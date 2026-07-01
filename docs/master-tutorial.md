@@ -58,10 +58,11 @@ Experience the system from your customer's perspective.
 1.  **Intake**: Visit your homepage and interact with the `[gp_quiz_lead_form]`.
     *   **User Interaction**: Complete the multi-step quiz.
     *   **Strategic Pro-Tip**: The quiz is a "High-Friction" filter designed to eliminate low-quality inquiries. In high-ticket sales, fewer leads of higher quality are always more profitable than mass volume.
-2.  **Autonomous Triage**: The system instantly performs sentiment analysis and calculates a "Deal Probability".
+2.  **Autonomous Triage**: The system instantly performs sentiment analysis, calculates a "Deal Probability", and generates a **Strategic Action Plan**.
     *   **Action**: Check the **Leads** menu in WordPress. Open your new lead record.
     *   **Operational Pro-Tip**: Set the "Neural Trigger Sensitivity" to 85% in the White-Label tab to ensure only the highest-fidelity leads trigger an urgent mobile notification.
-3.  **Behavioral Nudges**: Notice the AI-generated "Suggested Reply" and "Psychological Nudges" in the lead's meta box.
+3.  **Voice-AI Re-engagement**: If the prospect calls your Twilio number and you are unavailable, the **Voice Triage Node** executes a professional greeting and records their inquiry for AI analysis.
+4.  **Behavioral Nudges**: Notice the AI-generated "Suggested Reply", "Competitive Edge Analysis", and "Psychological Nudges" in the lead's meta box.
 
 ## 📜 Step 5: Proposal to Project Kickoff
 Closing the deal and initializing operations.
@@ -71,7 +72,7 @@ Closing the deal and initializing operations.
 2.  **Client Portal Interaction**: Open the proposal link (simulating the client). Click **"Accept & Sign"**.
 3.  **Automatic Kickoff**:
     *   **System Action**: The Lead status moves to **Closed**.
-    *   **System Action**: A new **Project (Case Study)** node is created.
+    *   **System Action**: A new **Project (Case Study)** node is created with an AI-generated cinematic success blueprint.
     *   **System Action**: An **Invoice** is generated in the Transaction ledger.
     *   **System Action**: A **Kickoff Task** is assigned to your staff.
 
@@ -82,7 +83,8 @@ Maintaining high-authority output.
 2.  **Content Studio**: Weekly, use the **AI Content Studio** to generate new KB articles or Treatments.
     *   **Action**: Click **"Sync to Knowledge Base"** to propagate intelligence.
     *   **Full Dominance**: Generate a 3-in-1 campaign (Blog, Email, Ads) to dominate a new topic node in under 5 minutes.
-3.  **Authority Monitoring**: Use the **Strategic Reports** and **Ecosystem Radar** to monitor your conversion velocity and net equity.
+3.  **Authority Monitoring**: Use the **Strategic Reports** and **Ecosystem Radar** to monitor your conversion velocity, net equity, and **Predictive Revenue Forecast**.
+4.  **Agency Command**: Use the **Agency Cluster** tab to manage multiple firm profiles and switch between niche configurations instantly.
 4.  **Strategic Command**: Daily, review the **AI Recommendations** widget on your dashboard. These are the single most impactful actions you can take to increase net equity based on the last 24 hours of data.
 
 ---

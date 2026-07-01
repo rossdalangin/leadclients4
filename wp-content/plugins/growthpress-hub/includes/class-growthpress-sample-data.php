@@ -218,6 +218,8 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_ai_closing_tips', "Strategic Advantage: Emphasize the 5-minute response rule. \nROI Pivot: Contrast the cost of their current manual triage latency against our autonomous realized equity spreads.");
                 update_post_meta($id, '_gp_ai_discovery_questions', "1. What is the current financial delta of your ignored leads?\n2. How would a 400% increase in response velocity impact your Q4 realization?");
                 update_post_meta($id, '_gp_ai_suggested_reply', "Hello " . explode(' ', $l['title'])[0] . ", I saw your inquiry about automation...");
+                update_post_meta($id, '_gp_ai_strategic_plan', "1. Execute v6.3 Merit Review Node\n2. Perform Jurisdictional Overlap Audit\n3. Initialize Secure Asset Vault Uplink\n4. Dispatch Strategic Proposal Node\n5. Finalize Retainer Realization");
+                update_post_meta($id, '_gp_ai_competitive_edge', "Your firm is the only one in this ZIP sector utilizing autonomous clinical mapping. This reduces intake latency by 44% compared to standard regional competitors.");
                 update_post_meta($id, '_gp_behavioral_nudge', "Based on your interest in " . $l['tag'] . " solutions, we have a specialized team ready.");
                 update_post_meta($id, '_gp_nurture_sequence', "Day 1: Welcome\nDay 2: Value Proposition\nDay 3: Case Study\nDay 4: Demo Invitation\nDay 5: Final Follow-up");
                 $niche = get_option('growthpress_niche', 'business');
@@ -618,7 +620,31 @@ class GrowthPress_Sample_Data {
     }
 
     private static function generate_projects($lead_ids = array()) {
-        $projects = array(
+        $niche = get_option('growthpress_niche', 'business');
+        $niche_projects = array(
+            'dental' => array(
+                'Full-Mouth Reconstruction Realization' => array('+180%', '12 HRS/WK', '$45k+'),
+                'Invisalign Elite Deployment' => array('+320%', '8 HRS/WK', '$25k+')
+            ),
+            'law' => array(
+                'Corporate Merger Triage' => array('+440%', '20 HRS/WK', '$1.2M+'),
+                'Strategic Litigation Merit Audit' => array('+210%', '15 HRS/WK', '$450k+')
+            ),
+            'solar' => array(
+                'Luxury Estate Infrastructure' => array('+550%', '30 HRS/WK', '$120k+'),
+                'Industrial Array Optimization' => array('+140%', '22 HRS/WK', '$850k+')
+            ),
+            'medical' => array(
+                'Neural Triage Hub Implementation' => array('+680%', '40 HRS/WK', '$2.1M+'),
+                'Clinical Protocol Standardization' => array('+115%', '18 HRS/WK', '$320k+')
+            ),
+            'contractor' => array(
+                'Modernist Estate Overhaul' => array('+240%', '25 HRS/WK', '$2.5M+'),
+                'Structural Engineering Realization' => array('+95%', '12 HRS/WK', '$420k+')
+            )
+        );
+
+        $projects = $niche_projects[$niche] ?? array(
             'Global Enterprise Migration' => array('+420%', '15 HRS/WK', '$2.5M+'),
             'Sustainable Infrastructure Deployment' => array('+215%', '22 HRS/WK', '$1.8M+'),
             'Neural Triage Implementation' => array('+680%', '40 HRS/WK', '$3.2M+')
