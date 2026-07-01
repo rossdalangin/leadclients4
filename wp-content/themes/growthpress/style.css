@@ -3,7 +3,7 @@ Theme Name: GrowthPress Ultra Elite
 Theme URI: https://growthpress.io
 Author: GrowthPress Team
 Description: The world's most advanced AI-powered business growth operating system for WordPress.
-Version: 6.3.0
+Version: 6.3.0 Elite Definitive
 Text Domain: growthpress
 */
 
@@ -253,6 +253,18 @@ body.dark-theme .site-header {
     background: var(--primary) !important;
     color: #FFF !important;
     border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Elite Block-Level Dark Mode Legibility */
+.gp-dark-mode .wp-block-heading, .dark-theme .wp-block-heading,
+.gp-dark-mode .wp-block-paragraph, .dark-theme .wp-block-paragraph,
+.gp-dark-mode .wp-block-list, .dark-theme .wp-block-list {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .wp-block-quote, .dark-theme .wp-block-quote {
+    border-left-color: var(--primary);
+    color: #CBD5E1;
 }
 
 .gp-dark-mode .gp-btn.secondary, .dark-theme .gp-btn.secondary {
@@ -573,7 +585,7 @@ body.gp-design-female .text-gradient {
     opacity: 0.2;
 }
 
-/* WordPress Block Optimization v6.0 */
+/* WordPress Block Optimization v6.3 Elite */
 .wp-block-columns {
     display: flex;
     margin-bottom: 3.5rem;

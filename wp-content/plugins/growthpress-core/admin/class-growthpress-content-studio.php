@@ -173,6 +173,7 @@ class GrowthPress_Content_Studio {
                             <option value="campaign">5-Day Nurture Sequence</option>
                             <option value="market">Market Angle of Attack</option>
                             <option value="sales">Discovery Talk Tracks</option>
+                            <option value="headline_optimizer">Neural Headline Optimizer (A/B)</option>
                             <option value="service">Service Line Description</option>
                             <option value="project">High-Ticket Case Study</option>
                             <option value="kb">Technical KB Article</option>

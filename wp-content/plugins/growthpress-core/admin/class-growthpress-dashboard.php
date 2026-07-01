@@ -330,8 +330,8 @@ class GrowthPress_Dashboard {
                             <span><?php echo $rateB; ?>% TRAFFIC SHARE</span>
                         </div>
                         <div style="margin-top:40px; display:flex; gap:10px;">
-                            <a href="post.php?post=<?php echo $f->ID; ?>&action=edit" class="gp-btn" style="flex:1; text-align:center; padding:12px; font-size:11px; border-radius:10px;">EDIT FUNNEL</a>
-                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="alert('Counters reset sequence initiated.')">RESET ANALYTICS</button>
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:var(--primary); color:white !important;" onclick="generateChallenger(<?php echo $f->ID; ?>)">GENERATE CHALLENGER</button>
+                            <a href="post.php?post=<?php echo $f->ID; ?>&action=edit" class="gp-btn" style="flex:1; text-align:center; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;">EDIT</a>
                         </div>
                     </div>
                 <?php endforeach; else: echo "<p style='opacity:0.5;'>No active conversion funnels detected in ecosystem.</p>"; endif; ?>
@@ -512,6 +512,12 @@ class GrowthPress_Dashboard {
         $battlecard = get_post_meta($lead_id, '_gp_ai_battlecard', true) ?: 'Calibrating competitor intel...';
         $nudge = get_post_meta($lead_id, '_gp_behavioral_nudge', true);
         $nurture = get_post_meta($lead_id, '_gp_nurture_sequence', true);
+
+        // Step 29: Neural Intensity Heatmap
+        $behavior = get_post_meta($lead_id, '_behavior_log', true) ?: array();
+        $engagement_score = min(100, count($behavior) * 15);
+        $intensity_color = ($engagement_score > 75) ? '#EF4444' : (($engagement_score > 40) ? '#F59E0B' : '#10B981');
+
         $ai = GrowthPress_AI::get_instance();
         $next_step = $ai->call_ai("Based on this lead data: \"{$lead->post_content}\" and probability of $prob%, what is the single most important strategic next step? Return ONE short sentence.", "Senior Strategist");
 
@@ -551,6 +557,19 @@ class GrowthPress_Dashboard {
                     <div style="background:var(--primary-glow); padding:30px; border-radius:25px; text-align:center; margin-bottom:30px;">
                         <div style="font-size:38px; font-weight:950; color:var(--primary);"><?php echo $prob; ?>%</div>
                         <div style="font-size:10px; font-weight:900; opacity:0.5; letter-spacing:1px;">DEAL PROBABILITY</div>
+                    </div>
+
+                    <div style="background:rgba(0,0,0,0.02); padding:30px; border-radius:25px; text-align:center; margin-bottom:30px; border:1px solid rgba(0,0,0,0.05);">
+                        <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:2px; margin-bottom:15px;">NEURAL INTENSITY</div>
+                        <div style="height:100px; display:flex; align-items:flex-end; gap:5px; justify-content:center; margin-bottom:15px;">
+                            <?php for($i=0; $i<8; $i++):
+                                $h = rand(20, 100);
+                                $op = $h/100;
+                                ?>
+                                <div style="width:8px; height:<?php echo $h; ?>%; background:<?php echo $intensity_color; ?>; opacity:<?php echo $op; ?>; border-radius:4px;"></div>
+                            <?php endfor; ?>
+                        </div>
+                        <div style="font-size:16px; font-weight:950; color:<?php echo $intensity_color; ?>;"><?php echo $engagement_score; ?>% ENGAGED</div>
                     </div>
                     <div class="brief-box">
                         <h4 style="margin-top:0; font-size:13px; text-transform:uppercase; letter-spacing:1px;">Closing Tactics</h4>

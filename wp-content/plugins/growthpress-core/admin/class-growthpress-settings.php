@@ -38,7 +38,9 @@ class GrowthPress_Settings {
             'growthpress_license_key', 'growthpress_license_status', 'growthpress_dashboard_logo',
             'growthpress_agency_mode', 'growthpress_compliance_mode', 'growthpress_login_logo',
             'growthpress_custom_css', 'growthpress_ai_personality', 'growthpress_autopilot_mode',
-            'growthpress_portal_branding', 'growthpress_neural_triggers', 'growthpress_visual_mode'
+            'growthpress_portal_branding', 'growthpress_neural_triggers', 'growthpress_visual_mode',
+            'growthpress_sso_enabled', 'growthpress_sso_provider', 'growthpress_sso_client_id',
+            'growthpress_sso_client_secret', 'growthpress_sso_endpoint'
         );
         foreach($keys as $k) register_setting( 'growthpress_settings_group', $k );
     }
@@ -674,6 +676,33 @@ class GrowthPress_Settings {
                                     <span>AGGRESSIVE AUTONOMY</span>
                                 </div>
                             </td>
+                        </tr>
+                        <tr class="section-header"><th colspan="2"><h3>Enterprise SSO Uplink</h3></th></tr>
+                        <tr>
+                            <th scope="row"><label>Enable SSO Authentication</label></th>
+                            <td><input type="checkbox" name="growthpress_sso_enabled" value="1" <?php checked(1, get_option('growthpress_sso_enabled'), true); ?>></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Identity Provider</label></th>
+                            <td>
+                                <select name="growthpress_sso_provider" style="width:100%; height:50px; border-radius:10px;">
+                                    <option value="okta" <?php selected('okta', get_option('growthpress_sso_provider'), true); ?>>Okta Workforce Identity</option>
+                                    <option value="azure" <?php selected('azure', get_option('growthpress_sso_provider'), true); ?>>Microsoft Entra ID (Azure)</option>
+                                    <option value="google" <?php selected('google', get_option('growthpress_sso_provider'), true); ?>>Google Workspace (OIDC)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Client ID</label></th>
+                            <td><input type="text" name="growthpress_sso_client_id" value="<?php echo esc_attr( get_option('growthpress_sso_client_id') ); ?>" class="regular-text"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Client Secret</label></th>
+                            <td><input type="password" name="growthpress_sso_client_secret" value="<?php echo esc_attr( get_option('growthpress_sso_client_secret') ); ?>" class="regular-text"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Auth Endpoint</label></th>
+                            <td><input type="text" name="growthpress_sso_endpoint" value="<?php echo esc_attr( get_option('growthpress_sso_endpoint') ); ?>" class="regular-text" placeholder="https://dev-xxxx.okta.com/oauth2/default"></td>
                         </tr>
                         <tr class="section-header"><th colspan="2"><h3>Visual Experience Architecture</h3></th></tr>
                         <tr>

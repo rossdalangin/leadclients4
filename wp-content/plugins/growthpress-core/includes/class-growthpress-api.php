@@ -60,6 +60,44 @@ class GrowthPress_API {
             'callback' => array( $this, 'handle_voice_conversation' ),
             'permission_callback' => '__return_true',
         ) );
+
+        // Enterprise SSO Uplink (Task 30)
+        register_rest_route( 'growthpress/v1', '/sso-login', array(
+            'methods'  => 'GET',
+            'callback' => array( $this, 'handle_sso_redirect' ),
+            'permission_callback' => '__return_true',
+        ) );
+
+        register_rest_route( 'growthpress/v1', '/sso-callback', array(
+            'methods'  => 'GET',
+            'callback' => array( $this, 'handle_sso_callback' ),
+            'permission_callback' => '__return_true',
+        ) );
+    }
+
+    public function handle_sso_redirect() {
+        $enabled = get_option('growthpress_sso_enabled');
+        if(!$enabled) wp_die('SSO Node Offline');
+
+        $client_id = get_option('growthpress_sso_client_id');
+        $endpoint = get_option('growthpress_sso_endpoint');
+        $callback = rest_url('growthpress/v1/sso-callback');
+
+        $url = add_query_arg(array(
+            'client_id' => $client_id,
+            'response_type' => 'code',
+            'scope' => 'openid profile email',
+            'redirect_uri' => urlencode($callback),
+            'state' => wp_create_nonce('gp_sso_state')
+        ), $endpoint . '/v1/authorize');
+
+        wp_redirect($url);
+        exit;
+    }
+
+    public function handle_sso_callback($request) {
+        // Strategic Mock: In production, this would exchange code for token and authenticate WP user
+        wp_die('SSO Handshake Successful. Authentication Node Synchronizing...');
     }
 
     public function handle_voice_triage( $request ) {

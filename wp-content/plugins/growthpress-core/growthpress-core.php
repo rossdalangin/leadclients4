@@ -3,7 +3,7 @@
  * Plugin Name: GrowthPress Core
  * Plugin URI: https://growthpress.io
  * Description: Core engine for the GrowthPress Business Operating System.
- * Version: 4.5.0
+ * Version: 6.3.0 Elite
  * Author: GrowthPress Team
  * Text Domain: growthpress-core
  */

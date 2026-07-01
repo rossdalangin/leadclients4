@@ -105,7 +105,26 @@ class GrowthPress_Portal {
     }
 
     public function render_portal() {
-        if ( ! is_user_logged_in() ) return '<div class="glass-card gp-reveal" style="text-align:center; padding:120px 60px; border-radius:60px; border: 1px solid rgba(255,255,255,0.4);"><div style="font-size:6rem; margin-bottom:40px;">🔐</div><h2 class="text-gradient" style="font-size:4rem; line-height:1.1;">Secure Node Authentication</h2><p style="opacity:0.7; font-size:1.4rem; max-width: 600px; margin: 30px auto 60px;">Identify yourself to access proprietary strategic metrics, legal blueprints, and financial ledgers.</p><a href="'.wp_login_url(get_permalink()).'" class="gp-btn" style="height:90px; padding:0 100px; font-size:22px; border-radius: 25px;">AUTHENTICATE SESSION</a></div>';
+        if ( ! is_user_logged_in() ) {
+            $sso_enabled = get_option('growthpress_sso_enabled');
+            $sso_provider = get_option('growthpress_sso_provider', 'okta');
+
+            $html = '<div class="glass-card gp-reveal" style="text-align:center; padding:120px 60px; border-radius:60px; border: 1px solid rgba(255,255,255,0.4);">
+                <div style="font-size:6rem; margin-bottom:40px;">🔐</div>
+                <h2 class="text-gradient" style="font-size:4rem; line-height:1.1;">Secure Node Authentication</h2>
+                <p style="opacity:0.7; font-size:1.4rem; max-width: 600px; margin: 30px auto 60px;">Identify yourself to access proprietary strategic metrics, legal blueprints, and financial ledgers.</p>
+                <a href="'.wp_login_url(get_permalink()).'" class="gp-btn" style="height:90px; padding:0 100px; font-size:22px; border-radius: 25px;">AUTHENTICATE SESSION</a>';
+
+            if ($sso_enabled) {
+                $html .= '<div style="margin-top:50px; padding-top:50px; border-top:1px solid rgba(0,0,0,0.05);">
+                    <div style="font-size:10px; font-weight:950; opacity:0.3; letter-spacing:2px; margin-bottom:25px; text-transform:uppercase;">Enterprise SSO Uplink</div>
+                    <button class="gp-btn" style="width:100%; max-width:400px; height:75px; background:#000; color:white !important; border-radius:20px; font-size:15px; letter-spacing:1px;" onclick="location.href=\''.esc_url(rest_url('growthpress/v1/sso-login')).'\'">LOGIN WITH '.strtoupper($sso_provider).'</button>
+                </div>';
+            }
+
+            $html .= '</div>';
+            return $html;
+        }
 
         $user = wp_get_current_user();
         $email = $user->user_email;

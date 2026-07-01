@@ -3,7 +3,7 @@
  * Plugin Name: GrowthPress Hub
  * Plugin URI: https://growthpress.io
  * Description: Strategic License Authority and Ecosystem Generation Hub for GrowthPress.
- * Version: 1.0.0
+ * Version: 6.3.0 Elite
  * Author: GrowthPress Team
  * Text Domain: growthpress-hub
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-define( 'GROWTHPRESS_HUB_VERSION', '1.0.0' );
+define( 'GROWTHPRESS_HUB_VERSION', '6.3.0' );
 define( 'GROWTHPRESS_HUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'GROWTHPRESS_HUB_URL', plugin_dir_url( __FILE__ ) );
 
