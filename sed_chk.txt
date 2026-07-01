@@ -1,0 +1,61 @@
+                    update_post_meta($id, '_related_lead', $lead_ids[rand(0, count($lead_ids)-1)]);
+                }
+            }
+        }
+    }
+
+    private static function generate_kb() {
+        $id = wp_insert_post(array(
+            'post_title'   => 'v6.3 AI Triage Safety Protocols',
+            'post_content' => 'Guidelines for maintaining high-fidelity intelligence routing across the 14-node architecture. This protocol ensures all leads are scored according to niche-specific intent metrics and routed to the appropriate specialist hub within 300ms of capture. Failure to maintain neural sync can result in a 15% increase in operational latency.',
+            'post_type'    => 'gp_kb',
+            'post_status'  => 'publish'
+        ));
+        if ($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_kb_intel_level', 'Executive');
+            update_post_meta($id, '_kb_access_control', 'Internal');
+            wp_set_post_tags($id, array('Intelligence', 'Protocol', 'Executive'));
+        }
+
+        $id2 = wp_insert_post(array(
+            'post_title'   => 'Enterprise Portal Access Guide',
+            'post_content' => 'Comprehensive walkthrough for high-net-worth clients to access their strategic proposals, project velocity charts, and secure financial ledgers through the GrowthPress Client Portal. This guide covers AES-256 encryption standards and multi-factor authentication nodes.',
+            'post_type'    => 'gp_kb',
+            'post_status'  => 'publish'
+        ));
+        if ($id2) {
+            update_post_meta($id2, '_gp_is_sample', '1');
+            update_post_meta($id2, '_kb_intel_level', 'Basic');
+            update_post_meta($id2, '_kb_access_control', 'Client');
+            wp_set_post_tags($id2, 'Onboarding, Guide, Portal');
+        }
+    }
+
+    private static function generate_services() {
+        $niche = get_option('growthpress_niche', 'business');
+        $niche_services = array(
+            'dental' => array(
+                'Full-Mouth Restoration' => array('🦷', 'High-authority aesthetic mapping and clinical reconstruction protocols.'),
+                'Invisalign Elite' => array('✨', 'Precision clear aligner therapy driven by autonomous clinical triage.'),
+                'Neural Dental Triage' => array('🤖', 'AI-driven patient routing and emergency symptom analysis.')
+            ),
+            'law' => array(
+                'Corporate Merger Triage' => array('⚖️', 'High-stakes legal auditing and conflict clearance for enterprise acquisitions.'),
+                'Litigation Intelligence' => array('🧠', 'AI-driven case merit review and multi-jurisdictional risk mitigation.'),
+                'Asset Protection Node' => array('🛡️', 'Sophisticated global asset shielding and trust architecture.')
+            ),
+            'solar' => array(
+                'Energy Equity Audit' => array('☀️', 'Comprehensive structural engineering and ROI modeling for solar arrays.'),
+                'Grid Independence Node' => array('⚡', 'Battery backup integration and high-efficiency energy storage deployment.'),
+                'Tax Credit Realization' => array('💰', 'Maximizing federal and state incentive capture through fiscal analysis.')
+            )
+        );
+
+        $services = $niche_services[$niche] ?? array(
+            'Growth Strategy Audit' => array('📈', 'Comprehensive operational intelligence audit for high-performance firms. We identify untapped pipeline equity through behavioral sales optimization and neural triage protocols.'),
+            'Neural Ecosystem Deployment' => array('🤖', 'Full-scale architectural deployment of the v6.3 GrowthPress OS. Seamlessly integrate multi-node intelligence across your entire lead-to-revenue lifecycle.'),
+            'Performance Blueprinting' => array('⚡', 'Elite blueprinting for high-ticket service firms. Our specialized v6.3 methodology ensures maximum ROI by eliminating operational latency and structural friction.'),
+            'Financial Trajectory Analysis' => array('💰', 'Advanced fiscal modeling and trajectory analysis. Identify high-yield capital preservation nodes and long-term equity growth opportunities.')
+        );
+        $ids = array();

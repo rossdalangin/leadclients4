@@ -1,0 +1,375 @@
+/* GrowthPress Ultimate Visual Overhaul v6.3 - Hyper-Glassmorphism SaaS Aesthetic */
+
+:root {
+    --primary: #2563EB;
+    --primary-alt: #1E40AF;
+    --primary-glow: rgba(37, 99, 235, 0.15);
+    --secondary: #0F172A;
+    --surface: #FFFFFF;
+    --accent: #10B981;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --card-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+}
+
+.growthpress-dashboard, .growthpress-studio, .growthpress-settings {
+    padding: 40px;
+    background-color: #F8FAFC;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.07) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.07) 0px, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    min-height: 100vh;
+    font-family: 'Lexend', 'Inter', -apple-system, sans-serif;
+    color: var(--text-main);
+    line-height: 1.6;
+    animation: backgroundPulse 20s ease infinite;
+}
+
+@keyframes backgroundPulse {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* Header & Navigation Beauty */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 20px 30px;
+    border-radius: 25px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#gp-strategic-search {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#gp-strategic-search:focus {
+    width: 350px !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px var(--primary-glow) !important;
+}
+
+/* Settings Layout Harmony */
+.growthpress-settings .glass-card {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.growthpress-settings .nav-tab-wrapper {
+    display: flex;
+    justify-content: center;
+    border-bottom: none;
+    margin-bottom: 40px;
+}
+
+/* Dashboard Grid System */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: start;
+}
+
+@media (max-width: 1400px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .side-col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+}
+
+@media (max-width: 1100px) {
+    .dashboard-header { padding: 15px; }
+    #gp-strategic-search { width: 100% !important; }
+}
+
+@media (max-width: 800px) {
+    .side-col { grid-template-columns: 1fr; }
+    .growthpress-dashboard { padding: 15px; }
+    .dashboard-header { flex-direction: column; align-items: stretch; }
+    .dashboard-header > div { justify-content: center; }
+}
+
+@media (max-width: 768px) {
+    .side-col {
+        grid-template-columns: 1fr;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Glass Card v6.3 */
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 40px;
+    box-shadow:
+        0 10px 30px -10px rgba(0, 0, 0, 0.05),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    padding: 45px;
+}
+
+.glass-card:hover {
+    transform: translateY(-15px) scale(1.01) perspective(1000px) rotateX(2deg);
+    box-shadow:
+        0 60px 120px -30px rgba(0, 0, 0, 0.12),
+        0 20px 40px var(--primary-glow),
+        inset 0 1px 2px rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 0.95);
+    z-index: 10;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transform: rotate(30deg);
+    pointer-events: none;
+    transition: all 1s ease;
+}
+
+.glass-card:hover::before {
+    transform: rotate(60deg) translate(10%, 10%);
+}
+
+/* Stats Display Polish */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.stats-grid .stat {
+    background: #FFFFFF;
+    padding: 35px;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.02);
+    transition: all 0.4s ease;
+}
+
+.stats-grid .stat:hover {
+    transform: scale(1.03);
+    box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.05);
+}
+
+.stat b { font-size: 42px; font-weight: 950; letter-spacing: -0.06em; line-height: 1; display: block; margin-top: 10px; }
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Kanban Ultra-SaaS Aesthetic */
+.kanban-board-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding-bottom: 30px;
+    width: 100%;
+}
+
+.kanban-col {
+    background: rgba(241, 245, 249, 0.5);
+    border-radius: 30px;
+    padding: 25px;
+    min-width: 320px;
+    border: 1px dashed rgba(203, 213, 225, 0.6);
+}
+
+.kanban-card {
+    background: #FFFFFF;
+    border-radius: 30px;
+    padding: 35px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.03);
+    margin-bottom: 25px;
+    cursor: grab;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kanban-card:active { cursor: grabbing; }
+
+.kanban-card:hover {
+    border-color: var(--primary);
+    box-shadow:
+        0 30px 60px -12px rgba(37, 99, 235, 0.25),
+        0 0 0 1px var(--primary);
+    transform: translateY(-8px) scale(1.03);
+}
+
+.kanban-card.neural-pulse {
+    animation: cardPulse 3s infinite;
+}
+
+@keyframes cardPulse {
+    0% { box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.03); }
+    50% { box-shadow: 0 10px 40px -5px rgba(16, 185, 129, 0.3); border-color: #10B981; }
+    100% { box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.03); }
+}
+
+.kanban-card strong {
+    font-family: 'Lexend', sans-serif;
+    letter-spacing: -0.03em;
+}
+
+/* Revenue Forecast & Charts */
+.forecast-widget {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    color: white;
+    padding: 50px;
+    border-radius: 45px;
+    border: none;
+    box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.3);
+}
+
+/* Dark Mode Elite */
+.gp-dark-mode {
+    --primary: #6366F1;
+    --secondary: #F8FAFC;
+    --surface: #0F172A;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    background: #020617 !important;
+}
+
+.gp-dark-mode .dashboard-header,
+.gp-dark-mode .glass-card {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.gp-dark-mode .kanban-card,
+.gp-dark-mode .stats-grid .stat {
+    background: #1E293B;
+    border-color: #334155;
+    color: #F8FAFC;
+}
+
+/* Cyber Neon Mode - High Impact */
+.gp-cyber-mode {
+    --primary: #00F2FF;
+    --secondary: #FF00E5;
+    --accent: #39FF14;
+    --surface: #050505;
+    --text-main: #FFFFFF;
+    --primary-glow: rgba(0, 242, 255, 0.3);
+    background: #000000 !important;
+}
+
+.gp-cyber-mode .glass-card {
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.gp-cyber-mode .glass-card:hover {
+    box-shadow: 0 0 50px var(--primary-glow), 0 0 100px rgba(255, 0, 229, 0.2);
+    border-color: var(--secondary);
+}
+
+.gp-cyber-mode .text-gradient {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+}
+
+.gp-cyber-mode .kanban-card {
+    background: #111;
+    border: 1px solid #333;
+    color: var(--primary);
+}
+
+.gp-cyber-mode .stat b {
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--primary);
+}
+
+.gp-dark-mode h4, .gp-cyber-mode h4 {
+    color: var(--primary) !important;
+}
+
+.gp-dark-mode .glass-card[style*="background:#f"],
+.gp-cyber-mode .glass-card[style*="background:#f"] {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid var(--primary) !important;
+}
+
+/* Animations */
+.gp-reveal { animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+@keyframes revealUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+.gradient-flow-line {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    background-size: 200% 100%;
+    animation: gradientFlow 3s linear infinite;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.kanban-card.neural-pulse:hover {
+    animation: none;
+    transform: translateY(-10px) scale(1.05);
+}
+
+/* Shimmer Effect for High Priority */
+.kanban-card.neural-pulse::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-25deg);
+    animation: shimmer 4s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+/* Custom Scrollbar for Elite Feel */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 20px; border: 3px solid #F8FAFC; }
+.gp-dark-mode ::-webkit-scrollbar-thumb { background: #475569; border-color: #020617; }

@@ -1,0 +1,62 @@
+/* GrowthPress Elite Admin Menu Accents v6.3 */
+
+#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+    background-color: #0F172A !important;
+}
+
+#adminmenu a {
+    color: rgba(255,255,255,0.7) !important;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 14px 20px !important;
+    transition: all 0.3s ease;
+}
+
+#adminmenu li.menu-top:hover > a {
+    color: #FFF !important;
+    background: rgba(255,255,255,0.05) !important;
+}
+
+#adminmenu li.current a.menu-top,
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head {
+    background: var(--primary) !important;
+    color: #FFF !important;
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+#adminmenu .wp-has-current-submenu .wp-submenu {
+    background-color: #1E293B !important;
+    border-radius: 0 0 12px 12px;
+    margin: 0 10px 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+#adminmenu li.wp-has-submenu:hover {
+    background-color: #1E293B !important;
+}
+
+#adminmenu .wp-menu-image:before {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+#adminmenu li.current .wp-menu-image:before {
+    color: #FFF !important;
+}
+
+/* Specific GrowthPress Dashboard Icon Glow */
+#toplevel_page_growthpress-dashboard .wp-menu-image:before {
+    color: var(--primary) !important;
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Hide Standard WP Admin Bar for cleaner feel in OS mode */
+#wpadminbar {
+    background: #FFF !important;
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+#wpadminbar .ab-item, #wpadminbar a.ab-item, #wpadminbar > #wp-toolbar span.ab-label, #wpadminbar > #wp-toolbar span.noticon {
+    color: #1E293B !important;
+}

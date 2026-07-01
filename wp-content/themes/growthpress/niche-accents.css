@@ -1,0 +1,42 @@
+/* Niche Specific Accents & SVG Branding v1.7 */
+body.gp-niche-dental { --primary: #0EA5E9; }
+body.gp-niche-law { --primary: #1E293B; }
+body.gp-niche-solar { --primary: #F59E0B; }
+body.gp-niche-medical { --primary: #10B981; }
+body.gp-niche-contractor { --primary: #EF4444; }
+body.gp-niche-roofing { --primary: #475569; }
+body.gp-niche-accounting { --primary: #7C3AED; }
+body.gp-niche-real-estate { --primary: #2563EB; }
+body.gp-niche-coaches { --primary: #DB2777; }
+body.gp-niche-consultants { --primary: #2563EB; }
+
+/* SVG Background Patterns for Hero Sections */
+.gp-niche-dental .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%230EA5E9' fill-opacity='0.05'/%3E%3C/svg%3E"); }
+.gp-niche-law .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0z' fill='%231E293B' fill-opacity='0.03'/%3E%3C/svg%3E"); }
+.gp-niche-solar .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='2' fill='%23F59E0B' fill-opacity='0.08'/%3E%3C/svg%3E"); }
+.gp-niche-medical .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 0v50M0 25h50' stroke='%2310B981' stroke-opacity='0.05' stroke-width='2'/%3E%3C/svg%3E"); }
+.gp-niche-contractor .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l30 30' stroke='%23EF4444' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E"); }
+.gp-niche-accounting .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='44' height='12' viewBox='0 0 44 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 12h4v-1h-4v1zm5 0h4v-1h-4v1zm5 0h4v-1h-4v1zm5 0h4v-1h-4v1zm5 0h4v-1h-4v1z' fill='%237C3AED' fill-opacity='0.05'/%3E%3C/svg%3E"); }
+.gp-niche-coaches .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50L100 0H0z' fill='%23DB2777' fill-opacity='0.03'/%3E%3C/svg%3E"); }
+.gp-niche-real-estate .gp-hero { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h30v30H0z' fill='%232563EB' fill-opacity='0.04'/%3E%3C/svg%3E"); }
+
+/* Specialized Niche UI Accents */
+.gp-niche-solar .gp-solar-calc { border-top: 10px solid #F59E0B; }
+.gp-niche-law .gp-legal-intake { border-right: 15px solid #1E293B; }
+.gp-niche-medical .gp-symptom-checker { box-shadow: 0 0 50px rgba(16, 185, 129, 0.1); }
+.gp-niche-dental .gp-insurance-optimizer { border-left: 15px solid #0EA5E9; }
+.gp-niche-real-estate .gp-property-matcher { border-bottom: 10px solid #2563EB; }
+.gp-niche-accounting .gp-tax-estimator { border-top: 10px solid #7C3AED; }
+
+/* Pricing Elite Cards */
+.glass-card.pricing-featured::after {
+    content: "PREMIUM OS";
+    position: absolute;
+    top: 20px; right: -30px;
+    background: var(--primary);
+    color: white;
+    padding: 5px 40px;
+    font-size: 10px;
+    font-weight: 900;
+    transform: rotate(45deg);
+}

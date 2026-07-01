@@ -1,0 +1,568 @@
+/*
+Theme Name: GrowthPress Ultra Elite
+Theme URI: https://growthpress.io
+Author: GrowthPress Team
+Description: The world's most advanced AI-powered business growth operating system for WordPress.
+Version: 6.3.0
+Text Domain: growthpress
+*/
+
+:root {
+    /* Mode-Agnostic Variables */
+    --radius: 32px;
+    --blur: 40px;
+    --speed: 0.8s;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition: var(--speed) var(--ease-out-expo);
+
+    /* Light Mode (Default) - High-Authority Indigo */
+    --primary: #4F46E5;
+    --primary-alt: #4338CA;
+    --primary-glow: rgba(79, 70, 229, 0.15);
+    --secondary: #1E1B4B;
+    --accent: #818CF8;
+    --bg: #F9FAFB;
+    --surface: #FFFFFF;
+    --surface-rgb: 255, 255, 255;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --border: rgba(0,0,0,0.05);
+    --glass-border: rgba(255,255,255,0.7);
+    --speed: 0.8s;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition: var(--speed) var(--ease-out-expo);
+
+    /* Fluid Shadows System */
+    --shadow-sm: 0 10px 20px rgba(0,0,0,0.02);
+    --shadow-md: 0 20px 40px rgba(0,0,0,0.04);
+    --shadow-lg: 0 40px 80px rgba(0,0,0,0.08);
+    --shadow-xl: 0 60px 120px rgba(0,0,0,0.12);
+
+    /* Fluid Typography Engine */
+    --step-0: clamp(1rem, 0.92rem + 0.39vw, 1.25rem);
+    --step-1: clamp(1.25rem, 1.08rem + 0.87vw, 1.8rem);
+    --step-2: clamp(1.56rem, 1.25rem + 1.55vw, 2.56rem);
+    --step-3: clamp(1.95rem, 1.43rem + 2.6vw, 3.66rem);
+    --step-4: clamp(2.44rem, 1.61rem + 4.14vw, 5.16rem);
+    --step-5: clamp(3.05rem, 1.78rem + 6.36vw, 7.25rem);
+}
+
+/* Selection & Scrollbar Styling */
+::selection { background: var(--primary); color: white; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Personality Node: Male Focus - Bold, Sharp, High-Density */
+body.gp-design-male {
+    --primary: #0F172A;
+    --primary-alt: #020617;
+    --primary-glow: rgba(37, 99, 235, 0.2);
+    --secondary: #2563EB;
+    --accent: #38BDF8;
+    --bg: #0F172A;
+    --surface: #1E293B;
+    --surface-rgb: 30, 41, 59;
+    --text: #F1F5F9;
+    --text-muted: #94A3B8;
+    --border: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.1);
+    --radius: 4px;
+    --font-heading: 'Lexend', 'Inter', sans-serif;
+}
+
+body.gp-design-male .glass-card {
+    border-radius: 4px;
+    border-width: 2px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+}
+
+/* Personality Node: Female Focus - Soft, Ethereal, High-Luxe */
+body.gp-design-female {
+    --primary: #BE185D;
+    --primary-alt: #9D174D;
+    --primary-glow: rgba(190, 24, 93, 0.12);
+    --secondary: #B45309; /* Deep Gold */
+    --accent: #F472B6;
+    --bg: #FFF1F2;
+    --surface: #FFFFFF;
+    --surface-rgb: 255, 255, 255;
+    --text: #4C0519;
+    --text-muted: #9D174D;
+    --border: rgba(190, 24, 93, 0.05);
+    --glass-border: rgba(255,255,255,1);
+    --radius: 100px;
+    --font-heading: 'Inter', sans-serif;
+}
+
+body.gp-design-female .glass-card {
+    border-radius: 80px;
+    box-shadow: 0 40px 100px rgba(190, 24, 93, 0.08);
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,241,242,0.9) 100%);
+}
+
+body.gp-design-female .gp-hero::before {
+    content: ""; position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+    background: radial-gradient(circle at center, rgba(190, 24, 93, 0.05) 0%, transparent 70%);
+    pointer-events: none; z-index: -1;
+}
+
+body.gp-design-male .site-header,
+body.gp-design-male .glass-card {
+    border: 2px solid var(--primary);
+    box-shadow: 15px 15px 0px rgba(0,0,0,0.15);
+}
+
+body.dark-theme {
+    --bg: #020617; /* Deep Slate 950 */
+    --surface: #0F172A; /* Slate 900 */
+    --surface-rgb: 15, 23, 42;
+    --text: #F8FAFC; /* Slate 50 */
+    --text-muted: #94A3B8; /* Slate 400 */
+    --border: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
+    --secondary: #FFFFFF;
+    --primary-glow: rgba(79, 70, 229, 0.4);
+    --shadow-sm: 0 10px 20px rgba(0,0,0,0.5);
+    --shadow-md: 0 20px 40px rgba(0,0,0,0.7);
+    --shadow-lg: 0 40px 80px rgba(0,0,0,0.9);
+    --shadow-xl: 0 60px 120px rgba(0,0,0,1);
+}
+
+/* Cyber Neon Node (Neon Mode Overlay) */
+body.gp-neon-mode {
+    --primary: #00F2FF;
+    --primary-alt: #7000FF;
+    --primary-glow: rgba(0, 242, 255, 0.3);
+    --accent: #FF00E5;
+    --elite-gradient: linear-gradient(135deg, #00F2FF 0%, #7000FF 100%);
+    --glass-border: rgba(0, 242, 255, 0.2);
+}
+
+body.gp-neon-mode .glass-card {
+    box-shadow: 0 0 40px rgba(0, 242, 255, 0.15), 0 0 80px rgba(112, 0, 255, 0.05), inset 0 0 20px rgba(0, 242, 255, 0.05);
+    border-color: rgba(0, 242, 255, 0.3);
+}
+
+body.gp-neon-mode .text-gradient {
+    filter: drop-shadow(0 0 15px var(--primary-glow));
+}
+
+body.gp-neon-mode .gp-btn {
+    background: var(--elite-gradient);
+    box-shadow: 0 0 40px rgba(112, 0, 255, 0.4);
+}
+
+body.dark-theme .glass-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.96) 100%);
+    backdrop-filter: blur(60px) saturate(250%);
+    -webkit-backdrop-filter: blur(60px) saturate(250%);
+    box-shadow:
+        var(--shadow-xl),
+        0 0 40px rgba(0,0,0,0.4),
+        inset 0 1px 0px rgba(255,255,255,0.12),
+        inset 0 -1px 0px rgba(0,0,0,0.7);
+    border-color: rgba(255,255,255,0.1);
+}
+
+body.dark-theme .gp-list li {
+    border-color: rgba(255,255,255,0.05);
+}
+
+body.dark-theme .site-header {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(255,255,255,0.05);
+}
+
+/* Reset & Foundation */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --section-spacing: clamp(5rem, 12vw, 12rem);
+}
+
+section, .site-main > div { padding-top: var(--section-spacing); padding-bottom: var(--section-spacing); }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+.container { max-width: 1440px; margin: 0 auto; padding: 0 40px; }
+
+/* Elite Header */
+.site-header {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(var(--surface-rgb), 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.main-navigation ul { display: flex; list-style: none; gap: 40px; }
+.main-navigation a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    transition: 0.3s ease;
+}
+.main-navigation a:hover { opacity: 1; }
+
+/* Ultimate Glassmorphism Engine v6.3 - Hyper-Cinematic */
+.glass-card, .gp-estimator, .gp-solar-calc, .gp-symptom-checker, .gp-ai-faq, .gp-insurance-optimizer, .gp-legal-intake {
+    background: linear-gradient(135deg, rgba(var(--surface-rgb), var(--glass-opacity, 0.88)) 0%, rgba(var(--surface-rgb), calc(var(--glass-opacity, 0.88) * 0.8)) 100%);
+    backdrop-filter: blur(var(--blur)) saturate(200%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(200%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: clamp(3rem, 8vw, 6rem);
+    box-shadow:
+        0 15px 35px -10px rgba(0, 0, 0, 0.08),
+        0 30px 60px -12px rgba(0,0,0,0.05),
+        inset 0 1px 1px rgba(255,255,255,0.9),
+        inset 0 -1px 1px rgba(0,0,0,0.03);
+    transition: transform 0.6s var(--ease-out-expo), box-shadow 0.6s var(--ease-out-expo), border-color 0.4s ease, backdrop-filter 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transform-style: preserve-3d;
+}
+
+.glass-card::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at top right, var(--primary-glow), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    transition: var(--transition);
+}
+
+/* Glass Shimmer Animation */
+.glass-card::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0) 40%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 60%,
+        transparent
+    );
+    transform: rotate(25deg);
+    transition: none;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+}
+
+.glass-card:hover::after {
+    animation: glass-shimmer 1.5s var(--ease-out-expo) forwards;
+}
+
+@keyframes glass-shimmer {
+    0% { transform: rotate(25deg) translate(-150%, -150%); opacity: 0; }
+    20% { opacity: 0.8; }
+    50% { opacity: 1; }
+    80% { opacity: 0.8; }
+    100% { transform: rotate(25deg) translate(150%, 150%); opacity: 0; }
+}
+
+.glass-card:hover {
+    transform: translateY(-25px) scale(1.02) perspective(1000px) rotateX(2deg);
+    box-shadow:
+        0 60px 120px -20px rgba(0, 0, 0, 0.15),
+        0 30px 90px var(--primary-glow),
+        inset 0 1px 2px rgba(255,255,255,1);
+    border-color: rgba(var(--surface-rgb), 1);
+    backdrop-filter: blur(calc(var(--blur) * 1.4)) saturate(240%);
+    -webkit-backdrop-filter: blur(calc(var(--blur) * 1.4)) saturate(240%);
+    z-index: 20;
+}
+
+body.gp-design-male .glass-card {
+    border-width: 2px;
+    background: linear-gradient(135deg, rgba(var(--surface-rgb), 0.95) 0%, rgba(var(--surface-rgb), 0.85) 100%);
+}
+
+body.gp-design-female .glass-card {
+    border-width: 1px;
+    box-shadow: var(--shadow-lg), 0 0 40px var(--primary-glow);
+}
+
+/* Fluid Typography Scaled v6.3 */
+h1 { font-family: var(--font-heading, 'Inter'); font-size: var(--step-5); line-height: 0.82; font-weight: 950; letter-spacing: -0.08em; text-wrap: balance; }
+h2 { font-family: var(--font-heading, 'Inter'); font-size: var(--step-4); font-weight: 900; letter-spacing: -0.06em; line-height: 0.92; text-wrap: balance; }
+h3 { font-size: var(--step-2); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
+h4, h5, h6 { font-weight: 800; letter-spacing: -0.02em; }
+
+body.gp-design-male h1, body.gp-design-male h2 { text-transform: uppercase; letter-spacing: -0.05em; }
+body.gp-design-female h1, body.gp-design-female h2 { letter-spacing: -0.02em; font-weight: 800; }
+
+.text-gradient {
+    background: var(--elite-gradient, linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Magnetic Interaction Nodes */
+.gp-btn, .wp-block-button__link {
+    background: var(--primary); color: white !important;
+    padding: 1.5rem 4rem; border-radius: var(--radius); font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer;
+    border: none; box-shadow: 0 20px 40px var(--primary-glow);
+    transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative; overflow: hidden;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.gp-btn:hover {
+    transform: scale(1.05) translateY(-8px);
+    box-shadow: 0 30px 60px var(--primary-glow);
+}
+
+/* Section Transitions & Reveals */
+.gp-reveal {
+    animation: gp-fade-up 1.5s var(--ease-out-expo) both;
+}
+
+.gp-reveal-stagger-1 { animation-delay: 0.1s; }
+.gp-reveal-stagger-2 { animation-delay: 0.2s; }
+.gp-reveal-stagger-3 { animation-delay: 0.3s; }
+
+@keyframes gp-fade-up {
+    0% { opacity: 0; transform: translateY(80px) scale(0.98); filter: blur(15px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* Strategic Typography Enhancements */
+.headline-xl { font-size: var(--step-5); font-weight: 950; letter-spacing: -0.06em; line-height: 0.85; }
+.headline-lg { font-size: var(--step-4); font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; }
+.headline-md { font-size: var(--step-3); font-weight: 850; letter-spacing: -0.04em; line-height: 1.05; }
+
+.eyebrow {
+    font-size: 11px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--primary);
+    margin-bottom: 2rem;
+    display: block;
+}
+
+/* Elite List Styling */
+.gp-list { list-style: none; padding: 0; }
+.gp-list li {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+.gp-list li::before {
+    content: "✓";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--primary-glow);
+    color: var(--primary);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 900;
+}
+.gp-list li:last-child { border-bottom: none; }
+.gp-list li:hover { transform: translateX(10px); color: var(--primary); }
+
+/* Elite Geometric Overlays v6.3 */
+.magnetic-grid {
+    display: var(--grid-display, none);
+    background-size: 50px 50px;
+    background-image:
+        linear-gradient(to right, var(--border) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+}
+
+.floating-nav {
+    margin: 20px 40px;
+    border-radius: 100px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+}
+
+/* Grainy Cinematic Atmosphere */
+.grainy-bg {
+    position: relative;
+    background: radial-gradient(at 0% 0%, var(--bg) 0, transparent 60%),
+                radial-gradient(at 100% 100%, var(--primary-glow) 0, transparent 60%),
+                radial-gradient(at 100% 0%, rgba(var(--surface-rgb), 0.5) 0, transparent 50%),
+                var(--bg);
+}
+
+.grainy-bg::after {
+    content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: var(--grain-opacity, 0.04); pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+
+/* Modern Forms */
+input, select, textarea {
+    width: 100%; border-radius: calc(var(--radius) / 2);
+    border: 1px solid var(--border);
+    background: rgba(var(--surface-rgb), 0.5);
+    padding: 20px 25px; font-size: 16px; font-weight: 500;
+    transition: 0.3s ease;
+    color: var(--text);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary); background: rgba(var(--surface-rgb), 1);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Mobile CTA Bar Glass-Blur */
+.gp-mobile-cta-bar {
+    background: rgba(var(--surface-rgb), 0.75);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.05);
+}
+
+/* Personality Accent Nodes */
+body.gp-design-male .text-gradient {
+    --elite-gradient: linear-gradient(90deg, #FFFFFF 0%, #94A3B8 100%);
+}
+
+body.gp-design-female .text-gradient {
+    --elite-gradient: linear-gradient(135deg, #BE185D 0%, #B45309 100%);
+}
+
+/* Improved Layout Accents */
+.container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 1440px) {
+    .container { max-width: 1320px; }
+}
+
+.site-main > div {
+    position: relative;
+}
+
+.site-main > div::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 50%; width: 1px; height: 100px;
+    background: linear-gradient(to bottom, var(--primary), transparent);
+    opacity: 0.2;
+}
+
+/* WordPress Block Optimization v6.0 */
+.wp-block-columns {
+    display: flex;
+    margin-bottom: 3.5rem;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    align-items: stretch;
+}
+
+.wp-block-columns.are-vertically-aligned-center { align-items: center; }
+.wp-block-columns.are-vertically-aligned-bottom { align-items: flex-end; }
+
+.wp-block-column {
+    flex: 1 0 0%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Elite Layout Optimization v6.3: High-Fidelity Block Architecture */
+.wp-block-columns:not([class*="has-"]) > .wp-block-column,
+.wp-block-column:only-of-type {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Nested Column Refinement: Handle recursive grid scenarios */
+.wp-block-column > .wp-block-columns {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    gap: 1.5rem;
+}
+
+/* Fluid Expansion for Solitary Glass Cards */
+.wp-block-column:only-of-type .glass-card,
+.wp-block-columns:not([class*="has-"]) > .wp-block-column .glass-card {
+    width: 100% !important;
+    max-width: none !important;
+    flex: 1 1 100%;
+}
+
+/* High-Precision Grid Calculations with Gap Compensation */
+.wp-block-columns.has-2-columns > .wp-block-column { flex: 1 1 calc(50% - 1.25rem); max-width: calc(50% - 1.25rem); }
+.wp-block-columns.has-3-columns > .wp-block-column { flex: 1 1 calc(33.33% - 1.67rem); max-width: calc(33.33% - 1.67rem); }
+.wp-block-columns.has-4-columns > .wp-block-column { flex: 1 1 calc(25% - 1.88rem); max-width: calc(25% - 1.88rem); }
+
+/* Global UI Polish for Documentation Blocks */
+.glass-card p strong { color: var(--primary); }
+.eyebrow { display: inline-block; background: var(--primary-glow); padding: 5px 15px; border-radius: 50px; font-size: 10px; margin-bottom: 25px; font-weight: 950; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); }
+
+/* Specialist Card Refinement */
+.gp-staff-card { transition: var(--transition); }
+.gp-staff-card:hover { transform: translateY(-15px); }
+.gp-staff-card img { border-radius: 20px; margin-bottom: 20px; }
+
+/* Review Feed Polish */
+.gp-review-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.gp-review-card { padding: 40px !important; border-radius: 30px !important; }
+
+/* Individual Column Vertical Alignment */
+.wp-block-column.is-vertically-aligned-center { align-self: center; }
+.wp-block-column.is-vertically-aligned-bottom { align-self: flex-end; }
+.wp-block-column.is-vertically-aligned-top { align-self: flex-start; }
+
+.wp-block-columns.is-not-stacked-on-mobile > .wp-block-column {
+    flex-basis: 0;
+}
+
+@media (max-width: 781px) {
+    .wp-block-columns:not(.is-not-stacked-on-mobile) > .wp-block-column {
+        flex-basis: 100% !important;
+    }
+}
+
+/* Mobile CTA Optimization */
+@media (max-width: 768px) {
+    .container { padding: 0 24px; }
+    .site-header { height: 80px; }
+    h1 { font-size: 3.5rem; }
+    .glass-card { padding: 3rem 2rem; }
+}
