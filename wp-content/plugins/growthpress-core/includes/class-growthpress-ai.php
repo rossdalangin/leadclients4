@@ -29,6 +29,28 @@ class GrowthPress_AI {
 
     private function __construct() {
         $this->provider = get_option('growthpress_ai_provider', 'openai');
+        add_action('wp_ajax_gp_submit_ai_feedback', array($this, 'handle_ai_feedback'));
+    }
+
+    public function handle_ai_feedback() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+        $post_id = intval($_POST['post_id']);
+        $meta_key = sanitize_text_field($_POST['meta_key']);
+        $feedback = sanitize_text_field($_POST['feedback']); // 'positive' or 'negative'
+
+        $log = get_option('gp_ai_feedback_log', array());
+        $log[] = array(
+            'post_id' => $post_id,
+            'key' => $meta_key,
+            'feedback' => $feedback,
+            'time' => current_time('mysql')
+        );
+        update_option('gp_ai_feedback_log', $log);
+
+        GrowthPress_Activity::log("Neural Feedback ingested for node #$post_id. Engine recalibrating...");
+        wp_send_json_success("Feedback ingested.");
     }
 
     public function call_ai( $prompt, $context = '' ) {

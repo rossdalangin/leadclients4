@@ -206,7 +206,7 @@ class GrowthPress_AI_FAQ {
     private function save_chat_message($session_id, $role, $message) {
         $chat_session = get_posts(array(
             'post_type' => 'gp_chat',
-            'title' => $session_id,
+            'name' => sanitize_title($session_id),
             'post_status' => 'publish',
             'posts_per_page' => 1
         ));
@@ -216,7 +216,8 @@ class GrowthPress_AI_FAQ {
         } else {
             $post_id = wp_insert_post(array(
                 'post_title' => $session_id,
-                'post_type' => 'gp_chat',
+                'post_name'  => sanitize_title($session_id),
+                'post_type'  => 'gp_chat',
                 'post_status' => 'publish'
             ));
         }

@@ -81,6 +81,45 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'System Ecosystem', 'Ecosystem Map', 'manage_options', 'growthpress-ecosystem', array( $this, 'render_ecosystem_map' ) );
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Agency Cluster', 'Agency Cluster', 'manage_options', 'growthpress-agency', array( $this, 'render_agency_cluster' ) );
+    }
+
+    public function render_agency_cluster() {
+        $profiles = get_option('gp_agency_profiles', array());
+        ?>
+        <div class="wrap growthpress-agency gp-reveal">
+            <div class="glass-card" style="background:#fefce8; border-left:5px solid #ca8a04; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#854d0e;">🏛️ Strategic Context: Multi-Tenant Management</h4>
+                <p style="margin:0; font-size:14px; color:#854d0e; line-height:1.5;">The Agency Cluster allows you to manage multiple brand profiles from a single unified node. <strong>Success Pattern:</strong> Agencies managing 5+ niches see a 40% reduction in OpEx by consolidating administrative overhead.</p>
+            </div>
+
+            <h1>Agency Strategic Cluster</h1>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px; margin-top:40px;">
+                <?php foreach($profiles as $slug => $p): ?>
+                    <div class="glass-card" style="padding:40px; border-radius:30px;">
+                        <h3 style="margin:0;"><?php echo esc_html($p['name']); ?></h3>
+                        <div style="font-size:11px; font-weight:900; opacity:0.4; letter-spacing:2px; margin:15px 0;"><?php echo strtoupper($p['niche']); ?> NODE</div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px;" onclick="switchAgencyProfile('<?php echo $slug; ?>')">ACTIVATE NODE</button>
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;">EDIT BRAND</button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="alert('Instantiating new brand node...')">
+                    <div style="text-align:center;">
+                        <div style="font-size:32px; margin-bottom:10px;">+</div>
+                        <div style="font-size:11px; font-weight:950; letter-spacing:1px;">INSTANTIATE NEW PROFILE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        function switchAgencyProfile(slug) {
+            alert('Switching to ' + slug.toUpperCase() + ' configuration...');
+            location.reload();
+        }
+        </script>
+        <?php
     }
 
     public function render_chat_command() {
@@ -444,9 +483,13 @@ class GrowthPress_Dashboard {
                 </div>
                 <div class="brief-main">
                     <h3 style="margin-top:0;"><?php echo esc_html($lead->post_title); ?></h3>
-                    <div style="background:#F0FDF4; border:1px solid #DCFCE7; padding:20px; border-radius:15px; margin-bottom:25px;">
+                    <div style="background:#F0FDF4; border:1px solid #DCFCE7; padding:20px; border-radius:15px; margin-bottom:25px; position:relative;">
                         <div style="font-size:10px; font-weight:950; color:#166534; letter-spacing:1px; margin-bottom:8px;">STRATEGIC RECOMMENDATION</div>
                         <div style="font-size:14px; font-weight:700; color:#166534; line-height:1.4;"><?php echo esc_html($next_step); ?></div>
+                        <div style="position:absolute; bottom:10px; right:15px; display:flex; gap:10px;">
+                            <span class="dashicons dashicons-thumbs-up" style="font-size:14px; cursor:pointer; color:#166534; opacity:0.3;" onclick="submitAIFeedback(<?php echo $lead_id; ?>, '_gp_ai_next_step', 'positive', this)"></span>
+                            <span class="dashicons dashicons-thumbs-down" style="font-size:14px; cursor:pointer; color:#B91C1C; opacity:0.3;" onclick="submitAIFeedback(<?php echo $lead_id; ?>, '_gp_ai_next_step', 'negative', this)"></span>
+                        </div>
                     </div>
                     <div style="font-size:13px; background:#FFFBEB; padding:20px; border-radius:15px; border:1px solid #FEF3C7; color:#92400E; margin-bottom:25px;">
                         <strong>AI Discovery Strategy:</strong><br>

@@ -100,6 +100,22 @@ class GrowthPress_CRM {
             'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
 
+        register_post_type( 'gp_conflict', array(
+            'labels'      => array( 'name' => 'Conflict Audits', 'singular_name' => 'Audit' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-shield',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_seo_cluster', array(
+            'labels'      => array( 'name' => 'SEO Clusters', 'singular_name' => 'Cluster' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-networking',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,

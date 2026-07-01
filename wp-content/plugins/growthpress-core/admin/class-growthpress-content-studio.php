@@ -91,6 +91,7 @@ class GrowthPress_Content_Studio {
                 case 'inventory': $result = $ai->call_ai("Generate a luxury Portfolio listing for \"$topic\". $context", "Elite Marketer"); break;
                 case 'kb': $result = $ai->call_ai("Generate a technical Knowledge Base article for \"$topic\". $context", "Knowledge Specialist"); break;
                 case 'treatment': $result = $ai->call_ai("Generate a specialized Clinical Treatment Protocol for \"$topic\". Include duration, complexity, and clinical outcomes. $context", "Medical Director AI"); break;
+                case 'seo_cluster': $result = $ai->call_ai("Generate a Local SEO content cluster strategy for \"$topic\". Identify 5 long-tail keywords based on high-intent ZIP code routing and draft a 200-word intro for each.", "SEO Clustering Architect"); break;
                 default: $result = 'Invalid selection.';
             }
         }
@@ -158,6 +159,7 @@ class GrowthPress_Content_Studio {
                             <option value="project">High-Ticket Case Study</option>
                             <option value="kb">Technical KB Article</option>
                             <option value="treatment">Clinical Treatment Protocol</option>
+                            <option value="seo_cluster">AI Local SEO Cluster</option>
                         </select>
                     </div>
 
@@ -231,6 +233,7 @@ class GrowthPress_Content_Studio {
                         <button class="sync-btn" onclick="syncAsset('gp_project')" style="--sync-color: #10B981;">Sync to Case Studies</button>
                         <button class="sync-btn" onclick="syncAsset('gp_property')" style="--sync-color: #F59E0B;">Sync to Inventory</button>
                         <button class="sync-btn" onclick="syncAsset('gp_treatment')" style="--sync-color: #EF4444;">Sync to Treatments</button>
+                        <button class="sync-btn" onclick="syncAsset('gp_seo_cluster')" style="--sync-color: #7C3AED;">Sync to SEO Clusters</button>
                         <button class="sync-btn" onclick="syncAsset('sync_all')" style="--sync-color: var(--primary); background:var(--primary-glow); border-style:dashed;">Propagate to All Nodes</button>
                     </div>
 

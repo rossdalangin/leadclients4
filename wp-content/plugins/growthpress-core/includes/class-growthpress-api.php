@@ -46,6 +46,30 @@ class GrowthPress_API {
             'callback' => array( $this, 'get_availability' ),
             'permission_callback' => array( $this, 'check_api_permission' ),
         ) );
+
+        // Voice Triage Webhook
+        register_rest_route( 'growthpress/v1', '/voice-triage', array(
+            'methods'  => 'POST',
+            'callback' => array( $this, 'handle_voice_triage' ),
+            'permission_callback' => '__return_true', // Twilio public webhook
+        ) );
+    }
+
+    public function handle_voice_triage( $request ) {
+        $from = $request->get_param('From');
+        $niche = get_option('growthpress_niche', 'business');
+        $brand = get_option('growthpress_brand_name', 'GrowthPress');
+
+        $ai = GrowthPress_AI::get_instance();
+        $voice_prompt = $ai->call_ai("Generate a short, professional script (max 30 words) for a phone greeting for $brand, an elite $niche firm. We are busy helping other clients. Tell them to state their name and inquiry after the beep.", "Voice AI Scriptwriter");
+
+        header('Content-Type: text/xml');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<Response>';
+        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($voice_prompt) . '</Say>';
+        echo '<Record action="' . esc_url(rest_url('growthpress/v1/voice-process')) . '" maxLength="30" />';
+        echo '</Response>';
+        exit;
     }
 
     public function check_api_permission() {

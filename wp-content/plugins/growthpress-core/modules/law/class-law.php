@@ -7,6 +7,34 @@ class GrowthPress_Law {
         add_shortcode('gp_legal_intake', array($this, 'render_legal_intake'));
         add_shortcode('gp_law_conflict_check', array($this, 'render_conflict_check'));
         add_action('gp_niche_lead_analysis', array($this, 'analyze_law_lead'));
+        add_action('wp_ajax_gp_law_execute_clearance', array($this, 'handle_clearance_request'));
+    }
+
+    public function handle_clearance_request() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $party = sanitize_text_field($_POST['party']);
+
+        // Automated Conflict Search Node
+        $matches = get_posts(array(
+            'post_type' => 'gp_lead',
+            's' => $party,
+            'posts_per_page' => 5
+        ));
+
+        $status = empty($matches) ? 'CLEARED' : 'FLAGGED';
+        $audit_id = wp_insert_post(array(
+            'post_title' => "Conflict Audit: $party",
+            'post_type' => 'gp_conflict',
+            'post_status' => 'publish'
+        ));
+
+        update_post_meta($audit_id, '_conflict_status', $status);
+        update_post_meta($audit_id, '_match_count', count($matches));
+
+        wp_send_json_success(array(
+            'status' => $status,
+            'message' => empty($matches) ? "No jurisdictional overlaps detected for $party." : "Overlaps detected with existing ecosystem nodes."
+        ));
     }
 
     public function render_conflict_check() {
@@ -32,8 +60,23 @@ class GrowthPress_Law {
                     <label style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:2px; display:block; margin-bottom:12px;">DISPUTE SUMMARY</label>
                     <textarea name="lead_msg" placeholder="Summarize the nature of the dispute and any other related entities... (Privileged)"></textarea>
                 </div>
-                <button type="submit" class="gp-btn" style="width:100%; height:95px; font-size:22px; background:#1E293B; border-radius: 25px; letter-spacing: 2px;">EXECUTE CLEARANCE SEQUENCE</button>
+                <button type="button" class="gp-btn" onclick="executeLawClearance()" style="width:100%; height:95px; font-size:22px; background:#1E293B; border-radius: 25px; letter-spacing: 2px;">EXECUTE CLEARANCE SEQUENCE</button>
             </form>
+            <script>
+            function executeLawClearance() {
+                var party = jQuery("input[name=\'adverse_party\']").val();
+                if(!party) return alert("Enter adverse party identity.");
+                jQuery.post(gp_ajax.ajaxurl, {
+                    action: "gp_law_execute_clearance",
+                    party: party,
+                    gp_nonce: "'.wp_create_nonce("gp_admin_nonce").'"
+                }, function(res) {
+                    if(res.success) {
+                        alert("CLEARANCE RESULT: " + res.data.status + "\n" + res.data.message);
+                    }
+                });
+            }
+            </script>
             <div style="margin-top:50px; font-size:12px; font-weight: 900; opacity:0.3; text-align:center; letter-spacing: 1px;">ENCRYPTION: AES-256-GCM. Clearance does not constitute engagement.</div>
         </div>';
     }

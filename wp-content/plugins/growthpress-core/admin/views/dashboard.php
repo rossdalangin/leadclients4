@@ -534,6 +534,18 @@
 </div>
 
 <script>
+function submitAIFeedback(postId, key, feedback, el) {
+    jQuery.post(ajaxurl, {
+        action: 'gp_submit_ai_feedback',
+        post_id: postId,
+        meta_key: key,
+        feedback: feedback,
+        gp_nonce: gp_admin.nonce
+    }, function() {
+        jQuery(el).parent().html('<span style="font-size:9px; font-weight:950; opacity:0.5;">FEEDBACK INGESTED</span>');
+    });
+}
+
 function switchNiche(niche) {
     if(confirm('Switching ecosystem to ' + niche.toUpperCase() + '? This will recalibrate Neural Hub prompts.')) {
         jQuery.post(ajaxurl, {
