@@ -211,15 +211,57 @@ body.dark-theme .site-header {
     background: #020617 !important;
 }
 
+.gp-dark-mode .site-footer, .dark-theme .site-footer {
+    background: #020617 !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .site-footer .footer-brand, .dark-theme .site-footer .footer-brand {
+    color: #FFF !important;
+}
+
 .gp-dark-mode .site-footer p, .dark-theme .site-footer p {
-    color: rgba(255,255,255,0.6) !important;
+    color: #94A3B8 !important;
 }
 
 .gp-dark-mode .site-footer a, .dark-theme .site-footer a {
-    color: rgba(255,255,255,0.8) !important;
+    color: #CBD5E1 !important; /* Slate 300 */
+    text-decoration: none;
 }
 
 .gp-dark-mode .site-footer a:hover, .dark-theme .site-footer a:hover {
+    color: #FFF !important;
+}
+
+.gp-dark-mode .site-footer .footer-heading, .dark-theme .site-footer .footer-heading {
+    color: #FFF !important;
+    opacity: 0.8;
+}
+
+.gp-dark-mode .site-footer .footer-eyebrow, .dark-theme .site-footer .footer-eyebrow {
+    color: #64748B !important;
+}
+
+.gp-dark-mode .site-footer .social-link, .dark-theme .site-footer .social-link {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #FFF !important;
+}
+
+/* Dark Mode Button and Card Polish */
+.gp-dark-mode .glass-card .gp-btn, .dark-theme .glass-card .gp-btn {
+    background: var(--primary) !important;
+    color: #FFF !important;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.gp-dark-mode .gp-btn.secondary, .dark-theme .gp-btn.secondary {
+    background: rgba(255,255,255,0.05) !important;
+    color: #F8FAFC !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.gp-dark-mode .glass-card strong, .dark-theme .glass-card strong {
     color: #FFF !important;
 }
 

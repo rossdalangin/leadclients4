@@ -252,9 +252,15 @@ class GrowthPress_CRM {
 
         // Rule 1: High-Probability Lead Escalation
         if ($prob >= 90) {
-            $admin = get_users(array('role' => 'administrator', 'number' => 1))[0];
-            update_post_meta($lead_id, '_assigned_staff', $admin->ID);
+            $admin_users = get_users(array('role' => 'administrator', 'number' => 1));
+            $admin_id = !empty($admin_users) ? $admin_users[0]->ID : 0;
+            if($admin_id) update_post_meta($lead_id, '_assigned_staff', $admin_id);
+
             $this->create_task("PRIORITY UPLINK: " . $lead->post_title, "High-probability lead ($prob%). Strategic outreach required.", $lead_id);
+
+            // Dispatch SMS Alert
+            $this->send_admin_sms("🚨 STRATEGIC ALERT: High-prob lead detected ($prob%): " . $lead->post_title . ". Login to Dashboard to execute closure.");
+
             GrowthPress_Activity::log("Neural Node: Priority Escalation for Lead #$lead_id.");
         }
 
@@ -288,10 +294,16 @@ class GrowthPress_CRM {
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
         $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5, 'sentiment' => 'neutral');
 
-        // Step 22: High-Risk Sentiment Detection
+        // Step 22: High-Risk Sentiment Detection & Strategic Automations
         if ( isset($analysis['sentiment']) && (stripos($analysis['sentiment'], 'negative') !== false || stripos($analysis['sentiment'], 'angry') !== false) ) {
             $this->create_task( "🚨 HIGH-RISK SENTIMENT: " . $lead->post_title, "AI detected potential strategic risk or negative sentiment in inquiry. Immediate specialist intervention required.", $lead_id );
             GrowthPress_Activity::log("Strategic Alert: Negative sentiment detected for Lead #$lead_id.");
+        }
+
+        // Automated Rule: Lead Urgency > 8 -> Instant SMS
+        if ( isset($analysis['urgency']) && (int)$analysis['urgency'] > 8 ) {
+            $this->send_admin_sms("🔥 HIGH URGENCY LEAD: " . $lead->post_title . " (Urgency: " . $analysis['urgency'] . "). Action required within 5 mins.");
+            $this->create_task("URGENT SMS DISPATCHED: " . $lead->post_title, "Lead urgency score exceeded threshold (8). Admin notified via Twilio.", $lead_id);
         }
 
         $prob = $ai->predict_deal_probability($lead_id);
@@ -773,6 +785,7 @@ class GrowthPress_CRM {
         $suggested = get_post_meta($post->ID, '_gp_ai_suggested_reply', true);
         $strategic_plan = get_post_meta($post->ID, '_gp_ai_strategic_plan', true);
         $competitive_edge = get_post_meta($post->ID, '_gp_ai_competitive_edge', true);
+        $battlecard = get_post_meta($post->ID, '_gp_ai_battlecard', true);
         ?>
         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:30px; padding:10px;">
             <div>
@@ -784,6 +797,12 @@ class GrowthPress_CRM {
                     <h4 style="margin-top:0; font-size:13px;">Closing Tactics</h4>
                     <div style="font-size:13px; line-height:1.6; opacity:0.8;"><?php echo nl2br(esc_html($closing)); ?></div>
                 </div>
+                <?php if($battlecard): ?>
+                <div style="margin-top:20px; background:#FFF1F2; padding:25px; border-radius:20px; border:1px solid #FDA4AF;">
+                    <h4 style="margin-top:0; font-size:11px; color:#9F1239; text-transform:uppercase; letter-spacing:1px;">Tactical Battlecard</h4>
+                    <div style="font-size:12px; line-height:1.5; color:#9F1239;"><?php echo nl2br(esc_html($battlecard)); ?></div>
+                </div>
+                <?php endif; ?>
             </div>
             <div>
                 <h4 style="margin-top:0;">AI Suggested Discovery Call Questions</h4>
@@ -938,6 +957,38 @@ class GrowthPress_CRM {
         $task_id = wp_insert_post( array( 'post_title' => $title, 'post_content' => $desc, 'post_type' => 'gp_task', 'post_status' => 'publish' ) );
         if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
         return $task_id;
+    }
+
+    /**
+     * Send strategic SMS alert to the principal specialist via Twilio.
+     */
+    public function send_admin_sms($message) {
+        $sid = get_option('growthpress_twilio_sid');
+        $token = get_option('growthpress_twilio_token');
+        $from = get_option('growthpress_twilio_from_number');
+        $to = get_option('growthpress_admin_sms_recipient');
+
+        if (!$sid || !$token || !$from || !$to) return false;
+
+        $url = "https://api.twilio.com/2010-04-01/Accounts/$sid/Messages.json";
+        $response = wp_remote_post($url, array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode("$sid:$token"),
+            ),
+            'body' => array(
+                'From' => $from,
+                'To'   => $to,
+                'Body' => $message,
+            ),
+        ));
+
+        if (is_wp_error($response)) {
+            GrowthPress_Activity::log("SMS Dispatch Failed: " . $response->get_error_message());
+            return false;
+        }
+
+        GrowthPress_Activity::log("Strategic SMS Dispatched to Principal Specialist.");
+        return true;
     }
 
     public function register_lead_bulk_actions( $bulk_actions ) {
