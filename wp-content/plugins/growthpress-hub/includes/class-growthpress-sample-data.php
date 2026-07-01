@@ -99,6 +99,14 @@ class GrowthPress_Sample_Data {
             array('login' => 'gp_client_1', 'role' => 'subscriber', 'email' => 'client@growthpress.io')
         );
 
+        // Seed Agency Profiles
+        $profiles = array(
+            'medical' => array('name' => 'Vance Health Systems', 'niche' => 'medical'),
+            'legal'   => array('name' => 'Sterling Global Law', 'niche' => 'law'),
+            'solar'   => array('name' => 'Apex Solar Infrastructure', 'niche' => 'solar')
+        );
+        update_option('gp_agency_profiles', $profiles);
+
         foreach($users as $u) {
             if ( ! username_exists($u['login']) ) {
                 $user_id = wp_insert_user(array(
@@ -220,6 +228,7 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_ai_suggested_reply', "Hello " . explode(' ', $l['title'])[0] . ", I saw your inquiry about automation...");
                 update_post_meta($id, '_gp_ai_strategic_plan', "1. Execute v6.3 Merit Review Node\n2. Perform Jurisdictional Overlap Audit\n3. Initialize Secure Asset Vault Uplink\n4. Dispatch Strategic Proposal Node\n5. Finalize Retainer Realization");
                 update_post_meta($id, '_gp_ai_competitive_edge', "Your firm is the only one in this ZIP sector utilizing autonomous clinical mapping. This reduces intake latency by 44% compared to standard regional competitors.");
+                update_post_meta($id, '_gp_ai_battlecard', "### Competitor Analysis\n- **Regional Incumbents**: High manual latency, no client portal.\n- **Our Edge**: 14-node relational OS, AI-driven triage, real-time ROI tracking.\n- **Win-Point**: Emphasize our 5-minute response rule vs their 48-hour delay.");
                 update_post_meta($id, '_gp_behavioral_nudge', "Based on your interest in " . $l['tag'] . " solutions, we have a specialized team ready.");
                 update_post_meta($id, '_gp_nurture_sequence', "Day 1: Welcome\nDay 2: Value Proposition\nDay 3: Case Study\nDay 4: Demo Invitation\nDay 5: Final Follow-up");
                 $niche = get_option('growthpress_niche', 'business');

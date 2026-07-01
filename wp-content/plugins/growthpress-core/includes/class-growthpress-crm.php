@@ -311,6 +311,9 @@ class GrowthPress_CRM {
         $competitive_edge = $ai->call_ai("Analyze the competitive edge for this lead based on their specific needs: \"{$lead->post_content}\"", "Market Analyst");
         if ( ! is_wp_error($competitive_edge) ) update_post_meta($lead_id, '_gp_ai_competitive_edge', $competitive_edge);
 
+        $battlecard = $ai->call_ai("Generate an AI Competitive Battlecard for lead: \"{$lead->post_content}\". Identify 2 regional competitors and list 3 tactical 'Win-Points' for our firm.", "Competitive Intelligence Node");
+        if ( ! is_wp_error($battlecard) ) update_post_meta($lead_id, '_gp_ai_battlecard', $battlecard);
+
         $nudge = $ai->generate_behavioral_nudge($lead_id);
         if ( ! is_wp_error($nudge) ) update_post_meta($lead_id, '_gp_behavioral_nudge', $nudge);
 

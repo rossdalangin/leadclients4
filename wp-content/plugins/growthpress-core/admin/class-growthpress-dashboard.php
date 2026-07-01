@@ -82,6 +82,52 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Agency Cluster', 'Agency Cluster', 'manage_options', 'growthpress-agency', array( $this, 'render_agency_cluster' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Workflow Command', 'Workflow Command', 'manage_options', 'growthpress-workflows', array( $this, 'render_workflow_command' ) );
+    }
+
+    public function render_workflow_command() {
+        ?>
+        <div class="wrap growthpress-workflows gp-reveal">
+            <div class="glass-card" style="background:#f0f9ff; border-left:5px solid #0ea5e9; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#0369a1;">⚡ Operational Pro-Tip: Multi-Channel Orchestration</h4>
+                <p style="margin:0; font-size:14px; color:#0369a1; line-height:1.5;">Orchestrating SMS, Email, and Task triggers within the first 15 minutes of intake creates an "omnipresence" effect. <strong>Success Pattern:</strong> Strategic firms use "Wait" nodes to space out re-engagement, preventing digital fatigue while maintaining peak equity interest.</p>
+            </div>
+
+            <h1>Strategic Workflow Orchestrator</h1>
+
+            <div style="margin-top:40px; background:rgba(255,255,255,0.6); padding:50px; border-radius:40px; border:1px solid #EEE; min-height:500px;">
+                <div style="display:flex; gap:30px; align-items:center; margin-bottom:50px;">
+                    <div style="width:60px; height:60px; background:var(--primary); border-radius:20px; display:flex; align-items:center; justify-content:center; color:white; font-size:24px;">📥</div>
+                    <div style="flex:1;">
+                        <h3 style="margin:0;">TRIGGER: Lead Captured</h3>
+                        <p style="margin:0; opacity:0.5; font-size:12px;">Initiated via [gp_quiz_lead_form]</p>
+                    </div>
+                </div>
+
+                <div style="display:grid; gap:30px; padding-left:30px; border-left:4px dashed #E2E8F0;">
+                    <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP 01: AI TRIAGE</div>
+                            <div style="font-size:14px; font-weight:800;">Analyze Sentiment & Score Urgency</div>
+                        </div>
+                        <span style="color:#10B981; font-weight:900; font-size:10px;">ACTIVE</span>
+                    </div>
+
+                    <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP 02: SMS NOTIFY</div>
+                            <div style="font-size:14px; font-weight:800;">Dispatch "Hot Lead" alert to Twilio Hub</div>
+                        </div>
+                        <span style="color:#10B981; font-weight:900; font-size:10px;">ACTIVE</span>
+                    </div>
+
+                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="alert('Opening Step Node library...')">
+                        <span style="font-size:12px; font-weight:900; opacity:0.4;">+ ADD ORCHESTRATION STEP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public function render_agency_cluster() {
@@ -421,6 +467,7 @@ class GrowthPress_Dashboard {
         $suggested = get_post_meta($lead_id, '_gp_ai_suggested_reply', true) ?: 'Drafting personalized response...';
         $strategic_plan = get_post_meta($lead_id, '_gp_ai_strategic_plan', true) ?: 'Generating strategic roadmap...';
         $competitive_edge = get_post_meta($lead_id, '_gp_ai_competitive_edge', true) ?: 'Analyzing market deltas...';
+        $battlecard = get_post_meta($lead_id, '_gp_ai_battlecard', true) ?: 'Calibrating competitor intel...';
         $nudge = get_post_meta($lead_id, '_gp_behavioral_nudge', true);
         $nurture = get_post_meta($lead_id, '_gp_nurture_sequence', true);
         $ai = GrowthPress_AI::get_instance();
@@ -505,6 +552,11 @@ class GrowthPress_Dashboard {
                             <div style="font-size:9px; font-weight:950; color:#0369A1; letter-spacing:1px; margin-bottom:8px;">COMPETITIVE EDGE</div>
                             <div style="font-size:12px; font-weight:600; color:#0369A1; line-height:1.4;"><?php echo nl2br(esc_html($competitive_edge)); ?></div>
                         </div>
+                    </div>
+
+                    <div style="background:#FFF1F2; border:1px solid #FDA4AF; padding:20px; border-radius:15px; margin-bottom:25px;">
+                        <div style="font-size:10px; font-weight:950; color:#9F1239; letter-spacing:1px; margin-bottom:8px;">AI COMPETITIVE BATTLECARD</div>
+                        <div style="font-size:12px; font-weight:700; color:#9F1239; line-height:1.4;"><?php echo nl2br(esc_html($battlecard)); ?></div>
                     </div>
                     <div class="brief-box">
                         <h4 style="margin-top:0; font-size:11px; text-transform:uppercase; letter-spacing:2px; opacity:0.4;">Neural Interaction Summary</h4>

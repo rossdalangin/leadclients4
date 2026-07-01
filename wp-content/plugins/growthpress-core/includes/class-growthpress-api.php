@@ -53,21 +53,41 @@ class GrowthPress_API {
             'callback' => array( $this, 'handle_voice_triage' ),
             'permission_callback' => '__return_true', // Twilio public webhook
         ) );
+
+        // Real-time Conversational Voice Processing (v2.0)
+        register_rest_route( 'growthpress/v1', '/voice-converse', array(
+            'methods'  => 'POST',
+            'callback' => array( $this, 'handle_voice_conversation' ),
+            'permission_callback' => '__return_true',
+        ) );
     }
 
     public function handle_voice_triage( $request ) {
-        $from = $request->get_param('From');
-        $niche = get_option('growthpress_niche', 'business');
         $brand = get_option('growthpress_brand_name', 'GrowthPress');
-
-        $ai = GrowthPress_AI::get_instance();
-        $voice_prompt = $ai->call_ai("Generate a short, professional script (max 30 words) for a phone greeting for $brand, an elite $niche firm. We are busy helping other clients. Tell them to state their name and inquiry after the beep.", "Voice AI Scriptwriter");
+        $niche = get_option('growthpress_niche', 'business');
+        $greeting = "Welcome to $brand. You are connected to our $niche intelligence node. How can we help you today?";
 
         header('Content-Type: text/xml');
         echo '<?xml version="1.0" encoding="UTF-8"?>';
         echo '<Response>';
-        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($voice_prompt) . '</Say>';
-        echo '<Record action="' . esc_url(rest_url('growthpress/v1/voice-process')) . '" maxLength="30" />';
+        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($greeting) . '</Say>';
+        echo '<Gather action="' . esc_url(rest_url('growthpress/v1/voice-converse')) . '" input="speech" timeout="3" speechTimeout="auto" />';
+        echo '</Response>';
+        exit;
+    }
+
+    public function handle_voice_conversation( $request ) {
+        $speech = $request->get_param('SpeechResult');
+        $niche = get_option('growthpress_niche', 'business');
+        $ai = GrowthPress_AI::get_instance();
+
+        $ai_response = $ai->call_ai("A caller said: \"$speech\". As an expert in $niche, provide a 1-sentence helpful response and suggest they book a strategy session.", "Conversational Voice Agent");
+
+        header('Content-Type: text/xml');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<Response>';
+        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($ai_response) . '</Say>';
+        echo '<Gather action="' . esc_url(rest_url('growthpress/v1/voice-converse')) . '" input="speech" timeout="3" speechTimeout="auto" />';
         echo '</Response>';
         exit;
     }
