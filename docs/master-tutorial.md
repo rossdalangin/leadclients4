@@ -1,4 +1,4 @@
-# GrowthPress Elite v6.3: Master Tutorial & Operational Blueprint
+# GrowthPress Elite v6.3 Elite Definitive: Master Tutorial & Operational Blueprint
 
 This tutorial provides a comprehensive, step-by-step guide to deploying, calibrating, and operating the GrowthPress Business Operating System (BOS). Follow this blueprint to achieve total market dominance.
 
@@ -9,7 +9,10 @@ Transform a standard WordPress installation into a high-performance business eco
 
 1.  **Installation**: Install and activate the `growthpress` theme and the `growthpress-core` plugin.
 2.  **Strategic Command**: Navigate to the **GrowthPress Dashboard**. You will see the "Strategic Command" interface.
-3.  **Niche Selection**: Click on the **"Launch Wizard"**. Choose your industry (e.g., *Medical*, *Solar*, *Law*).
+3.  **Sales Simulation (Specialist Training)**: Before going live, navigate to the **Sales Lab** submenu.
+    *   **Action**: Select a Client Archetype (e.g., *Skeptic*, *CEO*) and initialize a roleplay simulation.
+    *   **Strategic Pro-Tip**: Train your specialist nodes to handle objections using industry-specific terminology. AI-generated roleplay ensures your team is ready for high-stakes calls.
+4.  **Niche Selection**: Click on the **"Launch Wizard"**. Choose your industry (e.g., *Medical*, *Solar*, *Law*).
     *   **Strategic Pro-Tip**: Selecting the correct niche doesn't just change the logo; it recalibrates the AI's "Deep Instruction Layer," ensuring that all generated content utilizes high-authority industry terminology.
     *   **Operational Pro-Tip**: Run the Launch Wizard *after* setting your primary brand color in the Customizer to ensure all generated CSS variables are correctly inherited.
 4.  **Ecosystem Synchronization**: Click **"Apply Updates & Sync All Pages"**.
@@ -28,7 +31,12 @@ Connect the system's "Brain" to external intelligence and payment networks.
 2.  **Financial Integration**: Go to the **Integrations** tab.
     *   **Action**: Enter your Stripe Publishable and Secret keys.
     *   **Result**: The system can now track real-time ROI and generate invoices.
-3.  **Branding Optimization**: Navigate to `Appearance > Customize > GrowthPress Elite Branding`.
+3.  **Enterprise SSO Uplink**: Go to the **SSO Configuration** node in Settings.
+    *   **Action**: Authenticate with your Identity Provider (Okta, Azure, or Google Workspace).
+    *   **Result**: High-net-worth clients can now securely authenticate via enterprise-grade portals.
+4.  **Governance & Compliance**: Navigate to the **Governance** tab.
+    *   **Action**: Click "Execute Compliance Scan" to verify AES-256 encryption, HIPAA data triage, and data retention standards.
+5.  **Branding Optimization**: Navigate to `Appearance > Customize > GrowthPress Elite Branding`.
     *   **User Interaction**: Choose your **Design Node** (Unisex, Male, or Female). Adjust the **Global Primary Color**.
     *   **Result**: Watch as the entire UI shifts to match your brand's aesthetic.
 
@@ -84,7 +92,9 @@ Maintaining high-authority output.
     *   **Action**: Click **"Sync to Knowledge Base"** to propagate intelligence.
     *   **Full Dominance**: Generate a 3-in-1 campaign (Blog, Email, Ads) to dominate a new topic node in under 5 minutes.
 3.  **Authority Monitoring**: Use the **Strategic Reports** and **Ecosystem Radar** to monitor your conversion velocity, net equity, and **Predictive Revenue Forecast**.
-4.  **Agency Command**: Use the **Agency Cluster** tab to manage multiple firm profiles and switch between niche configurations instantly.
+4.  **Scenario Modeling**: Inside the Strategic ROI report, use the **Scenario Modeler** sliders.
+    *   **Action**: Simulate 10% conversion lifts or 20% price adjustments to see the real-time impact on your **Enterprise Valuation**.
+5.  **Agency Command**: Use the **Agency Cluster** tab to manage multiple firm profiles and switch between niche configurations instantly.
 4.  **Strategic Command**: Daily, review the **AI Recommendations** widget on your dashboard. These are the single most impactful actions you can take to increase net equity based on the last 24 hours of data.
 
 ---

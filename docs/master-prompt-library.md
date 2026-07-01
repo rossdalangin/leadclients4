@@ -1,4 +1,4 @@
-# GrowthPress Master AI Prompt Library v6.3
+# GrowthPress Master AI Prompt Library v6.3 Elite Definitive
 
 This library documents the "Instruction Layer" that powers the GrowthPress Elite OS.
 

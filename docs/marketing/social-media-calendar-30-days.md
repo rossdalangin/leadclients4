@@ -1,4 +1,4 @@
-# GrowthPress Elite v6.3: 30-Day "Definitive Dominance" Social Media Calendar
+# GrowthPress Elite v6.3 Elite Definitive: 30-Day "Definitive Dominance" Social Media Calendar
 
 This calendar is engineered to move prospects from "Static Brochure" thinking to "Autonomous OS" deployment.
 
@@ -97,7 +97,7 @@ This calendar is engineered to move prospects from "Static Brochure" thinking to
 *   **Day 24**: Stop managing software. Start managing growth.
     *   **Asset**: `assets/marketing/social-media/day-24.png`
     *   **Prompt**: A CEO walking confidently through a high-end airport terminal, checking a tablet. Freedom, mobility, control.
-*   **Day 25**: Why the "Elite v6.3" is a premium necessity.
+*   **Day 25**: Why the "Elite v6.3 Elite Definitive" is a premium necessity.
     *   **Asset**: `assets/marketing/social-media/day-25.png`
     *   **Prompt**: Macro shot of a "Definitive Edition" gold-embossed seal. Premium, exclusive, high-value.
 *   **Day 26**: The cost of this system is a rounding error. The cost of inaction is terminal.

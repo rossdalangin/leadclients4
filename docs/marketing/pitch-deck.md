@@ -1,4 +1,4 @@
-# GrowthPress Elite v6.3 Pitch Deck Outline
+# GrowthPress Elite v6.3 Elite Definitive Pitch Deck Outline
 
 ## Slide 1: The High-Ticket Crisis
 Standard websites are "digital brochures." They lose 95% of traffic because they lack intelligence and follow-up. GrowthPress Elite is the solution: A unified Business Operating System (BOS).

@@ -234,6 +234,12 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_ai_strategic_plan', "1. Execute v6.3 Merit Review Node\n2. Perform Jurisdictional Overlap Audit\n3. Initialize Secure Asset Vault Uplink\n4. Dispatch Strategic Proposal Node\n5. Finalize Retainer Realization");
                 update_post_meta($id, '_gp_ai_competitive_edge', "Your firm is the only one in this ZIP sector utilizing autonomous clinical mapping. This reduces intake latency by 44% compared to standard regional competitors.");
                 update_post_meta($id, '_gp_ai_battlecard', "### Competitor Analysis\n- **Regional Incumbents**: High manual latency, no client portal.\n- **Our Edge**: 14-node relational OS, AI-driven triage, real-time ROI tracking.\n- **Win-Point**: Emphasize our 5-minute response rule vs their 48-hour delay.");
+        update_post_meta($id, '_gp_behavior_log', array(
+            array('page' => 'Home', 'time' => date('Y-m-d H:i', strtotime('-2 hours'))),
+            array('page' => 'ROI Calculator', 'time' => date('Y-m-d H:i', strtotime('-1 hour'))),
+            array('page' => 'Services', 'time' => date('Y-m-d H:i', strtotime('-45 mins'))),
+            array('page' => 'KB: Strategic ROI', 'time' => date('Y-m-d H:i', strtotime('-30 mins')))
+        ));
                 update_post_meta($id, '_gp_behavioral_nudge', "Based on your interest in " . $l['tag'] . " solutions, we have a specialized team ready.");
                 update_post_meta($id, '_gp_nurture_sequence', "Day 1: Welcome\nDay 2: Value Proposition\nDay 3: Case Study\nDay 4: Demo Invitation\nDay 5: Final Follow-up");
                 $niche = get_option('growthpress_niche', 'business');
@@ -841,6 +847,12 @@ class GrowthPress_Sample_Data {
             update_post_meta($id, '_gp_is_sample', '1');
             update_post_meta($id, '_related_lead', $lead_ids[0]);
             update_post_meta($id, '_chat_session_id', 'sample_' . wp_generate_password(8, false));
+            update_post_meta($id, '_gp_chat_history', array(
+                array('role' => 'user', 'msg' => 'How does the v6.3 triage system work?', 'time' => date('Y-m-d H:i', strtotime('-1 hour'))),
+                array('role' => 'ai', 'msg' => 'Our neural engine identifies your strategic goals and routes you to the optimal specialist node.', 'time' => date('Y-m-d H:i', strtotime('-55 mins'))),
+                array('role' => 'user', 'msg' => 'Can it handle multi-national conflict clearance?', 'time' => date('Y-m-d H:i', strtotime('-50 mins')))
+            ));
+            update_post_meta($id, '_gp_last_active', date('Y-m-d H:i', strtotime('-50 mins')));
         }
     }
 

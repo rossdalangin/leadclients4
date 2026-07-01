@@ -1,4 +1,4 @@
-# GrowthPress v6.3 Elite User Guide
+# GrowthPress v6.3 Elite Definitive User Guide
 
 > **Note:** For a step-by-step walkthrough of the entire system setup and daily operations, please refer to the **[Master Tutorial & Operational Blueprint](master-tutorial.md)**.
 

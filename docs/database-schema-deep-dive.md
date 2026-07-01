@@ -1,4 +1,4 @@
-# GrowthPress Database Schema & Metadata Mapping v6.3
+# GrowthPress Database Schema & Metadata Mapping v6.3 Elite Definitive
 
 For enterprise-level data integration, this document provides the granular mapping of all 14 Custom Post Types, Taxonomies, and Meta Keys within the Elite ecosystem.
 

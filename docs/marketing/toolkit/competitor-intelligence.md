@@ -6,9 +6,9 @@ Most competitors (Elementor-based themes, generic SaaS CRMs like Pipedrive) are 
 - **Problem**: They are disconnected; the website doesn't know what the CRM is doing.
 
 ## The GrowthPress Advantage: Relational Realization
-GrowthPress v6.3 is an "Active Operational Hub."
+GrowthPress v6.3 Elite Definitive is an "Active Operational Hub."
 
-| Feature | GrowthPress v6.3 | Generic Theme/SaaS |
+| Feature | GrowthPress v6.3 Elite Definitive | Generic Theme/SaaS |
 | :--- | :--- | :--- |
 | **Data Structure** | 14-Node Relational Ecosystem | Disconnected Form Data |
 | **Intelligence** | Integrated Neural Triage | Manual Qualification |

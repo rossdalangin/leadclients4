@@ -1,4 +1,4 @@
-# GrowthPress Elite: API & Integration Specification v6.3
+# GrowthPress Elite: API & Integration Specification v6.3 Elite Definitive
 
 The GrowthPress OS is built with a REST-first architecture, allowing seamless integration with Zapier, Make.com, and custom enterprise middleware.
 

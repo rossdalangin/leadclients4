@@ -7,7 +7,7 @@
 ## 🥊 Competitor Weaknesses
 1. **Generic Construction Software (Procore, Buildertrend)**:
    - **Weakness**: Focused on "Job-Site Management." They are terrible at "Sales Realization" and front-end lead qualification.
-   - **GrowthPress Counter**: "GrowthPress v6.3 features a **Precision Quotation Engine**. We move prospects from 'Inquiry' to 'Preliminary Estimate' in under 5 minutes, autonomously."
+   - **GrowthPress Counter**: "GrowthPress v6.3 Elite Definitive features a **Precision Quotation Engine**. We move prospects from 'Inquiry' to 'Preliminary Estimate' in under 5 minutes, autonomously."
 2. **Standard "Home Service" Agencies**:
    - **Weakness**: They focus on volume, not "Project Equity." They don't provide the high-fidelity Case Study nodes required for estate-level trust.
    - **GrowthPress Counter**: "We provide **Success Profiles** that validate your structural engineering and ROI, anchoring your firm as the Tier-1 choice for luxury renovations."

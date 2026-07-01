@@ -1,6 +1,6 @@
 # LinkedIn High-Ticket Prospecting Strategy: The "Authority Uplink"
 
-This strategy is designed for agency owners to prospect for high-ticket firm owners (Law, Medical, Solar, Real Estate) using the v6.3 Business OS as the core "Value Pivot."
+This strategy is designed for agency owners to prospect for high-ticket firm owners (Law, Medical, Solar, Real Estate) using the v6.3 Elite Definitive Business OS as the core "Value Pivot."
 
 ## 🎯 Strategic Usage & Delivery
 > **Persona:** Agency Principal / Consultant.
@@ -21,7 +21,7 @@ This strategy is designed for agency owners to prospect for high-ticket firm own
 
 ## Phase 2: The "Pattern Interrupt" Connection Request
 **Template**:
-"Hi [Name], noticed your firm is scaling in [City]. I ran a brief technical audit on your intake process and spotted a significant 'Lead Leakage' node where you're likely losing high-intent prospects to faster-responding competitors. Would love to share the data from our v6.3 triage benchmarks if you're open to it."
+"Hi [Name], noticed your firm is scaling in [City]. I ran a brief technical audit on your intake process and spotted a significant 'Lead Leakage' node where you're likely losing high-intent prospects to faster-responding competitors. Would love to share the data from our v6.3 Elite Definitive triage benchmarks if you're open to it."
 
 ---
 
