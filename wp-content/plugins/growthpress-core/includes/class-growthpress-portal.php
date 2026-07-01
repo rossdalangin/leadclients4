@@ -15,6 +15,41 @@ class GrowthPress_Portal {
         add_action( 'wp_ajax_gp_update_portal_profile', array( $this, 'handle_profile_update' ) );
         add_action( 'wp_ajax_gp_portal_upload', array( $this, 'handle_portal_upload' ) );
         add_action( 'wp_ajax_gp_mark_milestone', array( $this, 'handle_mark_milestone' ) );
+        add_action( 'wp_ajax_gp_submit_referral', array( $this, 'handle_referral_submission' ) );
+        add_action( 'wp_ajax_gp_submit_onboarding', array( $this, 'handle_onboarding_submission' ) );
+    }
+
+    public function handle_onboarding_submission() {
+        $user = wp_get_current_user();
+        $lead_id = intval($_POST['lead_id']);
+        $goals = sanitize_textarea_field($_POST['onboarding_goals']);
+
+        update_post_meta($lead_id, '_gp_onboarding_data', $goals);
+        update_post_meta($lead_id, '_gp_onboarding_complete', '1');
+
+        GrowthPress_Activity::log("Cinematic Onboarding completed by client: {$user->display_name}");
+        wp_send_json_success("Onboarding data synchronized to secure node.");
+    }
+
+    public function handle_referral_submission() {
+        $name = sanitize_text_field($_POST['ref_name']);
+        $email = sanitize_email($_POST['ref_email']);
+        $source_user = wp_get_current_user();
+
+        $ref_id = wp_insert_post(array(
+            'post_title' => "Referral: $name",
+            'post_type' => 'gp_referral',
+            'post_status' => 'publish'
+        ));
+
+        if($ref_id) {
+            update_post_meta($ref_id, '_referral_email', $email);
+            update_post_meta($ref_id, '_source_client_id', $source_user->ID);
+            update_post_meta($ref_id, '_referral_status', 'New');
+            GrowthPress_Activity::log("New Referral submitted by client: {$source_user->display_name}");
+            wp_send_json_success("Referral node initialized. Strategic outreach queued.");
+        }
+        wp_send_json_error();
     }
 
     public function handle_portal_upload() {
@@ -93,6 +128,29 @@ class GrowthPress_Portal {
 
             <div class="gp-portal-grid" style="display:grid; grid-template-columns: 2.5fr 1fr; gap:60px;">
                 <div class="portal-main">
+                    <!-- Strategic Onboarding Sequence (Step 23) -->
+                    <?php
+                    $lead = !empty($leads) ? $leads[0] : null;
+                    if($lead && !get_post_meta($lead->ID, '_gp_onboarding_complete', true)): ?>
+                        <div class="glass-card gp-reveal" style="background:linear-gradient(135deg, var(--primary), var(--primary-alt)); color:white; padding:70px; border-radius:44px; margin-bottom:60px; border:none; box-shadow:0 30px 60px var(--primary-glow);">
+                            <h2 style="color:white; font-size:3rem; margin-bottom:20px; letter-spacing:-0.05em;">Strategic Onboarding</h2>
+                            <p style="font-size:1.4rem; opacity:0.8; margin-bottom:40px;">Initialize your v6.3 deployment by documenting your primary Q4 realization targets.</p>
+                            <div id="onboarding-step">
+                                <textarea id="onboard-goals" placeholder="Outline your top 3 growth objectives..." style="width:100%; height:150px; border-radius:20px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; padding:25px; font-size:16px; margin-bottom:30px;"></textarea>
+                                <button class="gp-btn" style="background:white; color:var(--primary) !important; width:100%; height:80px; font-size:18px; border-radius:20px;" onclick="submitOnboarding(<?php echo $lead->ID; ?>)">EXECUTE ONBOARDING</button>
+                            </div>
+                            <script>
+                            function submitOnboarding(id) {
+                                const goals = jQuery('#onboard-goals').val();
+                                if(!goals) return alert('Input objectives node.');
+                                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_onboarding', lead_id: id, onboarding_goals: goals }, function(res) {
+                                    if(res.success) location.reload();
+                                });
+                            }
+                            </script>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Project Velocity Tracker -->
                     <div class="glass-card" style="border-left: 15px solid var(--primary); margin-bottom:60px; padding:70px; border-radius:44px;">
                         <div style="background:rgba(37,99,235,0.05); border:1px solid rgba(37,99,235,0.1); padding:20px; border-radius:20px; margin-bottom:40px;">
@@ -282,6 +340,29 @@ class GrowthPress_Portal {
                         <?php if($transactions): ?>
                             <button class="gp-btn" style="width:100%; margin-top:15px; height:50px; font-size:11px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="alert('Generating cinematic PDF statement...')">DOWNLOAD FULL STATEMENT</button>
                         <?php endif; ?>
+                    </div>
+
+                    <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px; background:#F0FDF4; border-color:#DCFCE7;">
+                        <h3 style="font-size:22px; margin-bottom:10px; color:#166534;">Strategic Referral Hub</h3>
+                        <p style="font-size:12px; opacity:0.6; color:#166534; margin-bottom:30px;">Propagate your network dominance. Qualified referrals earn priority operational credits.</p>
+                        <div id="gp-portal-referral">
+                            <input type="text" id="ref-name" placeholder="Referral Name" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:15px;">
+                            <input type="email" id="ref-email" placeholder="Referral Email" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:20px;">
+                            <button class="gp-btn" style="width:100%; height:55px; font-size:12px; background:#166534; color:white !important; border-radius:12px;" onclick="submitReferral()">INITIALIZE REFERRAL NODE</button>
+                        </div>
+                        <script>
+                        function submitReferral() {
+                            const name = jQuery('#ref-name').val();
+                            const email = jQuery('#ref-email').val();
+                            if(!name || !email) return alert('Input identity nodes.');
+                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_referral', ref_name: name, ref_email: email }, function(res) {
+                                if(res.success) {
+                                    alert(res.data);
+                                    jQuery('#gp-portal-referral').html('<div style="text-align:center; padding:20px; color:#166534; font-weight:900;">REFERRAL NODE SYNCED</div>');
+                                }
+                            });
+                        }
+                        </script>
                     </div>
 
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px;">

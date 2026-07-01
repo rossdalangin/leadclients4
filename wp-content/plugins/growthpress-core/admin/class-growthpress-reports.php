@@ -42,6 +42,15 @@ class GrowthPress_Reports {
 
         $weighted_value = GrowthPress_Proposals::get_instance()->get_weighted_pipeline_value();
 
+        // Step 24: Predictive Churn Analysis
+        $stagnant_count = 0;
+        foreach($leads as $l) {
+            $last_active = get_post_meta($l->ID, '_gp_last_active', true);
+            if($last_active && strtotime($last_active) < strtotime('-30 days')) {
+                $stagnant_count++;
+            }
+        }
+
         return array(
             'Total Leads' => count($leads),
             'Confirmed Bookings' => count($appts),
@@ -49,7 +58,8 @@ class GrowthPress_Reports {
             'OpEx' => $expenses,
             'Net Equity' => $revenue - $expenses,
             'Pipeline Upside' => $total_value,
-            'AI Weighted Forecast' => $weighted_value
+            'AI Weighted Forecast' => $weighted_value,
+            'Stagnant Accounts' => $stagnant_count
         );
     }
 
@@ -116,7 +126,7 @@ class GrowthPress_Reports {
             <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:25px;">
                 <?php foreach($stats as $label => $val):
                     $is_money = in_array($label, array('Revenue', 'OpEx', 'Net Equity', 'Pipeline Upside', 'AI Weighted Forecast'));
-                    $border_color = ($label === 'Net Equity' || $label === 'AI Weighted Forecast') ? '#10B981' : (($label === 'OpEx') ? '#EF4444' : 'var(--border)');
+                    $border_color = ($label === 'Net Equity' || $label === 'AI Weighted Forecast') ? '#10B981' : (($label === 'OpEx' || $label === 'Stagnant Accounts') ? '#EF4444' : 'var(--border)');
                 ?>
                     <div class="stat-card glass-card" style="padding:35px; border-radius:30px; border-bottom: 6px solid <?php echo $border_color; ?>;">
                         <h4 style="font-size:10px; font-weight:950; opacity:0.4; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px;"><?php echo $label; ?></h4>

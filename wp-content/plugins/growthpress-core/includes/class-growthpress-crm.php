@@ -116,6 +116,22 @@ class GrowthPress_CRM {
             'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
 
+        register_post_type( 'gp_inventory', array(
+            'labels'      => array( 'name' => 'ERP Inventory', 'singular_name' => 'Asset' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-archive',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_referral', array(
+            'labels'      => array( 'name' => 'Referral Node', 'singular_name' => 'Referral' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-share-alt',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,
@@ -270,7 +286,14 @@ class GrowthPress_CRM {
         if ( ! $lead ) return;
 
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
-        $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5);
+        $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5, 'sentiment' => 'neutral');
+
+        // Step 22: High-Risk Sentiment Detection
+        if ( isset($analysis['sentiment']) && (stripos($analysis['sentiment'], 'negative') !== false || stripos($analysis['sentiment'], 'angry') !== false) ) {
+            $this->create_task( "🚨 HIGH-RISK SENTIMENT: " . $lead->post_title, "AI detected potential strategic risk or negative sentiment in inquiry. Immediate specialist intervention required.", $lead_id );
+            GrowthPress_Activity::log("Strategic Alert: Negative sentiment detected for Lead #$lead_id.");
+        }
+
         $prob = $ai->predict_deal_probability($lead_id);
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);

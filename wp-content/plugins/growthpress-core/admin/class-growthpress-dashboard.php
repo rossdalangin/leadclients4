@@ -83,6 +83,48 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Agency Cluster', 'Agency Cluster', 'manage_options', 'growthpress-agency', array( $this, 'render_agency_cluster' ) );
         add_submenu_page( 'growthpress-dashboard', 'Workflow Command', 'Workflow Command', 'manage_options', 'growthpress-workflows', array( $this, 'render_workflow_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'manage_options', 'growthpress-erp', array( $this, 'render_erp_command' ) );
+    }
+
+    public function render_erp_command() {
+        $inventory = get_posts(array('post_type' => 'gp_inventory', 'posts_per_page' => -1));
+        ?>
+        <div class="wrap growthpress-erp gp-reveal">
+            <div class="glass-card" style="background:#fef2f2; border-left:5px solid #ef4444; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#991b1b;">🏗️ Operational Pro-Tip: Supply Chain Integrity</h4>
+                <p style="margin:0; font-size:14px; color:#991b1b; line-height:1.5;">Maintaining 100% material availability for high-ticket deployments (Solar, Dental) prevents project latency. <strong>Success Pattern:</strong> Re-order alerts should trigger when stock levels fall below 20% of Q4 projected utilization.</p>
+            </div>
+
+            <h1>Enterprise Resource Planning: Inventory</h1>
+
+            <div style="margin-top:40px; display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px;">
+                <?php if($inventory): foreach($inventory as $item):
+                    $stock = get_post_meta($item->ID, '_gp_stock_level', true) ?: 0;
+                    $min = get_post_meta($item->ID, '_gp_min_threshold', true) ?: 10;
+                    $status = ($stock <= $min) ? 'CRITICAL' : 'OPTIMAL';
+                    $color = ($stock <= $min) ? '#EF4444' : '#10B981';
+                    ?>
+                    <div class="glass-card" style="padding:40px; border-radius:30px; border-top: 6px solid <?php echo $color; ?>;">
+                        <h3 style="margin:0;"><?php echo esc_html($item->post_title); ?></h3>
+                        <div style="font-size:42px; font-weight:950; margin:20px 0;"><?php echo $stock; ?> <span style="font-size:12px; opacity:0.3;">UNITS</span></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                            <span style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px;">STATUS: <?php echo $status; ?></span>
+                            <span style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px;">MIN: <?php echo $min; ?></span>
+                        </div>
+                        <div style="height:8px; background:#F1F5F9; border-radius:10px; overflow:hidden; margin-bottom:30px;">
+                            <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
+                        </div>
+                        <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="alert('Initializing supply chain uplink...')">RE-ORDER ASSET</button>
+                    </div>
+                <?php endforeach; else: ?>
+                    <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
+                        <span class="dashicons dashicons-archive" style="font-size:64px; width:64px; height:64px; margin-bottom:20px;"></span>
+                        <p>No inventory nodes detected in the current ERP cluster.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
     }
 
     public function render_workflow_command() {

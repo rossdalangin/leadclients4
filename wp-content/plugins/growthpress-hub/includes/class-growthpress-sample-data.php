@@ -31,6 +31,8 @@ class GrowthPress_Sample_Data {
         self::generate_reviews($project_ids);
         self::generate_treatments();
         self::generate_chat_templates();
+        self::generate_erp_inventory();
+        self::generate_referrals();
 
         // 2. Call niche-specific sample data
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
@@ -782,6 +784,31 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_treatment_duration', $data[0]);
                 update_post_meta($id, '_treatment_complexity', $data[1]);
             }
+        }
+    }
+
+    private static function generate_erp_inventory() {
+        $items = array(
+            'High-Efficiency Solar Array Node' => 45,
+            'Neural Clinical Implant' => 12,
+            'Structural Steel Beam (Elite)' => 8
+        );
+        foreach($items as $title => $stock) {
+            $id = wp_insert_post(array('post_title' => $title, 'post_type' => 'gp_inventory', 'post_status' => 'publish'));
+            if($id) {
+                update_post_meta($id, '_gp_is_sample', '1');
+                update_post_meta($id, '_gp_stock_level', $stock);
+                update_post_meta($id, '_gp_min_threshold', 10);
+            }
+        }
+    }
+
+    private static function generate_referrals() {
+        $id = wp_insert_post(array('post_title' => 'Referral: Sarah Vance', 'post_type' => 'gp_referral', 'post_status' => 'publish'));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_referral_email', 'sarah@vance-legal.com');
+            update_post_meta($id, '_referral_status', 'Qualified');
         }
     }
 
