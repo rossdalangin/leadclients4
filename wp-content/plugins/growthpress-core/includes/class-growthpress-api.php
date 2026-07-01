@@ -78,8 +78,15 @@ class GrowthPress_API {
 
     public function handle_voice_conversation( $request ) {
         $speech = $request->get_param('SpeechResult');
+        $from = $request->get_param('From');
         $niche = get_option('growthpress_niche', 'business');
         $ai = GrowthPress_AI::get_instance();
+
+        // Step 27: Voice-to-Task Pipeline
+        $crm = GrowthPress_CRM::get_instance();
+        $task_id = $crm->create_task("Voice Inquiry: $from", "Transcription: $speech", 0);
+        update_post_meta($task_id, '_task_priority', 'High');
+        update_post_meta($task_id, '_task_source', 'Voice-AI');
 
         $ai_response = $ai->call_ai("A caller said: \"$speech\". As an expert in $niche, provide a 1-sentence helpful response and suggest they book a strategy session.", "Conversational Voice Agent");
 

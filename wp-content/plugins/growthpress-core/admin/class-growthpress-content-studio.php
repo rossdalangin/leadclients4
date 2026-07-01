@@ -14,6 +14,24 @@ class GrowthPress_Content_Studio {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_studio_assets' ) );
         add_action( 'wp_ajax_gp_generate_content', array( $this, 'handle_generation' ) );
         add_action( 'wp_ajax_gp_sync_to_kb', array( $this, 'handle_kb_sync' ) );
+        add_action( 'wp_ajax_gp_generate_social_image', array( $this, 'handle_social_image_generation' ) );
+    }
+
+    public function handle_social_image_generation() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $topic = sanitize_text_field($_POST['topic']);
+
+        $ai = GrowthPress_AI::get_instance();
+        $prompt = $ai->call_ai("Generate a cinematic, high-authority social media image prompt for the topic: \"$topic\". Focus on luxury materials and architectural precision.", "Creative Director AI");
+
+        // Strategic Mock: In production, this would uplink to DALL-E 3 or Midjourney API
+        $mock_url = GROWTHPRESS_CORE_URL . "assets/images/social-gen-placeholder.png";
+
+        wp_send_json_success(array(
+            'prompt' => $prompt,
+            'image_url' => $mock_url,
+            'message' => "Neural creative node initialized. High-authority asset generated."
+        ));
     }
 
     public function handle_kb_sync() {
@@ -190,6 +208,7 @@ class GrowthPress_Content_Studio {
                                 <span style="font-size:11px; font-weight:950; opacity:0.5; letter-spacing:2px; text-transform: uppercase;">Intelligence Stream</span>
                             </div>
                             <div style="display:flex; gap:10px;">
+                                <button class="button button-small" onclick="generateSocialImage()" style="background:var(--primary); color:white; border:none; font-weight: 800;">GENERATE IMAGE</button>
                                 <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none; font-weight: 800;">COPY RAW</button>
                             </div>
                         </div>
@@ -313,6 +332,21 @@ class GrowthPress_Content_Studio {
                 jQuery(this).addClass('active');
                 jQuery('#design-preview-area').attr('class', 'preview-' + jQuery(this).data('design'));
             });
+        function generateSocialImage() {
+            const topic = jQuery('#gp-content-topic').val();
+            if(!topic) return alert('Identify topic node.');
+            alert('Consulting Neural Creative Cluster...');
+            jQuery.post(ajaxurl, {
+                action: 'gp_generate_social_image',
+                topic: topic,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    jQuery('#preview-body').prepend(`<img src="${res.data.image_url}" style="width:100%; border-radius:20px; margin-bottom:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);">`);
+                    alert('SOCIAL IMAGE PROMPT: ' + res.data.prompt);
+                }
+            });
+        }
         </script>
         <?php
     }

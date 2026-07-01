@@ -15,6 +15,20 @@ class GrowthPress_Reports {
 
     public function add_reports_menu() {
         add_submenu_page( 'growthpress-dashboard', 'Reports & ROI', 'Strategic ROI', 'manage_options', 'growthpress-reports', array( $this, 'render_reports' ) );
+        add_action('wp_ajax_gp_generate_executive_summary', array($this, 'handle_executive_summary'));
+    }
+
+    public function handle_executive_summary() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $stats = $this->get_live_stats();
+        $niche = get_option('growthpress_niche', 'business');
+
+        $ai = GrowthPress_AI::get_instance();
+        $summary = $ai->call_ai("Generate a high-level Principal Executive Summary for a CEO in the $niche sector.
+        Data: Leads: {$stats['Total Leads']}, Net Equity: \${$stats['Net Equity']}, Pipeline: \${$stats['Pipeline Upside']}.
+        Focus on capital allocation strategy and operational gaps.", "Principal Strategist AI");
+
+        wp_send_json_success(array('summary' => $summary));
     }
 
     private function get_live_stats() {
@@ -162,6 +176,25 @@ class GrowthPress_Reports {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="glass-card gp-reveal" style="margin-top:40px; background:linear-gradient(135deg, #0F172A, #1E293B); color:white; border:none; padding:60px; border-radius:40px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+                    <h3 style="color:white; margin:0; font-size:2rem;">Principal Executive Summary</h3>
+                    <button class="gp-btn" onclick="generateExecSummary()" style="background:var(--primary); color:white; border:none;">GENERATE INTELLIGENCE BRIEF</button>
+                </div>
+                <div id="exec-summary-output" style="font-size:16px; line-height:1.8; opacity:0.8; font-family:'Inter', sans-serif;">
+                    Click to initialize a weekly high-level executive briefing summarizing all 14 ecosystem nodes.
+                </div>
+                <script>
+                function generateExecSummary() {
+                    const out = jQuery('#exec-summary-output');
+                    out.text('CONSULTING STRATEGIC NODES...').css('opacity', 0.5);
+                    jQuery.post(ajaxurl, { action: 'gp_generate_executive_summary', gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                        out.html(res.data.summary).css('opacity', 1);
+                    });
+                }
+                </script>
             </div>
 
             <div class="glass-card" style="margin-top:40px; padding:40px;">

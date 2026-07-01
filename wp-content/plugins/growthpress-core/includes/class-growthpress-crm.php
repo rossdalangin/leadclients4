@@ -886,12 +886,19 @@ class GrowthPress_CRM {
 
         $lead_id = intval( $_POST['lead_id'] );
         $notes   = get_post_meta( $lead_id, '_gp_internal_notes', true ) ?: array();
+        $note_text = sanitize_textarea_field( $_POST['note'] );
         $notes[] = array(
             'user' => wp_get_current_user()->display_name,
             'time' => current_time( 'mysql' ),
-            'text' => sanitize_textarea_field( $_POST['note'] )
+            'text' => $note_text
         );
         update_post_meta( $lead_id, '_gp_internal_notes', $notes );
+
+        // Step 25: Real-time @mention detection
+        if (strpos($note_text, '@') !== false) {
+            GrowthPress_Activity::log("Specialist mentioned in Lead #$lead_id. Routing priority alert.");
+        }
+
         wp_send_json_success();
     }
 

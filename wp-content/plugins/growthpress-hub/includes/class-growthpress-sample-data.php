@@ -33,6 +33,9 @@ class GrowthPress_Sample_Data {
         self::generate_chat_templates();
         self::generate_erp_inventory();
         self::generate_referrals();
+        self::generate_seo_clusters();
+        self::generate_chat_sessions($lead_ids);
+        self::generate_conflict_audits();
 
         // 2. Call niche-specific sample data
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
@@ -809,6 +812,50 @@ class GrowthPress_Sample_Data {
             update_post_meta($id, '_gp_is_sample', '1');
             update_post_meta($id, '_referral_email', 'sarah@vance-legal.com');
             update_post_meta($id, '_referral_status', 'Qualified');
+        }
+    }
+
+    private static function generate_seo_clusters() {
+        $niche = get_option('growthpress_niche', 'business');
+        $id = wp_insert_post(array(
+            'post_title' => "v6.3 SEO Cluster: " . ucfirst($niche) . " Authority",
+            'post_content' => "Automated SEO cluster identifying 5 high-intent long-tail keywords for the $niche sector.",
+            'post_type' => 'gp_seo_cluster',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_cluster_keywords', 'high-ticket ' . $niche . ', ' . $niche . ' automation, elite ' . $niche . ' services');
+        }
+    }
+
+    private static function generate_chat_sessions($lead_ids = array()) {
+        if(empty($lead_ids)) return;
+        $id = wp_insert_post(array(
+            'post_title' => 'Chat Session: ' . get_the_title($lead_ids[0]),
+            'post_content' => "User: How does the v6.3 triage system work?\nAI: Our neural engine identifies your strategic goals and routes you to the optimal specialist node.\nUser: Interesting. Can it handle multi-national conflict clearance?",
+            'post_type' => 'gp_chat',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_related_lead', $lead_ids[0]);
+            update_post_meta($id, '_chat_session_id', 'sample_' . wp_generate_password(8, false));
+        }
+    }
+
+    private static function generate_conflict_audits() {
+        $niche = get_option('growthpress_niche', 'business');
+        if($niche !== 'law') return;
+        $id = wp_insert_post(array(
+            'post_title' => 'Conflict Audit: Sterling Global vs Apex Corp',
+            'post_type' => 'gp_conflict',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_conflict_status', 'CLEARED');
+            update_post_meta($id, '_audit_notes', 'Neural search performed across 14-node ecosystem. No jurisdictional overlaps detected.');
         }
     }
 
