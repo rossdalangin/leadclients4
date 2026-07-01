@@ -209,10 +209,6 @@ body.dark-theme .site-header {
 
 .gp-dark-mode .site-footer, .dark-theme .site-footer {
     background: #020617 !important;
-}
-
-.gp-dark-mode .site-footer, .dark-theme .site-footer {
-    background: #020617 !important;
     color: #F8FAFC !important;
 }
 
@@ -246,6 +242,116 @@ body.dark-theme .site-header {
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     color: #FFF !important;
+}
+
+/* Elite Footer Layout & Re-integration */
+.site-footer {
+    background: var(--secondary);
+    color: white;
+    padding: 120px 0 60px;
+    margin-top: 150px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    background: radial-gradient(circle at top right, var(--primary), transparent);
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+}
+
+.footer-grid {
+    margin-bottom: 100px;
+    gap: 60px;
+}
+
+.brand-column {
+    flex-basis: 45%;
+}
+
+.footer-brand {
+    color: white;
+    margin-bottom: 25px;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    letter-spacing: -0.04em;
+}
+
+.footer-desc {
+    color: rgba(255,255,255,0.5);
+    font-size: 17px;
+    line-height: 1.8;
+    max-width: 400px;
+}
+
+.footer-social-wrap {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.footer-eyebrow {
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 2px;
+    opacity: 0.4;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 15px;
+}
+
+.social-link {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+}
+
+.footer-heading {
+    color: white;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    margin-bottom: 35px;
+    opacity: 0.4;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+    font-size: 15px;
+    line-height: 2.8;
+    font-weight: 600;
+}
+
+.footer-nav a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.footer-nav a:hover {
+    color: white;
 }
 
 /* Dark Mode Button and Card Polish */

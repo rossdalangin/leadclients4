@@ -306,6 +306,14 @@ class GrowthPress_CRM {
             $this->create_task("URGENT SMS DISPATCHED: " . $lead->post_title, "Lead urgency score exceeded threshold (8). Admin notified via Twilio.", $lead_id);
         }
 
+        // Step 45: Neural Sentiment Response Auto-Pilot
+        if ( isset($analysis['sentiment']) && stripos($analysis['sentiment'], 'negative') !== false ) {
+            $niche = get_option('growthpress_niche', 'business');
+            $draft = $ai->call_ai("A lead is showing negative sentiment: \"{$lead->post_content}\". Draft a 'Risk Mitigation' email as a specialist in $niche. Focus on high-empathy conflict resolution and invite them to an immediate session with a Managing Director.", "Crisis Resolution Node");
+            if(!is_wp_error($draft)) update_post_meta($lead_id, '_gp_ai_risk_mitigation_draft', $draft);
+            GrowthPress_Activity::log("Neural Auto-Pilot: Crisis mitigation response drafted for Lead #$lead_id.");
+        }
+
         $prob = $ai->predict_deal_probability($lead_id);
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
@@ -926,6 +934,16 @@ class GrowthPress_CRM {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $task_id = intval( $_POST['task_id'] );
         update_post_meta( $task_id, '_task_status', 'Completed' );
+
+        // Step 39: Precision Resource Allocation (ERP) - Bottleneck detection
+        $staff_id = get_post_meta($task_id, '_assigned_staff', true);
+        if($staff_id) {
+            $pending = get_posts(array('post_type' => 'gp_task', 'meta_key' => '_assigned_staff', 'meta_value' => $staff_id, 'meta_query' => array(array('key' => '_task_status', 'value' => 'Pending'))));
+            if(count($pending) > 5) {
+                GrowthPress_Activity::log("ERP Node: Resource bottleneck detected for Specialist ID #$staff_id. 5+ pending tasks. Suggesting redistribution.");
+            }
+        }
+
         GrowthPress_Activity::log( "Strategic Task #$task_id marked as completed." );
         wp_send_json_success();
     }

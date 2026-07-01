@@ -20,6 +20,24 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_strategic_search', array( $this, 'handle_strategic_search' ) );
         add_action( 'wp_ajax_gp_get_chat_history', array( $this, 'handle_get_chat_history' ) );
         add_action( 'wp_ajax_gp_admin_chat_reply', array( $this, 'handle_admin_chat_reply' ) );
+        add_action( 'wp_ajax_gp_sales_lab_converse', array( $this, 'handle_sales_lab_converse' ) );
+    }
+
+    public function handle_sales_lab_converse() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $msg = sanitize_text_field($_POST['msg']);
+        $arch = sanitize_text_field($_POST['archetype']);
+        $diff = sanitize_text_field($_POST['difficulty']);
+        $niche = get_option('growthpress_niche', 'business');
+
+        $ai = GrowthPress_AI::get_instance();
+        $prompt = "You are simulating a client for a $niche firm.
+        Archetype: $arch. Difficulty: $diff.
+        Specialist said: \"$msg\".
+        Provide a 1-2 sentence response. If the specialist provides a weak answer, raise a tough objection. If they provide an 'Elite' answer, show signs of interest.";
+
+        $response = $ai->call_ai($prompt, "Sales Simulation Node");
+        wp_send_json_success(array('reply' => $response));
     }
 
     public function handle_get_chat_history() {
@@ -78,12 +96,71 @@ class GrowthPress_Dashboard {
         add_menu_page( $brand, $brand, 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ), 'dashicons-chart-line', 2 );
         add_submenu_page( 'growthpress-dashboard', 'System Dashboard', 'System Dashboard', 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ) );
         add_submenu_page( 'growthpress-dashboard', 'Strategic Tasks', 'Global Tasks', 'manage_options', 'growthpress-tasks', array( $this, 'render_global_tasks' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Sales Simulation Lab', 'Sales Lab', 'manage_options', 'growthpress-sales-lab', array( $this, 'render_sales_lab' ) );
         add_submenu_page( 'growthpress-dashboard', 'System Ecosystem', 'Ecosystem Map', 'manage_options', 'growthpress-ecosystem', array( $this, 'render_ecosystem_map' ) );
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Agency Cluster', 'Agency Cluster', 'manage_options', 'growthpress-agency', array( $this, 'render_agency_cluster' ) );
         add_submenu_page( 'growthpress-dashboard', 'Workflow Command', 'Workflow Command', 'manage_options', 'growthpress-workflows', array( $this, 'render_workflow_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'manage_options', 'growthpress-erp', array( $this, 'render_erp_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Legal Lab', 'Legal Lab', 'manage_options', 'growthpress-law-lab', array( $this, 'render_law_lab' ) );
+    }
+
+    public function render_law_lab() {
+        $niche = get_option('growthpress_niche', 'business');
+        if($niche !== 'law') {
+            echo '<div class="wrap"><h1>Legal Lab</h1><p>This module is only active when the "Law" niche is calibrated.</p></div>';
+            return;
+        }
+        ?>
+        <div class="wrap gp-reveal">
+            <div class="glass-card" style="background:#f8fafc; border-left:5px solid #1e293b; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#1e293b;">⚖️ Strategic Task 38: Automated Contract Redlining</h4>
+                <p style="margin:0; font-size:14px; color:#1e293b; line-height:1.5;">Our redlining node analyzes incoming documents for high-stakes liabilities. <strong>Success Pattern:</strong> Elite firms use the 'Aggressive Realization' tone to minimize negotiation latency by 60%.</p>
+            </div>
+
+            <h1>Autonomous Contract Redlining Terminal</h1>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px; margin-top:40px;">
+                <div class="glass-card" style="padding:50px;">
+                    <h3 style="margin-top:0;">Input Agreement</h3>
+                    <textarea id="contract-input" style="width:100%; height:400px; border-radius:20px; padding:30px; font-family:'Inter', sans-serif; font-size:14px;" placeholder="Paste incoming contract text here for neural redlining..."></textarea>
+                    <button class="button button-primary button-hero" style="width:100%; height:60px; margin-top:30px; border-radius:15px; font-weight:950;" onclick="executeRedline()">EXECUTE REDLINE ANALYSIS</button>
+                </div>
+                <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:#0F172A; color:white; border:none;">
+                    <div style="padding:25px 40px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:11px; font-weight:950; opacity:0.5; letter-spacing:2px;">AUTONOMOUS ANALYSIS STREAM</span>
+                        <div id="redline-status" style="font-size:10px; font-weight:950; color:#EF4444;">IDLE</div>
+                    </div>
+                    <div id="redline-log" style="flex:1; overflow-y:auto; padding:40px; font-family:'JetBrains Mono', monospace; font-size:14px; line-height:1.8;">
+                        <div style="opacity:0.3;">// Identify contract node to begin elite redlining sequence.</div>
+                    </div>
+                    <div style="padding:25px 40px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.1);">
+                        <button class="gp-btn" style="width:100%; font-size:11px; padding:12px; border-radius:10px;" onclick="alert('Synchronizing redlines to CRM dossier...')">SYNC TO DOSSIER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        function executeRedline() {
+            const txt = jQuery('#contract-input').val();
+            if(!txt) return alert('Input contract text.');
+            jQuery('#redline-status').text('ANALYZING THROUGH ELITE CLUSTER...').css('color', '#F59E0B');
+            jQuery('#redline-log').html('<div style="color:var(--accent);">[SYSTEM] Redlining protocol initialized. Locating jurisdictional overlaps...</div>');
+
+            jQuery.post(ajaxurl, {
+                action: 'gp_law_redline_contract',
+                contract_text: txt,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    jQuery('#redline-status').text('ANALYSIS COMPLETE').css('color', '#10B981');
+                    jQuery('#redline-log').append('<div style="margin-top:20px; white-space:pre-wrap;">' + res.data.analysis + '</div>');
+                }
+            });
+        }
+        </script>
+        <?php
     }
 
     public function render_erp_command() {
@@ -374,6 +451,94 @@ class GrowthPress_Dashboard {
                 <?php endforeach; ?>
             </div>
         </div>
+        <?php
+    }
+
+    public function render_sales_lab() {
+        $niche = get_option('growthpress_niche', 'business');
+        ?>
+        <div class="wrap growthpress-sales-lab gp-reveal">
+            <div class="glass-card" style="background:#fef2f2; border-left:5px solid #ef4444; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#991b1b;">🎓 Strategic Context: Sales Simulation</h4>
+                <p style="margin:0; font-size:14px; color:#991b1b; line-height:1.5;">The Simulation Lab allows specialists to practice high-stakes closing tactics against neural client archetypes. <strong>Success Pattern:</strong> Specialists who complete 3 simulations per week report a 19% higher closing velocity on actual discovery calls.</p>
+            </div>
+
+            <h1>Neural Sales Simulation Lab</h1>
+
+            <div style="display:grid; grid-template-columns: 350px 1fr; gap:40px; margin-top:40px; height:600px;">
+                <div class="glass-card" style="padding:40px;">
+                    <h3 style="margin-top:0;">Configure Simulation</h3>
+                    <div style="margin-top:30px;">
+                        <label style="font-weight:950; font-size:10px; opacity:0.4; letter-spacing:1px; display:block; margin-bottom:15px;">CLIENT ARCHETYPE</label>
+                        <select id="sim-archetype" style="width:100%; height:50px; border-radius:12px; font-weight:700;">
+                            <option value="skeptic">The High-Authority Skeptic</option>
+                            <option value="implementer">Security-Seeking Implementer</option>
+                            <option value="gatherer">The Information Gatherer</option>
+                            <option value="aggressive">Aggressive Scale-Focused CEO</option>
+                        </select>
+                    </div>
+                    <div style="margin-top:25px;">
+                        <label style="font-weight:950; font-size:10px; opacity:0.4; letter-spacing:1px; display:block; margin-bottom:15px;">DIFFICULTY NODE</label>
+                        <select id="sim-difficulty" style="width:100%; height:50px; border-radius:12px; font-weight:700;">
+                            <option value="standard">Standard - v6.3 Base</option>
+                            <option value="elite">Elite - Objection Heavy</option>
+                            <option value="extreme">Extreme - High-Pressure Realization</option>
+                        </select>
+                    </div>
+                    <button class="button button-primary button-hero" style="width:100%; height:60px; margin-top:40px; border-radius:15px;" onclick="startSimulation()">INITIALIZE SIMULATION</button>
+                </div>
+
+                <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:#0F172A; border:none; color:white;">
+                    <div style="padding:25px 40px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:11px; font-weight:950; opacity:0.5; letter-spacing:2px;">NEURAL SIMULATION STREAM</span>
+                        <div id="sim-status" style="font-size:10px; font-weight:950; color:#EF4444;">DISCONNECTED</div>
+                    </div>
+                    <div id="sim-log" style="flex:1; overflow-y:auto; padding:40px; font-family:'JetBrains Mono', monospace; font-size:14px; line-height:1.7;">
+                        <div style="opacity:0.3;">// System standing by. Identify archetype to begin roleplay sequence.</div>
+                    </div>
+                    <div style="padding:30px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.1); display:flex; gap:15px;">
+                        <input type="text" id="sim-input" style="flex:1; background:transparent; border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:white; padding:15px 25px;" placeholder="Type your sales response..." disabled>
+                        <button class="button" onclick="simReply()" style="background:var(--primary); color:white; border:none; height:55px; width:100px; border-radius:12px; font-weight:800;">REPLY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        function startSimulation() {
+            const arch = jQuery('#sim-archetype').val();
+            jQuery('#sim-status').text('NEURAL LINK ACTIVE').css('color', '#10B981');
+            jQuery('#sim-input').prop('disabled', false).focus();
+            jQuery('#sim-log').html('<div style="margin-bottom:20px; color:var(--accent);">[SYSTEM] Simulation Initialized. Archetype: ' + arch.toUpperCase() + '</div>');
+            setTimeout(() => {
+                jQuery('#sim-log').append('<div style="margin-bottom:20px;"><strong>CLIENT:</strong> Look, we\'ve seen a lot of systems like this. Why should I trust your ' + '<?php echo $niche; ?>' + ' OS over the established regional firms we already use?</div>');
+            }, 1000);
+        }
+        function simReply() {
+            const msg = jQuery('#sim-input').val();
+            const arch = jQuery('#sim-archetype').val();
+            const diff = jQuery('#sim-difficulty').val();
+            if(!msg) return;
+
+            jQuery('#sim-log').append('<div style="margin-bottom:20px; color:#94A3B8;"><strong>YOU:</strong> ' + msg + '</div>');
+            jQuery('#sim-input').val('').prop('disabled', true);
+            jQuery('#sim-status').text('CLIENT IS THINKING...').css('color', '#F59E0B');
+
+            jQuery.post(ajaxurl, {
+                action: 'gp_sales_lab_converse',
+                msg: msg,
+                archetype: arch,
+                difficulty: diff,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    jQuery('#sim-status').text('NEURAL LINK ACTIVE').css('color', '#10B981');
+                    jQuery('#sim-input').prop('disabled', false).focus();
+                    jQuery('#sim-log').append('<div style="margin-bottom:20px;"><strong>CLIENT:</strong> ' + res.data.reply + '</div>');
+                    jQuery('#sim-log').scrollTop(10000);
+                }
+            });
+        }
+        </script>
         <?php
     }
 

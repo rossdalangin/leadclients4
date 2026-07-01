@@ -337,6 +337,10 @@ class GrowthPress_Proposals {
                 }
             }
 
+            // Step 40: Prompt for Referral & Review (Customer Advocacy Node)
+            $crm->create_task("ADVOCACY: Request Video Review & Referrals", "Proposal accepted for Lead #$lead_id. Deploy advocacy node at peak satisfaction.", $lead_id);
+            update_post_meta($lead_id, '_gp_advocacy_status', 'pending');
+
             GrowthPress_Activity::log( "Lead #$lead_id transitioned to 'Closed' following proposal acceptance. Draft Case Study initialized." );
         }
 

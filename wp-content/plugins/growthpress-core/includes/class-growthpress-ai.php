@@ -30,6 +30,22 @@ class GrowthPress_AI {
     private function __construct() {
         $this->provider = get_option('growthpress_ai_provider', 'openai');
         add_action('wp_ajax_gp_submit_ai_feedback', array($this, 'handle_ai_feedback'));
+        add_action('wp_ajax_gp_intelligence_routing_v2', array($this, 'handle_v2_routing'));
+    }
+
+    public function handle_v2_routing() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $prompt = sanitize_text_field($_POST['prompt']);
+        $complexity = (int)($_POST['complexity'] ?? 5);
+
+        // Task 43: Multi-Intelligence Routing v2.0
+        // GPT-4 for high-complexity, Claude 3 for creative/legal, Ollama for routine
+        if ($complexity > 8) $this->provider = 'openai'; // Force GPT-4
+        elseif ($complexity > 5) $this->provider = 'claude'; // Force Claude
+        else $this->provider = 'ollama'; // Local node for routine triage
+
+        $res = $this->call_ai($prompt, "Strategic Intelligence v2.0");
+        wp_send_json_success(array('reply' => $res, 'node' => $this->provider));
     }
 
     public function handle_ai_feedback() {

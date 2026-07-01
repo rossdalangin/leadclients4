@@ -8,6 +8,18 @@ class GrowthPress_Law {
         add_shortcode('gp_law_conflict_check', array($this, 'render_conflict_check'));
         add_action('gp_niche_lead_analysis', array($this, 'analyze_law_lead'));
         add_action('wp_ajax_gp_law_execute_clearance', array($this, 'handle_clearance_request'));
+        add_action('wp_ajax_gp_law_redline_contract', array($this, 'handle_contract_redlining'));
+    }
+
+    public function handle_contract_redlining() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $contract_text = sanitize_textarea_field($_POST['contract_text']);
+
+        $ai = GrowthPress_AI::get_instance();
+        $redline = $ai->call_ai("Analyze this contract for high-risk clauses: \"$contract_text\".
+        Identify 3 liabilities and suggest alternative 'Elite' legal language that protects the firm's equity while ensuring Q4 realization speed.", "Autonomous Redlining AI");
+
+        wp_send_json_success(array('analysis' => $redline));
     }
 
     public function handle_clearance_request() {

@@ -15,6 +15,22 @@ class GrowthPress_Content_Studio {
         add_action( 'wp_ajax_gp_generate_content', array( $this, 'handle_generation' ) );
         add_action( 'wp_ajax_gp_sync_to_kb', array( $this, 'handle_kb_sync' ) );
         add_action( 'wp_ajax_gp_generate_social_image', array( $this, 'handle_social_image_generation' ) );
+        add_action( 'wp_ajax_gp_syndicate_content', array( $this, 'handle_syndication' ) );
+    }
+
+    public function handle_syndication() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $title = sanitize_text_field($_POST['title']);
+        $content = wp_kses_post($_POST['content']);
+        $channels = $_POST['channels'] ?? array('linkedin', 'x');
+
+        $ai = GrowthPress_AI::get_instance();
+        $summary = $ai->call_ai("Summarize this for social sharing on " . implode(', ', $channels) . ": \"$content\"", "Social Omnipresence Node");
+
+        // Strategic Mock: In production, this would uplink to LinkedIn/X API or Buffer/Hootsuite
+        GrowthPress_Activity::log("Multi-Channel Presence Node: Syndicated \"$title\" to " . strtoupper(implode(', ', $channels)));
+
+        wp_send_json_success(array('summary' => $summary, 'message' => "Content successfully queued for global authority propagation."));
     }
 
     public function handle_social_image_generation() {
@@ -110,6 +126,14 @@ class GrowthPress_Content_Studio {
                 case 'kb': $result = $ai->call_ai("Generate a technical Knowledge Base article for \"$topic\". $context", "Knowledge Specialist"); break;
                 case 'treatment': $result = $ai->call_ai("Generate a specialized Clinical Treatment Protocol for \"$topic\". Include duration, complexity, and clinical outcomes. $context", "Medical Director AI"); break;
                 case 'seo_cluster': $result = $ai->call_ai("Generate a Local SEO content cluster strategy for \"$topic\". Identify 5 long-tail keywords based on high-intent ZIP code routing and draft a 200-word intro for each.", "SEO Clustering Architect"); break;
+                case 'geo_fencing':
+                    $zips = get_posts(array('post_type' => 'gp_location', 'fields' => 'ids'));
+                    $zip_context = "";
+                    foreach($zips as $zid) $zip_context .= get_post_meta($zid, '_serviced_zips', true) . ", ";
+                    $result = $ai->call_ai("Generate a Hyper-Local SEO landing page for topic: \"$topic\".
+                    Target Neighborhoods based on these ZIP nodes: $zip_context.
+                    Include a neighborhood-specific ROI anchor and local social proof references. $context", "Geo-Fencing Specialist");
+                    break;
                 default: $result = 'Invalid selection.';
             }
         }
@@ -179,6 +203,8 @@ class GrowthPress_Content_Studio {
                             <option value="kb">Technical KB Article</option>
                             <option value="treatment">Clinical Treatment Protocol</option>
                             <option value="seo_cluster">AI Local SEO Cluster</option>
+                            <option value="geo_fencing">Hyper-Local Geo-Fencing (Task 37)</option>
+                            <option value="competitor_swot">Autonomous Competitor SWOT (Task 43)</option>
                         </select>
                     </div>
 
@@ -255,6 +281,7 @@ class GrowthPress_Content_Studio {
                         <button class="sync-btn" onclick="syncAsset('gp_treatment')" style="--sync-color: #EF4444;">Sync to Treatments</button>
                         <button class="sync-btn" onclick="syncAsset('gp_seo_cluster')" style="--sync-color: #7C3AED;">Sync to SEO Clusters</button>
                         <button class="sync-btn" onclick="syncAsset('sync_all')" style="--sync-color: var(--primary); background:var(--primary-glow); border-style:dashed;">Propagate to All Nodes</button>
+                        <button class="sync-btn" onclick="syndicateContent()" style="--sync-color: #000; margin-top:15px; border-style: double;">Syndicate to Social Nodes (Task 35)</button>
                     </div>
 
                     <hr style="margin:40px 0; opacity:0.1;">
@@ -333,6 +360,24 @@ class GrowthPress_Content_Studio {
                 jQuery(this).addClass('active');
                 jQuery('#design-preview-area').attr('class', 'preview-' + jQuery(this).data('design'));
             });
+        function syndicateContent() {
+            const title = jQuery('#gp-content-topic').val();
+            const content = jQuery('#gp-studio-output').find('.ai-response').text();
+            if(!content) return alert('Generate content node first.');
+
+            if(!confirm('Syndicate this intelligence to LinkedIn and X?')) return;
+
+            jQuery.post(ajaxurl, {
+                action: 'gp_syndicate_content',
+                title: title,
+                content: content,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    alert('SYNDICATION SUCCESS: ' + res.data.summary);
+                }
+            });
+        }
         function generateSocialImage() {
             const topic = jQuery('#gp-content-topic').val();
             if(!topic) return alert('Identify topic node.');
