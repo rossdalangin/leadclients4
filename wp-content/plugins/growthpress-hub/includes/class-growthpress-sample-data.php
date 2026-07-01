@@ -30,6 +30,7 @@ class GrowthPress_Sample_Data {
         self::generate_staff($lead_ids);
         self::generate_reviews($project_ids);
         self::generate_treatments();
+        self::generate_chat_templates();
 
         // 2. Call niche-specific sample data
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
@@ -65,7 +66,7 @@ class GrowthPress_Sample_Data {
 
     public static function remove_all_sample_data() {
         $args = array(
-            'post_type'      => array('gp_lead', 'gp_appointment', 'gp_property', 'gp_review', 'gp_proposal', 'gp_transaction', 'gp_funnel', 'gp_location', 'gp_task', 'gp_kb', 'gp_project', 'gp_service', 'gp_treatment', 'gp_staff'),
+            'post_type'      => array('gp_lead', 'gp_appointment', 'gp_property', 'gp_review', 'gp_proposal', 'gp_transaction', 'gp_funnel', 'gp_location', 'gp_task', 'gp_kb', 'gp_project', 'gp_service', 'gp_treatment', 'gp_staff', 'gp_chat', 'gp_chat_template'),
             'posts_per_page' => -1,
             'meta_query'     => array(
                 array(
@@ -745,6 +746,69 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_is_sample', '1');
                 update_post_meta($id, '_treatment_duration', $data[0]);
                 update_post_meta($id, '_treatment_complexity', $data[1]);
+            }
+        }
+    }
+
+    private static function generate_chat_templates() {
+        $niche = get_option('growthpress_niche', 'business');
+        $niche_templates = array(
+            'dental' => array(
+                array('title' => 'Invisalign Inquiry', 'content' => 'We offer Invisalign Elite protocols. Our neural triage system will map your aesthetic journey during the first session. Would you like to check our availability?', 'keywords' => 'invisalign, aligner, straight'),
+                array('title' => 'Emergency Triage', 'content' => 'If you are experiencing acute pain, our specialist routing is active. Please book an "Emergency Triage" slot immediately for priority clinical handling.', 'keywords' => 'emergency, pain, hurt, broken')
+            ),
+            'law' => array(
+                array('title' => 'Retainer Question', 'content' => 'Our corporate litigation nodes operate on a high-value retainer model. We provide multi-jurisdictional risk mitigation and AI-driven case merit analysis.', 'keywords' => 'retainer, cost, price, fee'),
+                array('title' => 'Conflict Clearance', 'content' => 'We utilize v6.3 conflict clearance protocols to ensure enterprise-grade legal integrity. Initial clearance takes approximately 24 hours.', 'keywords' => 'conflict, clear, background')
+            ),
+            'solar' => array(
+                array('title' => 'Incentive Modeling', 'content' => 'Our structural ROI engineering identifies all available federal and state tax credits. Most clients realize a 100% ROI within 5-7 years.', 'keywords' => 'tax, credit, incentive, roi, money'),
+                array('title' => 'Grid Independence', 'content' => 'We specialize in grid-independence modeling using high-efficiency battery storage nodes. This ensures operational continuity during outages.', 'keywords' => 'battery, storage, outage, grid, off-grid')
+            ),
+            'medical' => array(
+                array('title' => 'HIPAA Security', 'content' => 'All health intelligence data is stored in our secure, HIPAA-ready neural vault. Your clinical records are only accessible to authorized specialists.', 'keywords' => 'hipaa, privacy, secure, safe, data'),
+                array('title' => 'Specialist Routing', 'content' => 'Our triage node handles specialized outpatient protocols. Once you book a session, you will be routed to the appropriate clinical expert.', 'keywords' => 'specialist, doctor, expert, route')
+            ),
+            'contractor' => array(
+                array('title' => 'Permit Realization', 'content' => 'Our autonomous design-to-build protocol includes full permit management and structural engineering authentication to reduce project latency.', 'keywords' => 'permit, code, city, engineering'),
+                array('title' => 'Material Authority', 'content' => 'We source only high-authority materials for modernist estate overhauls, ensuring absolute structural dominance and long-term appreciation.', 'keywords' => 'material, wood, steel, finish, luxury')
+            ),
+            'roofing' => array(
+                array('title' => 'Drone Audit', 'content' => 'We execute AI-assisted drone surveys to identify structural deltas. This reduces audit friction by 40% and provides high-fidelity storm damage reports.', 'keywords' => 'drone, survey, audit, inspect, fly'),
+                array('title' => 'Slate Expertise', 'content' => 'Our industrial deployment teams specialize in natural slate installations, which offer the highest level of asset protection and aesthetic authority.', 'keywords' => 'slate, natural, stone, luxury')
+            ),
+            'accounting' => array(
+                array('title' => 'Tax Delta', 'content' => 'We specialize in identifying reclaimable capital nodes through multi-jurisdictional tax delta analysis. Our focus is long-term wealth preservation.', 'keywords' => 'tax, capital, save, refund, irs'),
+                array('title' => 'Fiscal Trajectory', 'content' => 'Our v6.3 Wealth Preservation Engine models your 10-year fiscal trajectory, accounting for high-stakes corporate audits and capital realization.', 'keywords' => 'audit, trajectory, future, wealth, plan')
+            ),
+            'real-estate' => array(
+                array('title' => 'Off-Market Nodes', 'content' => 'Access proprietary off-market inventory through our Neural Lifestyle Matcher. We target high-growth appreciation nodes for elite capital deployment.', 'keywords' => 'off-market, hidden, secret, exclusive, deal'),
+                array('title' => 'Portfolio Delta', 'content' => 'Our acquisition specialists utilize AI-driven market delta analysis to pair high-net-worth individuals with modernist estates.', 'keywords' => 'portfolio, asset, investment, estate')
+            ),
+            'coaches' => array(
+                array('title' => 'Scaling Roadmap', 'content' => 'Our Performance Engine provides the 12-month roadmap for 7-figure high-ticket scaling. We focus on transitioning from manual latency to autonomous realization.', 'keywords' => 'scale, growth, roadmap, plan, million'),
+                array('title' => 'Authority Building', 'content' => 'We empower founders to capture absolute sector authority through neural content automation and high-stakes closing tactics.', 'keywords' => 'authority, brand, expert, closing, sales')
+            ),
+            'consultants' => array(
+                array('title' => 'Operational Audit', 'content' => 'We identify 18+ hours per week in reclaimable operational equity by eliminating lifecycle friction across your digital ecosystem.', 'keywords' => 'audit, equity, time, friction, efficiency'),
+                array('title' => 'Change Command', 'content' => 'Our Management Consultants perform full-scale architectural audits to modernize your ecosystem and maximize conversion velocity.', 'keywords' => 'change, manage, velocity, modern')
+            )
+        );
+
+        $templates = $niche_templates[$niche] ?? array(
+            array('title' => 'General Inquiry', 'content' => 'Welcome to the GrowthPress ecosystem. Our neural-calibrated OS is ready to handle your specialized technical inquiries.', 'keywords' => 'help, information, about')
+        );
+
+        foreach ($templates as $tpl) {
+            $id = wp_insert_post(array(
+                'post_title'   => $tpl['title'],
+                'post_content' => $tpl['content'],
+                'post_type'    => 'gp_chat_template',
+                'post_status'  => 'publish'
+            ));
+            if ($id) {
+                update_post_meta($id, '_gp_is_sample', '1');
+                update_post_meta($id, '_gp_template_keywords', $tpl['keywords']);
             }
         }
     }
