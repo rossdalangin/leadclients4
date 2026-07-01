@@ -122,7 +122,7 @@ body.dark-theme {
     --text-muted: #94A3B8; /* Slate 400 */
     --border: rgba(255,255,255,0.06);
     --glass-border: rgba(255,255,255,0.12);
-    --secondary: #FFFFFF;
+    --secondary: #1E293B; /* Slate 800 for contrast */
     --primary-glow: rgba(79, 70, 229, 0.4);
     --shadow-sm: 0 10px 20px rgba(0,0,0,0.5);
     --shadow-md: 0 20px 40px rgba(0,0,0,0.7);
@@ -173,6 +173,54 @@ body.dark-theme .gp-list li {
 body.dark-theme .site-header {
     background: rgba(15, 23, 42, 0.85);
     border-color: rgba(255,255,255,0.05);
+}
+
+/* Admin Dashboard & Dark Mode Polish */
+.gp-dark-mode, .dark-theme {
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+}
+
+.gp-dark-mode .glass-card, .dark-theme .glass-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.96) 100%) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode h1, .gp-dark-mode h2, .gp-dark-mode h3, .gp-dark-mode h4,
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4 {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode p, .dark-theme p {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.gp-dark-mode .gp-btn:not(.secondary), .dark-theme .gp-btn:not(.secondary) {
+    color: white !important;
+}
+
+.gp-dark-mode input, .gp-dark-mode select, .gp-dark-mode textarea,
+.dark-theme input, .dark-theme select, .dark-theme textarea {
+    background: rgba(0,0,0,0.2) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #FFF !important;
+}
+
+.gp-dark-mode .site-footer, .dark-theme .site-footer {
+    background: #020617 !important;
+}
+
+.gp-dark-mode .site-footer p, .dark-theme .site-footer p {
+    color: rgba(255,255,255,0.6) !important;
+}
+
+.gp-dark-mode .site-footer a, .dark-theme .site-footer a {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+.gp-dark-mode .site-footer a:hover, .dark-theme .site-footer a:hover {
+    color: #FFF !important;
 }
 
 /* Reset & Foundation */

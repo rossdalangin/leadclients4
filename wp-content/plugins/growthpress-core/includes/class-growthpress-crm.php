@@ -273,6 +273,12 @@ class GrowthPress_CRM {
         $suggested = $ai->call_ai("Personalized reply for: \"{$lead->post_content}\"", "Assistant");
         if ( ! is_wp_error($suggested) ) update_post_meta($lead_id, '_gp_ai_suggested_reply', $suggested);
 
+        $action_plan = $ai->call_ai("Develop a 5-step strategic action plan for this lead: \"{$lead->post_content}\"", "Senior Strategist");
+        if ( ! is_wp_error($action_plan) ) update_post_meta($lead_id, '_gp_ai_strategic_plan', $action_plan);
+
+        $competitive_edge = $ai->call_ai("Analyze the competitive edge for this lead based on their specific needs: \"{$lead->post_content}\"", "Market Analyst");
+        if ( ! is_wp_error($competitive_edge) ) update_post_meta($lead_id, '_gp_ai_competitive_edge', $competitive_edge);
+
         $nudge = $ai->generate_behavioral_nudge($lead_id);
         if ( ! is_wp_error($nudge) ) update_post_meta($lead_id, '_gp_behavioral_nudge', $nudge);
 
@@ -707,6 +713,8 @@ class GrowthPress_CRM {
         $closing = get_post_meta($post->ID, '_gp_ai_closing_tips', true);
         $discovery = get_post_meta($post->ID, '_gp_ai_discovery_questions', true);
         $suggested = get_post_meta($post->ID, '_gp_ai_suggested_reply', true);
+        $strategic_plan = get_post_meta($post->ID, '_gp_ai_strategic_plan', true);
+        $competitive_edge = get_post_meta($post->ID, '_gp_ai_competitive_edge', true);
         ?>
         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:30px; padding:10px;">
             <div>
@@ -723,6 +731,16 @@ class GrowthPress_CRM {
                 <h4 style="margin-top:0;">AI Suggested Discovery Call Questions</h4>
                 <div style="background:#FFFBEB; padding:25px; border-radius:20px; border:1px solid #FEF3C7; color:#92400E; font-size:14px; line-height:1.7; margin-bottom:30px;">
                     <?php echo nl2br(esc_html($discovery)); ?>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
+                    <div style="background:#F0FDF4; padding:20px; border-radius:15px; border:1px solid #DCFCE7;">
+                        <h4 style="margin-top:0; font-size:12px; color:#166534;">Strategic Action Plan</h4>
+                        <div style="font-size:12px; line-height:1.5; color:#166534;"><?php echo nl2br(esc_html($strategic_plan)); ?></div>
+                    </div>
+                    <div style="background:#F0F9FF; padding:20px; border-radius:15px; border:1px solid #BAE6FD;">
+                        <h4 style="margin-top:0; font-size:12px; color:#0369A1;">Competitive Edge Analysis</h4>
+                        <div style="font-size:12px; line-height:1.5; color:#0369A1;"><?php echo nl2br(esc_html($competitive_edge)); ?></div>
+                    </div>
                 </div>
                 <h4>Draft Response</h4>
                 <textarea id="gp-ai-reply" style="width:100%; height:200px; border-radius:15px; border:1px solid #E2E8F0; padding:20px; font-size:14px; background:#F0FDF4;"><?php echo esc_textarea($suggested); ?></textarea>

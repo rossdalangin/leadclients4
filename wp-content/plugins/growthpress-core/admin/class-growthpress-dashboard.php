@@ -49,6 +49,7 @@ class GrowthPress_Dashboard {
     public function add_dashboard_menu() {
         $brand = get_option('growthpress_brand_name', 'GrowthPress');
         add_menu_page( $brand, $brand, 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ), 'dashicons-chart-line', 2 );
+        add_submenu_page( 'growthpress-dashboard', 'System Dashboard', 'System Dashboard', 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ) );
         add_submenu_page( 'growthpress-dashboard', 'Strategic Tasks', 'Global Tasks', 'manage_options', 'growthpress-tasks', array( $this, 'render_global_tasks' ) );
         add_submenu_page( 'growthpress-dashboard', 'System Ecosystem', 'Ecosystem Map', 'manage_options', 'growthpress-ecosystem', array( $this, 'render_ecosystem_map' ) );
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
@@ -272,6 +273,8 @@ class GrowthPress_Dashboard {
         $closing = get_post_meta($lead_id, '_gp_ai_closing_tips', true) ?: 'Analyzing closing vectors...';
         $discovery = get_post_meta($lead_id, '_gp_ai_discovery_questions', true) ?: 'Calibrating discovery questions...';
         $suggested = get_post_meta($lead_id, '_gp_ai_suggested_reply', true) ?: 'Drafting personalized response...';
+        $strategic_plan = get_post_meta($lead_id, '_gp_ai_strategic_plan', true) ?: 'Generating strategic roadmap...';
+        $competitive_edge = get_post_meta($lead_id, '_gp_ai_competitive_edge', true) ?: 'Analyzing market deltas...';
         $nudge = get_post_meta($lead_id, '_gp_behavioral_nudge', true);
         $nurture = get_post_meta($lead_id, '_gp_nurture_sequence', true);
         $ai = GrowthPress_AI::get_instance();
@@ -291,8 +294,17 @@ class GrowthPress_Dashboard {
 
         ob_start();
         ?>
+        <style>
+            .gp-intel-brief-modal-content { color: var(--text); }
+            .gp-dark-mode .gp-intel-brief-modal-content { color: #F8FAFC; }
+            .gp-intel-brief-modal-content h3, .gp-intel-brief-modal-content h4 { color: inherit; }
+            .brief-box { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 25px; border-radius: 20px; margin-bottom: 20px; }
+            .gp-dark-mode .brief-box { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+            .gp-intel-brief-modal-content textarea { width: 100%; height: 120px; border-radius: 12px; padding: 15px; font-size: 13px; }
+            .gp-dark-mode .gp-intel-brief-modal-content textarea { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: #FFF; }
+        </style>
         <div class="gp-intel-brief-modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding-bottom:20px; border-bottom:1px solid #EEE;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding-bottom:20px; border-bottom:1px solid rgba(0,0,0,0.1);">
                 <div style="display:flex; align-items:center; gap:15px;">
                     <div class="status-ping active"></div>
                     <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:2px;">NEURAL LINK STABLE</div>
@@ -305,7 +317,7 @@ class GrowthPress_Dashboard {
                         <div style="font-size:38px; font-weight:950; color:var(--primary);"><?php echo $prob; ?>%</div>
                         <div style="font-size:10px; font-weight:900; opacity:0.5; letter-spacing:1px;">DEAL PROBABILITY</div>
                     </div>
-                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; margin-bottom:20px;">
+                    <div class="brief-box">
                         <h4 style="margin-top:0; font-size:13px; text-transform:uppercase; letter-spacing:1px;">Closing Tactics</h4>
                         <div style="font-size:12px; line-height:1.6; opacity:0.7;"><?php echo nl2br(esc_html($closing)); ?></div>
                     </div>
@@ -333,7 +345,18 @@ class GrowthPress_Dashboard {
                         <strong>AI Discovery Strategy:</strong><br>
                         <?php echo nl2br(esc_html($discovery)); ?>
                     </div>
-                    <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:25px; border-radius:20px; margin-bottom:30px;">
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:25px;">
+                        <div style="background:#F0FDF4; border:1px solid #DCFCE7; padding:20px; border-radius:15px;">
+                            <div style="font-size:9px; font-weight:950; color:#166534; letter-spacing:1px; margin-bottom:8px;">STRATEGIC ACTION PLAN</div>
+                            <div style="font-size:12px; font-weight:600; color:#166534; line-height:1.4;"><?php echo nl2br(esc_html($strategic_plan)); ?></div>
+                        </div>
+                        <div style="background:#F0F9FF; border:1px solid #BAE6FD; padding:20px; border-radius:15px;">
+                            <div style="font-size:9px; font-weight:950; color:#0369A1; letter-spacing:1px; margin-bottom:8px;">COMPETITIVE EDGE</div>
+                            <div style="font-size:12px; font-weight:600; color:#0369A1; line-height:1.4;"><?php echo nl2br(esc_html($competitive_edge)); ?></div>
+                        </div>
+                    </div>
+                    <div class="brief-box">
                         <h4 style="margin-top:0; font-size:11px; text-transform:uppercase; letter-spacing:2px; opacity:0.4;">Neural Interaction Summary</h4>
                         <div style="font-size:13px; line-height:1.7; opacity:0.8;"><?php echo nl2br(esc_html($chat_summary)); ?></div>
                     </div>
@@ -352,11 +375,11 @@ class GrowthPress_Dashboard {
                         </div>
                     <?php endif; ?>
                     <h4 style="margin-bottom:10px;">Neural Draft Response</h4>
-                    <textarea style="width:100%; height:120px; border-radius:12px; padding:15px; font-size:13px; background:#F0FDF4; border:1px solid #DCFCE7;"><?php echo esc_textarea($suggested); ?></textarea>
+                    <textarea style="background:#F0FDF4; border:1px solid #DCFCE7;"><?php echo esc_textarea($suggested); ?></textarea>
 
                     <?php if($nurture): ?>
                         <h4 style="margin-top:30px; margin-bottom:10px;">5-Day Strategic Nurture</h4>
-                        <div style="background:#F8FAFC; padding:20px; border-radius:15px; border:1px solid #E2E8F0; font-size:12px; line-height:1.7; max-height:200px; overflow-y:auto;"><?php echo nl2br(esc_html($nurture)); ?></div>
+                        <div class="brief-box" style="font-size:12px; line-height:1.7; max-height:200px; overflow-y:auto;"><?php echo nl2br(esc_html($nurture)); ?></div>
                     <?php endif; ?>
 
                     <div style="margin-top:30px; display:flex; gap:10px;">

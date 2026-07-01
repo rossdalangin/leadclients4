@@ -30,7 +30,8 @@ class GrowthPress_Settings {
             'growthpress_gemini_api_key', 'growthpress_perplexity_api_key', 'growthpress_ollama_host',
             'growthpress_ollama_model', 'growthpress_niche', 'growthpress_api_token',
             'growthpress_brand_name', 'growthpress_primary_color', 'growthpress_hot_threshold',
-            'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_whatsapp_key',
+            'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_twilio_from_number',
+            'growthpress_admin_sms_recipient', 'growthpress_whatsapp_key',
             'growthpress_google_maps_key', 'growthpress_stripe_key', 'growthpress_stripe_secret',
             'growthpress_paypal_client_id', 'growthpress_paypal_secret', 'growthpress_paypal_mode',
             'growthpress_zoom_account_id', 'growthpress_zoom_client_id', 'growthpress_zoom_client_secret',
@@ -253,6 +254,14 @@ class GrowthPress_Settings {
                             <th scope="row"><label>Twilio Auth Token</label></th>
                             <td><input type="password" name="growthpress_twilio_token" value="<?php echo esc_attr( get_option('growthpress_twilio_token') ); ?>" class="regular-text"></td>
                         </tr>
+                        <tr>
+                            <th scope="row"><label>Twilio From Number</label></th>
+                            <td><input type="text" name="growthpress_twilio_from_number" value="<?php echo esc_attr( get_option('growthpress_twilio_from_number') ); ?>" class="regular-text" placeholder="+15550000000"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Admin SMS Recipient</label></th>
+                            <td><input type="text" name="growthpress_admin_sms_recipient" value="<?php echo esc_attr( get_option('growthpress_admin_sms_recipient') ); ?>" class="regular-text" placeholder="+15550000000"></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -409,6 +418,7 @@ class GrowthPress_Settings {
                 <div class="glass-card" style="max-width:1100px; background:#f0fdfa; border-left:5px solid #0d9488; margin-bottom:30px; padding:20px;">
                     <h4 style="margin:0 0 10px 0; color:#0f766e;">⚡ Strategic Context: Automation Protocol</h4>
                     <p style="margin:0; font-size:14px; color:#0f766e; line-height:1.5;">Define high-stakes rules that trigger autonomously based on ecosystem events. <strong>Operational Pro-Tip:</strong> High-urgency leads (Score > 8) should trigger an instant SMS to your phone via Twilio, allowing for sub-60 second response times while the prospect is still in "Peak Interest" mode.</p>
+                    <p style="margin:10px 0 0 0; font-size:13px; color:#0f766e;">Ensure your <strong>Twilio From Number</strong> and <strong>Admin SMS Recipient</strong> are configured in the <a href="#tab-config" onclick="jQuery('a[href=\'#tab-config\']').click();">Configuration</a> tab.</p>
                 </div>
 
                 <div class="glass-card" style="max-width:1100px; background:#f5f3ff; border-left:5px solid #7c3aed; margin-bottom:30px; padding:20px;">
