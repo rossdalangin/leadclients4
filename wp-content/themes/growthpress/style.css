@@ -244,6 +244,17 @@ body.dark-theme .site-header {
     color: #FFF !important;
 }
 
+/* Secondary Button Polish for Dark Mode */
+.gp-dark-mode .gp-btn-card, .dark-theme .gp-btn-card {
+    background: rgba(255,255,255,0.1) !important;
+    color: #F1F5F9 !important;
+}
+
+.gp-dark-mode .gp-btn-card:hover, .dark-theme .gp-btn-card:hover {
+    background: var(--primary) !important;
+    color: #FFF !important;
+}
+
 /* Elite Footer Layout & Re-integration */
 .site-footer {
     background: var(--secondary);

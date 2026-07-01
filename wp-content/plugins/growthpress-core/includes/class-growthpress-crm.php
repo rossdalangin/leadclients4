@@ -32,6 +32,7 @@ class GrowthPress_CRM {
         add_action( 'wp_ajax_gp_add_lead_note', array( $this, 'handle_add_note' ) );
         add_action( 'wp_ajax_gp_add_vault_asset', array( $this, 'handle_add_vault_asset' ) );
         add_action( 'wp_ajax_gp_complete_task', array( $this, 'handle_complete_task' ) );
+        add_action( 'wp_ajax_gp_process_referral', array( $this, 'handle_process_referral' ) );
         if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
             wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
         }
@@ -149,6 +150,9 @@ class GrowthPress_CRM {
 
         add_filter( 'manage_gp_lead_posts_columns', array( $this, 'lead_columns' ) );
         add_action( 'manage_gp_lead_posts_custom_column', array( $this, 'lead_column_content' ), 10, 2 );
+
+        add_filter( 'manage_gp_conflict_posts_columns', array( $this, 'conflict_columns' ) );
+        add_action( 'manage_gp_conflict_posts_custom_column', array( $this, 'conflict_column_content' ), 10, 2 );
 
         add_filter( 'manage_gp_task_posts_columns', array( $this, 'task_columns' ) );
         add_action( 'manage_gp_task_posts_custom_column', array( $this, 'task_column_content' ), 10, 2 );
@@ -929,6 +933,32 @@ class GrowthPress_CRM {
         wp_send_json_success();
     }
 
+    public function handle_process_referral() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $ref_id = intval($_POST['referral_id']);
+        $email = get_post_meta($ref_id, '_referral_email', true);
+        $title = get_the_title($ref_id);
+
+        $lead_id = wp_insert_post(array(
+            'post_title' => str_replace('Referral: ', '', $title),
+            'post_type'  => 'gp_lead',
+            'post_status' => 'publish'
+        ));
+
+        if($lead_id) {
+            update_post_meta($lead_id, '_lead_email', $email);
+            update_post_meta($lead_id, '_lead_source', 'Referral Node');
+            update_post_meta($ref_id, '_referral_status', 'Converted');
+            update_post_meta($ref_id, '_related_lead_id', $lead_id);
+
+            do_action('gp_lead_captured', $lead_id);
+            GrowthPress_Activity::log("Referral Node Converted to Lead #$lead_id: $title");
+            wp_send_json_success("Referral successfully promoted to active Lead node.");
+        }
+        wp_send_json_error();
+    }
+
+
     public function handle_complete_task() {
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
@@ -1065,6 +1095,46 @@ class GrowthPress_CRM {
         $cols['_lead'] = 'Related Lead';
         $cols['_staff'] = 'Assigned To';
         return $cols;
+    }
+
+    public function referral_columns($cols) {
+        $cols['_email'] = 'Referral Email';
+        $cols['_status'] = 'Status';
+        $cols['_source'] = 'Source Client';
+        $cols['_action'] = 'Action';
+        return $cols;
+    }
+
+    public function referral_column_content($col, $post_id) {
+        if($col === '_email') echo get_post_meta($post_id, '_referral_email', true);
+        if($col === '_status') echo get_post_meta($post_id, '_referral_status', true);
+        if($col === '_source') {
+            $cid = get_post_meta($post_id, '_source_client_id', true);
+            echo $cid ? get_userdata($cid)->display_name : 'Portal Node';
+        }
+        if($col === '_action') {
+            if(get_post_meta($post_id, '_referral_status', true) !== 'Converted') {
+                echo '<button class="button button-small" onclick="gpProcessReferral('.$post_id.')">PROMOTE</button>';
+                echo '<script>function gpProcessReferral(id){ jQuery.post(ajaxurl, {action:"gp_process_referral", referral_id:id, gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}, function(r){ alert(r.data); location.reload(); }); }</script>';
+            } else {
+                echo '<span style="color:#10b981; font-weight:bold;">CONVERTED</span>';
+            }
+        }
+    }
+
+    public function conflict_columns($cols) {
+        $cols['_status'] = 'Clearance Status';
+        $cols['_matches'] = 'Overlaps';
+        return $cols;
+    }
+
+    public function conflict_column_content($col, $post_id) {
+        if($col === '_status') {
+            $s = get_post_meta($post_id, '_conflict_status', true);
+            $color = ($s === 'CLEARED') ? '#10b981' : '#ef4444';
+            echo "<span style='color:$color; font-weight:bold;'>$s</span>";
+        }
+        if($col === '_matches') echo get_post_meta($post_id, '_match_count', true);
     }
 
     public function task_column_content( $col, $post_id ) {

@@ -100,6 +100,25 @@ class GrowthPress_Law {
 
         if (strpos($content, 'conflict') !== false || strpos($content, 'parties') !== false) {
             $crm->create_task("Legal Conflict Check", "Parties mentioned in inquiry. Execute priority clearance protocol.", $lead_id);
+
+            // Step 14: Autonomous Conflict Search
+            // Simple keyword-based extraction of potential parties (Mock for AI extraction)
+            $words = explode(' ', $lead->post_content);
+            $potential_party = end($words);
+
+            $matches = get_posts(array('post_type' => 'gp_lead', 's' => $potential_party, 'exclude' => array($lead_id), 'posts_per_page' => 3));
+            $status = empty($matches) ? 'CLEARED' : 'FLAGGED';
+
+            $audit_id = wp_insert_post(array(
+                'post_title' => "Auto-Audit: " . $lead->post_title,
+                'post_type' => 'gp_conflict',
+                'post_status' => 'publish'
+            ));
+            update_post_meta($audit_id, '_conflict_status', $status);
+            update_post_meta($audit_id, '_related_lead', $lead_id);
+            update_post_meta($audit_id, '_match_count', count($matches));
+
+            GrowthPress_Activity::log("Legal Hub: Autonomous conflict search performed for Lead #$lead_id. Status: $status.");
         }
 
         if (strpos($content, 'litigation') !== false || strpos($content, 'sue') !== false) {

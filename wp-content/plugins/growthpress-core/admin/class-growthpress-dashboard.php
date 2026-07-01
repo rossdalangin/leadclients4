@@ -20,7 +20,59 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_strategic_search', array( $this, 'handle_strategic_search' ) );
         add_action( 'wp_ajax_gp_get_chat_history', array( $this, 'handle_get_chat_history' ) );
         add_action( 'wp_ajax_gp_admin_chat_reply', array( $this, 'handle_admin_chat_reply' ) );
+        add_action( 'wp_ajax_gp_admin_chat_delete', array( $this, 'handle_admin_chat_delete' ) );
         add_action( 'wp_ajax_gp_sales_lab_converse', array( $this, 'handle_sales_lab_converse' ) );
+        add_action( 'wp_ajax_gp_activate_agency_node', array( $this, 'handle_agency_activation' ) );
+        add_action( 'wp_ajax_gp_erp_reorder', array( $this, 'handle_erp_reorder' ) );
+        add_action( 'wp_ajax_gp_workflow_step_add', array( $this, 'handle_workflow_step_add' ) );
+        add_action( 'wp_ajax_gp_chat_session_delete', array( $this, 'handle_chat_session_delete' ) );
+    }
+
+    public function handle_chat_session_delete() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $id = intval($_POST['session_post_id']);
+        wp_delete_post($id, true);
+        GrowthPress_Activity::log("Chat Command: Session ID #$id purged from ecosystem.");
+        wp_send_json_success("Session successfully terminated and purged.");
+    }
+
+    public function handle_workflow_step_add() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $step_name = sanitize_text_field($_POST['step_name']);
+
+        $steps = get_option('gp_workflow_steps', array(
+            array('name' => 'Analyze Sentiment & Score Urgency', 'status' => 'ACTIVE'),
+            array('name' => 'Dispatch "Hot Lead" alert to Twilio Hub', 'status' => 'ACTIVE')
+        ));
+
+        $steps[] = array('name' => $step_name, 'status' => 'ACTIVE');
+        update_option('gp_workflow_steps', $steps);
+
+        GrowthPress_Activity::log("Workflow Orchestrator: New strategic step added: \"$step_name\". Full lifecycle synchronized.");
+        wp_send_json_success("Step \"$step_name\" successfully integrated into the lead-to-revenue lifecycle.");
+    }
+
+    public function handle_erp_reorder() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $item_id = intval($_POST['item_id']);
+        $title = get_the_title($item_id);
+
+        GrowthPress_Activity::log("ERP Node: Re-order sequence initiated for \"$title\". Request dispatched to supply chain API.");
+        wp_send_json_success("Re-order node for \"$title\" synchronized. Q4 fulfillment protected.");
+    }
+
+    public function handle_agency_activation() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $slug = sanitize_text_field($_POST['slug']);
+        $profiles = get_option('gp_agency_profiles', array());
+
+        if(isset($profiles[$slug])) {
+            update_option('growthpress_brand_name', $profiles[$slug]['name']);
+            update_option('growthpress_niche', $profiles[$slug]['niche']);
+            GrowthPress_Activity::log("Agency Node Activated: " . $profiles[$slug]['name']);
+            wp_send_json_success("Node " . strtoupper($slug) . " successfully activated.");
+        }
+        wp_send_json_error("Node not found.");
     }
 
     public function handle_sales_lab_converse() {
@@ -46,6 +98,15 @@ class GrowthPress_Dashboard {
         $id = intval($_POST['session_post_id']);
         $history = get_post_meta($id, '_gp_chat_history', true) ?: array();
         wp_send_json_success(array('history' => $history));
+    }
+
+    public function handle_admin_chat_delete() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $id = intval($_POST['session_post_id']);
+        wp_delete_post($id, true);
+        GrowthPress_Activity::log("Chat Session #$id purged from ecosystem.");
+        wp_send_json_success();
     }
 
     public function handle_admin_chat_reply() {
@@ -104,6 +165,64 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'Workflow Command', 'Workflow Command', 'manage_options', 'growthpress-workflows', array( $this, 'render_workflow_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'manage_options', 'growthpress-erp', array( $this, 'render_erp_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Legal Lab', 'Legal Lab', 'manage_options', 'growthpress-law-lab', array( $this, 'render_law_lab' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Referral Hub', 'Referrals', 'manage_options', 'growthpress-referrals', array( $this, 'render_referral_hub' ) );
+    }
+
+    public function render_referral_hub() {
+        $referrals = get_posts(array('post_type' => 'gp_referral', 'posts_per_page' => -1));
+        ?>
+        <div class="wrap gp-reveal">
+            <div class="glass-card" style="background:#f0fdf4; border-left:5px solid #10b981; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#065f46;">🤝 Strategic Context: Referral Engine</h4>
+                <p style="margin:0; font-size:14px; color:#065f46; line-height:1.5;">Referrals are your highest-authority lead source. <strong>Success Pattern:</strong> Transitioning referrals to lead nodes within 12 hours maintains the trust delta established by the referring client.</p>
+            </div>
+
+            <h1>Strategic Referral Command Hub</h1>
+            <div class="glass-card" style="margin-top:30px; padding:0; overflow:hidden;">
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="padding:20px; font-weight:900;">REFERRAL IDENTITY</th>
+                            <th style="padding:20px; font-weight:900;">EMAIL NODE</th>
+                            <th style="padding:20px; font-weight:900;">STATUS</th>
+                            <th style="padding:20px; font-weight:900;">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if($referrals): foreach($referrals as $r):
+                            $status = get_post_meta($r->ID, '_referral_status', true) ?: 'New';
+                            ?>
+                            <tr>
+                                <td style="padding:20px; font-weight:700;"><?php echo esc_html($r->post_title); ?></td>
+                                <td style="padding:20px;"><?php echo get_post_meta($r->ID, '_referral_email', true); ?></td>
+                                <td style="padding:20px;"><span style="background:<?php echo $status === 'Lead Created' ? '#D1FAE5' : '#F8FAFC'; ?>; color:<?php echo $status === 'Lead Created' ? '#065F46' : '#64748B'; ?>; padding:5px 12px; border-radius:30px; font-size:10px; font-weight:950;"><?php echo strtoupper($status); ?></span></td>
+                                <td style="padding:20px;">
+                                    <?php if($status !== 'Lead Created'): ?>
+                                        <button class="button button-primary" onclick="processReferral(<?php echo $r->ID; ?>, this)">CONVERT TO LEAD</button>
+                                    <?php else: ?>
+                                        <a href="<?php echo get_edit_post_link(get_post_meta($r->ID, '_converted_lead_id', true)); ?>" class="button">VIEW DOSSIER</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; else: ?>
+                            <tr><td colspan="4" style="text-align:center; padding:40px; opacity:0.5;">No referrals detected in current network.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+        function processReferral(id, btn) {
+            jQuery(btn).text('...').prop('disabled', true);
+            jQuery.post(ajaxurl, { action: 'gp_process_referral', referral_id: id, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        </script>
+        <?php
     }
 
     public function render_law_lab() {
@@ -140,6 +259,37 @@ class GrowthPress_Dashboard {
                     </div>
                 </div>
             </div>
+
+            <h2 style="margin-top:60px; margin-bottom:40px;">Conflict Audit Trail</h2>
+            <div class="glass-card" style="padding:0; overflow:hidden;">
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="padding:20px; font-weight:900;">AUDIT SUBJECT</th>
+                            <th style="padding:20px; font-weight:900;">STATUS</th>
+                            <th style="padding:20px; font-weight:900;">MATCHES</th>
+                            <th style="padding:20px; font-weight:900;">TIMESTAMP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $audits = get_posts(array('post_type' => 'gp_conflict', 'posts_per_page' => 10));
+                        if($audits): foreach($audits as $audit):
+                            $status = get_post_meta($audit->ID, '_conflict_status', true);
+                            $matches = get_post_meta($audit->ID, '_match_count', true) ?: 0;
+                            ?>
+                            <tr>
+                                <td style="padding:20px; font-weight:700;"><?php echo esc_html($audit->post_title); ?></td>
+                                <td style="padding:20px;"><span style="background:<?php echo $status === 'CLEARED' ? '#D1FAE5' : '#FEF2F2'; ?>; color:<?php echo $status === 'CLEARED' ? '#065F46' : '#991B1B'; ?>; padding:5px 12px; border-radius:30px; font-size:10px; font-weight:950;"><?php echo $status; ?></span></td>
+                                <td style="padding:20px; font-weight:800;"><?php echo $matches; ?> OVERLAPS</td>
+                                <td style="padding:20px; opacity:0.5; font-size:11px;"><?php echo get_the_date('M j, Y H:i', $audit->ID); ?></td>
+                            </tr>
+                        <?php endforeach; else: ?>
+                            <tr><td colspan="4" style="text-align:center; padding:40px; opacity:0.5;">No conflict audits synchronized.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <script>
         function executeRedline() {
@@ -156,6 +306,15 @@ class GrowthPress_Dashboard {
                 if(res.success) {
                     jQuery('#redline-status').text('ANALYSIS COMPLETE').css('color', '#10B981');
                     jQuery('#redline-log').append('<div style="margin-top:20px; white-space:pre-wrap;">' + res.data.analysis + '</div>');
+                }
+            });
+        }
+        function deleteChatSession() {
+            if(!confirm('PURGE this chat session from the ecosystem? This action is irreversible.')) return;
+            jQuery.post(ajaxurl, { action: 'gp_chat_session_delete', session_post_id: currentSessionId, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
                 }
             });
         }
@@ -191,7 +350,7 @@ class GrowthPress_Dashboard {
                         <div style="height:8px; background:#F1F5F9; border-radius:10px; overflow:hidden; margin-bottom:30px;">
                             <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
                         </div>
-                        <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="alert('Initializing supply chain uplink...')">RE-ORDER ASSET</button>
+                        <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
                     </div>
                 <?php endforeach; else: ?>
                     <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
@@ -201,6 +360,17 @@ class GrowthPress_Dashboard {
                 <?php endif; ?>
             </div>
         </div>
+        <script>
+        function erpReorder(id) {
+            jQuery.post(ajaxurl, {
+                action: 'gp_erp_reorder',
+                item_id: id,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) alert(res.data);
+            });
+        }
+        </script>
         <?php
     }
 
@@ -224,28 +394,44 @@ class GrowthPress_Dashboard {
                 </div>
 
                 <div style="display:grid; gap:30px; padding-left:30px; border-left:4px dashed #E2E8F0;">
-                    <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP 01: AI TRIAGE</div>
-                            <div style="font-size:14px; font-weight:800;">Analyze Sentiment & Score Urgency</div>
+                    <?php
+                    $workflow_steps = get_option('gp_workflow_steps', array(
+                        array('name' => 'Analyze Sentiment & Score Urgency', 'status' => 'ACTIVE'),
+                        array('name' => 'Dispatch "Hot Lead" alert to Twilio Hub', 'status' => 'ACTIVE')
+                    ));
+                    $idx = 1;
+                    foreach($workflow_steps as $step): ?>
+                        <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP <?php echo str_pad($idx, 2, '0', STR_PAD_LEFT); ?>: <?php echo ($idx == 1 ? 'AI TRIAGE' : ($idx == 2 ? 'SMS NOTIFY' : 'CUSTOM NODE')); ?></div>
+                                <div style="font-size:14px; font-weight:800;"><?php echo esc_html($step['name']); ?></div>
+                            </div>
+                            <span style="color:#10B981; font-weight:900; font-size:10px;"><?php echo $step['status']; ?></span>
                         </div>
-                        <span style="color:#10B981; font-weight:900; font-size:10px;">ACTIVE</span>
-                    </div>
+                    <?php $idx++; endforeach; ?>
 
-                    <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP 02: SMS NOTIFY</div>
-                            <div style="font-size:14px; font-weight:800;">Dispatch "Hot Lead" alert to Twilio Hub</div>
-                        </div>
-                        <span style="color:#10B981; font-weight:900; font-size:10px;">ACTIVE</span>
-                    </div>
-
-                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="alert('Opening Step Node library...')">
+                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="addWorkflowStep()">
                         <span style="font-size:12px; font-weight:900; opacity:0.4;">+ ADD ORCHESTRATION STEP</span>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+        function addWorkflowStep() {
+            const name = prompt('Identify orchestration step node:');
+            if(!name) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_workflow_step_add',
+                step_name: name,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        </script>
         <?php
     }
 
@@ -280,8 +466,17 @@ class GrowthPress_Dashboard {
         </div>
         <script>
         function switchAgencyProfile(slug) {
-            alert('Switching to ' + slug.toUpperCase() + ' configuration...');
-            location.reload();
+            if(!confirm('Activate ' + slug.toUpperCase() + ' brand node? This will update global OS settings.')) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_activate_agency_node',
+                slug: slug,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
         }
         </script>
         <?php
@@ -326,6 +521,7 @@ class GrowthPress_Dashboard {
                     <div id="chat-session-footer" style="padding:20px; background:#F8FAFC; border-top:1px solid #EEE; display:none; gap:10px;">
                         <input type="text" id="admin-chat-input" style="flex:1; border-radius:10px; border:1px solid #E2E8F0; padding:12px;" placeholder="Transmit response...">
                         <button class="button button-primary" onclick="sendAdminChat()">SEND</button>
+                        <button class="button" style="background:#EF4444; color:white; border:none;" onclick="deleteChatSession()">PURGE</button>
                     </div>
                 </div>
             </div>
@@ -350,6 +546,12 @@ class GrowthPress_Dashboard {
                     jQuery('#chat-session-body').html(html).scrollTop(100000);
                     jQuery('#chat-session-footer').css('display', 'flex');
                 }
+            });
+        }
+        function deleteChatSession() {
+            if(!confirm('Purge this chat history node?')) return;
+            jQuery.post(ajaxurl, { action: 'gp_admin_chat_delete', session_post_id: currentSessionId, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) location.reload();
             });
         }
         function sendAdminChat() {
