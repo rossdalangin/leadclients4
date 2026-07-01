@@ -111,6 +111,11 @@ class GrowthPress_Solar {
                     jQuery("#solar-val").text(v);
                     jQuery("#roi-val").text((v * 12 * 25 * 0.75).toLocaleString());
                 });
+                jQuery("#solar-input").on("change", function() {
+                    if(typeof gpLogHighIntent === "function") {
+                        gpLogHighIntent("Solar Calc Value: $" + jQuery(this).val());
+                    }
+                });
             </script>
         </div>';
     }

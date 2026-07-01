@@ -40,13 +40,16 @@ class GrowthPress_Reports {
             else $expenses += $amt;
         }
 
+        $weighted_value = GrowthPress_Proposals::get_instance()->get_weighted_pipeline_value();
+
         return array(
             'Total Leads' => count($leads),
             'Confirmed Bookings' => count($appts),
             'Revenue' => $revenue,
             'OpEx' => $expenses,
             'Net Equity' => $revenue - $expenses,
-            'Pipeline Upside' => $total_value
+            'Pipeline Upside' => $total_value,
+            'AI Weighted Forecast' => $weighted_value
         );
     }
 
@@ -112,8 +115,8 @@ class GrowthPress_Reports {
 
             <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:25px;">
                 <?php foreach($stats as $label => $val):
-                    $is_money = in_array($label, array('Revenue', 'OpEx', 'Net Equity', 'Pipeline Upside'));
-                    $border_color = ($label === 'Net Equity') ? '#10B981' : (($label === 'OpEx') ? '#EF4444' : 'var(--border)');
+                    $is_money = in_array($label, array('Revenue', 'OpEx', 'Net Equity', 'Pipeline Upside', 'AI Weighted Forecast'));
+                    $border_color = ($label === 'Net Equity' || $label === 'AI Weighted Forecast') ? '#10B981' : (($label === 'OpEx') ? '#EF4444' : 'var(--border)');
                 ?>
                     <div class="stat-card glass-card" style="padding:35px; border-radius:30px; border-bottom: 6px solid <?php echo $border_color; ?>;">
                         <h4 style="font-size:10px; font-weight:950; opacity:0.4; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px;"><?php echo $label; ?></h4>
@@ -121,7 +124,10 @@ class GrowthPress_Reports {
                             <?php echo $is_money ? '$'.number_format($val) : $val; ?>
                         </div>
                         <?php if($label === 'Pipeline Upside'): ?>
-                            <div style="font-size:9px; font-weight:800; color:var(--primary); margin-top:10px; text-transform:uppercase;">65% Weighted Prob.</div>
+                            <div style="font-size:9px; font-weight:800; color:var(--primary); margin-top:10px; text-transform:uppercase;">Gross Contract Value</div>
+                        <?php endif; ?>
+                        <?php if($label === 'AI Weighted Forecast'): ?>
+                            <div style="font-size:9px; font-weight:800; color:#10B981; margin-top:10px; text-transform:uppercase;">Neural Probability Adjusted</div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

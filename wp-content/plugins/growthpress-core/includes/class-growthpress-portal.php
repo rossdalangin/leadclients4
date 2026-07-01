@@ -257,25 +257,31 @@ class GrowthPress_Portal {
                     </div>
 
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px;">
-                        <h3 style="font-size:22px; margin-bottom:10px; letter-spacing:-0.03em;">Financial Ledger</h3>
+                        <h3 style="font-size:22px; margin-bottom:10px; letter-spacing:-0.03em;">Interactive Financial Ledger</h3>
                         <p style="font-size:12px; opacity:0.5; margin-bottom:30px;">Real-time synchronization of settled transactions and pending investment nodes.</p>
-                        <?php
-                        // Isolate Transactions by related lead IDs or email matching
-                        $transactions = !empty($lead_ids) ? get_posts(array('post_type' => 'gp_transaction', 'posts_per_page' => 10, 'meta_query' => array(array('key' => '_related_id', 'value' => array_merge($lead_ids, $proposals ? wp_list_pluck($proposals, 'ID') : []), 'compare' => 'IN')))) : array();
-                        if($transactions): foreach($transactions as $t):
-                            $status = get_post_meta($t->ID, '_status', true);
-                            ?>
-                            <div style="padding:15px 0; border-bottom:1px solid #F1F5F9; display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="font-size:13px; font-weight:700;"><?php echo esc_html($t->post_title); ?></div>
-                                    <div style="font-size:10px; opacity:0.4;"><?php echo get_the_date('M j, Y', $t->ID); ?></div>
+                        <div id="gp-portal-ledger">
+                            <?php
+                            // Isolate Transactions by related lead IDs or email matching
+                            $transactions = !empty($lead_ids) ? get_posts(array('post_type' => 'gp_transaction', 'posts_per_page' => 10, 'meta_query' => array(array('key' => '_related_id', 'value' => array_merge($lead_ids, $proposals ? wp_list_pluck($proposals, 'ID') : []), 'compare' => 'IN')))) : array();
+                            if($transactions): foreach($transactions as $t):
+                                $status = get_post_meta($t->ID, '_status', true);
+                                $amt = get_post_meta($t->ID, '_amount', true);
+                                ?>
+                                <div class="ledger-item" style="padding:20px; background:rgba(0,0,0,0.02); border-radius:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; border:1px solid transparent; transition:0.3s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='#FFF';" onmouseout="this.style.borderColor='transparent'; this.style.background='rgba(0,0,0,0.02)';">
+                                    <div>
+                                        <div style="font-size:14px; font-weight:800;"><?php echo esc_html($t->post_title); ?></div>
+                                        <div style="font-size:11px; opacity:0.5; margin-top:5px; font-weight:600; text-transform:uppercase; letter-spacing:1px;"><?php echo get_the_date('M j, Y', $t->ID); ?> • REF: <?php echo get_post_meta($t->ID, '_payment_reference', true) ?: 'GP-INTERNAL'; ?></div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:18px; font-weight:950; color:<?php echo $status === 'Paid' ? '#10B981' : 'var(--primary)'; ?>;">$<?php echo number_format($amt); ?></div>
+                                        <div style="font-size:9px; font-weight:950; opacity:0.6; margin-top:5px; letter-spacing:1px; background:<?php echo $status === 'Paid' ? '#D1FAE5' : '#FEF3C7'; ?>; color:<?php echo $status === 'Paid' ? '#065F46' : '#92400E'; ?>; padding:4px 10px; border-radius:30px; display:inline-block;"><?php echo strtoupper($status); ?></div>
+                                    </div>
                                 </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:13px; font-weight:900; color:<?php echo $status === 'Paid' ? '#10B981' : 'var(--primary)'; ?>;">$<?php echo number_format(get_post_meta($t->ID, '_amount', true)); ?></div>
-                                    <div style="font-size:8px; font-weight:950; opacity:0.5;"><?php echo strtoupper($status); ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; else: echo "<p style='opacity:0.5;'>No financial ledger entries detected.</p>"; endif; ?>
+                            <?php endforeach; else: echo "<p style='opacity:0.5; text-align:center; padding:20px;'>No financial ledger entries detected for this secure node.</p>"; endif; ?>
+                        </div>
+                        <?php if($transactions): ?>
+                            <button class="gp-btn" style="width:100%; margin-top:15px; height:50px; font-size:11px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="alert('Generating cinematic PDF statement...')">DOWNLOAD FULL STATEMENT</button>
+                        <?php endif; ?>
                     </div>
 
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px;">
