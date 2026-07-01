@@ -84,6 +84,22 @@ class GrowthPress_CRM {
             'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
         ) );
 
+        register_post_type( 'gp_chat', array(
+            'labels'      => array( 'name' => 'Chat Sessions', 'singular_name' => 'Chat' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-format-chat',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_chat_template', array(
+            'labels'      => array( 'name' => 'Chat Templates', 'singular_name' => 'Template' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-media-text',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,

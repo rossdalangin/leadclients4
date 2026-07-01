@@ -73,6 +73,11 @@ class GrowthPress_AI_FAQ {
             .gp-msg-ai { background: white; color: #1E293B; border-bottom-left-radius: 5px; border: 1px solid rgba(0,0,0,0.05); align-self: flex-start; font-weight: 500; }
             .gp-msg-user { background: <?php echo $primary; ?>; color: white; border-bottom-right-radius: 5px; align-self: flex-end; font-weight: 600; }
 
+            .dark-theme .gp-chat-window { background: #0F172A !important; border-color: rgba(255,255,255,0.1) !important; color: #F8FAFC; }
+            .dark-theme .gp-msg-ai { background: #1E293B; color: #F1F5F9; border-color: rgba(255,255,255,0.05); }
+            .dark-theme .gp-chat-footer { background: #0F172A; border-top-color: rgba(255,255,255,0.05); }
+            .dark-theme .gp-chat-footer input { background: #1E293B; border-color: rgba(255,255,255,0.1); color: white; }
+
             .gp-chat-footer { padding: 30px; background: white; border-top: 1px solid #F1F5F9; display: flex; gap: 15px; align-items: center; border-radius: 0 0 40px 40px; }
             .gp-chat-footer input { flex: 1; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px 25px; font-size: 15px; outline: none; transition: all 0.3s ease; margin:0; background: #F8FAFC; font-weight: 600; }
             .gp-chat-footer input:focus { border-color: <?php echo $primary; ?>; background: #FFF; box-shadow: 0 0 0 4px var(--primary-glow); }
@@ -92,6 +97,9 @@ class GrowthPress_AI_FAQ {
                 jQuery('#gp-chat-launcher').fadeIn(400);
             });
 
+            let chatSessionId = localStorage.getItem('gp_chat_session') || 'sess_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('gp_chat_session', chatSessionId);
+
             function askAI() {
                 var query = jQuery('#gp-faq-input').val();
                 var nonce = jQuery('#gp_ai_faq_nonce').val();
@@ -104,12 +112,12 @@ class GrowthPress_AI_FAQ {
                 $chat.scrollTop($chat[0].scrollHeight);
                 $typing.show();
 
-                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_ai_faq_ask', query: query, nonce: nonce }, function(res) {
+                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_ai_faq_ask', query: query, nonce: nonce, session_id: chatSessionId }, function(res) {
                     $typing.hide();
                     if(res.success) {
                         $chat.append('<div class="gp-msg-ai">' + res.data.answer + '</div>');
                         if(res.data.intent === 'booking') {
-                            $chat.append('<div class="gp-msg-ai" style="background:#f0f9ff; border-color:#bae6fd;">🗓️ <strong>Strategic Session:</strong> You can secure your slot here: <br><br><a href="/book-now" class="gp-btn" style="font-size:12px; padding:10px 15px; width:100%; text-align:center; border-radius:12px;">Book Consultation</a></div>');
+                            $chat.append('<div class="gp-msg-ai" style="background:#f0f9ff; border-color:#bae6fd; color:#1e293b;">🗓️ <strong>Strategic Session:</strong> You can secure your slot here: <br><br><a href="/book-now" class="gp-btn" style="font-size:12px; padding:10px 15px; width:100%; text-align:center; border-radius:12px;">Book Consultation</a></div>');
                         }
                     } else {
                         $chat.append('<div class="gp-msg-ai">Engine Timeout. Please retry.</div>');
@@ -138,8 +146,33 @@ class GrowthPress_AI_FAQ {
             wp_send_json_error( 'Missing query' );
         }
         $query = sanitize_text_field($_POST['query']);
+        $session_id = sanitize_text_field($_POST['session_id'] ?? 'anonymous');
         $niche = get_option('growthpress_niche', 'Business');
         $ai = GrowthPress_AI::get_instance();
+
+        // Save User Message
+        $this->save_chat_message($session_id, 'user', $query);
+
+        // Keyword/Template Check
+        $templates = get_posts(array(
+            'post_type' => 'gp_chat_template',
+            'posts_per_page' => -1,
+            'post_status' => 'publish'
+        ));
+
+        foreach($templates as $tpl) {
+            $keywords = get_post_meta($tpl->ID, '_gp_template_keywords', true);
+            if($keywords) {
+                $kw_array = array_map('trim', explode(',', $keywords));
+                foreach($kw_array as $kw) {
+                    if(stripos($query, $kw) !== false) {
+                        $answer = $tpl->post_content;
+                        $this->save_chat_message($session_id, 'ai', $answer);
+                        wp_send_json_success(array('answer' => $answer, 'intent' => 'general', 'template_hit' => true));
+                    }
+                }
+            }
+        }
 
         // KB Context Injection
         $kb_posts = get_posts(array('post_type' => 'gp_kb', 's' => $query, 'posts_per_page' => 2));
@@ -166,7 +199,36 @@ class GrowthPress_AI_FAQ {
             $response['answer'] .= " I have checked our real-time master calendar, and we still have a few high-priority slots available for this week.";
         }
 
+        $this->save_chat_message($session_id, 'ai', $response['answer']);
         wp_send_json_success($response);
+    }
+
+    private function save_chat_message($session_id, $role, $message) {
+        $chat_session = get_posts(array(
+            'post_type' => 'gp_chat',
+            'title' => $session_id,
+            'post_status' => 'publish',
+            'posts_per_page' => 1
+        ));
+
+        if($chat_session) {
+            $post_id = $chat_session[0]->ID;
+        } else {
+            $post_id = wp_insert_post(array(
+                'post_title' => $session_id,
+                'post_type' => 'gp_chat',
+                'post_status' => 'publish'
+            ));
+        }
+
+        $history = get_post_meta($post_id, '_gp_chat_history', true) ?: array();
+        $history[] = array(
+            'role' => $role,
+            'msg' => $message,
+            'time' => current_time('mysql')
+        );
+        update_post_meta($post_id, '_gp_chat_history', $history);
+        update_post_meta($post_id, '_gp_last_active', current_time('mysql'));
     }
 }
 new GrowthPress_AI_FAQ();

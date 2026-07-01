@@ -18,6 +18,33 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_update_lead_stage', array( $this, 'handle_lead_stage_update' ) );
         add_action( 'wp_ajax_gp_get_lead_brief', array( $this, 'handle_get_lead_brief' ) );
         add_action( 'wp_ajax_gp_strategic_search', array( $this, 'handle_strategic_search' ) );
+        add_action( 'wp_ajax_gp_get_chat_history', array( $this, 'handle_get_chat_history' ) );
+        add_action( 'wp_ajax_gp_admin_chat_reply', array( $this, 'handle_admin_chat_reply' ) );
+    }
+
+    public function handle_get_chat_history() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $id = intval($_POST['session_post_id']);
+        $history = get_post_meta($id, '_gp_chat_history', true) ?: array();
+        wp_send_json_success(array('history' => $history));
+    }
+
+    public function handle_admin_chat_reply() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $id = intval($_POST['session_post_id']);
+        $msg = sanitize_text_field($_POST['msg']);
+
+        $history = get_post_meta($id, '_gp_chat_history', true) ?: array();
+        $history[] = array(
+            'role' => 'ai', // Admin replies act as AI/System
+            'msg' => $msg,
+            'time' => current_time('mysql')
+        );
+        update_post_meta($id, '_gp_chat_history', $history);
+        update_post_meta($id, '_gp_last_active', current_time('mysql'));
+        wp_send_json_success();
     }
 
     public function render_strategic_notifications() {
@@ -53,6 +80,86 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'Strategic Tasks', 'Global Tasks', 'manage_options', 'growthpress-tasks', array( $this, 'render_global_tasks' ) );
         add_submenu_page( 'growthpress-dashboard', 'System Ecosystem', 'Ecosystem Map', 'manage_options', 'growthpress-ecosystem', array( $this, 'render_ecosystem_map' ) );
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
+    }
+
+    public function render_chat_command() {
+        $chats = get_posts(array('post_type' => 'gp_chat', 'posts_per_page' => -1, 'orderby' => 'meta_value', 'meta_key' => '_gp_last_active', 'order' => 'DESC'));
+        ?>
+        <div class="wrap growthpress-chat gp-reveal">
+            <div class="glass-card" style="background:#f0fdf4; border-left:5px solid #10b981; margin-bottom:30px; padding:25px;">
+                <h4 style="margin:0 0 10px 0; color:#065f46;">💬 Operational Pro-Tip: Real-time Re-engagement</h4>
+                <p style="margin:0; font-size:14px; color:#065f46; line-height:1.5;">Responding to active chat sessions within 3 minutes increases conversion by 44%. <strong>Success Pattern:</strong> Use the "Chat Templates" section to define high-authority responses for recurring technical queries.</p>
+            </div>
+
+            <h1>Strategic Chat Command Center</h1>
+            <div style="display:grid; grid-template-columns: 350px 1fr; gap:30px; margin-top:30px; height:700px;">
+                <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+                    <div style="padding:20px; background:rgba(0,0,0,0.02); border-bottom:1px solid #EEE; font-weight:900; font-size:11px; letter-spacing:1px;">ACTIVE SESSIONS</div>
+                    <div style="flex:1; overflow-y:auto;">
+                        <?php foreach($chats as $c):
+                            $history = get_post_meta($c->ID, '_gp_chat_history', true);
+                            $last_msg = end($history);
+                            ?>
+                            <div class="chat-session-item" style="padding:20px; border-bottom:1px solid #F1F5F9; cursor:pointer; transition:0.2s;" onclick="loadChatSession(<?php echo $c->ID; ?>, this)">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                    <strong style="font-size:13px;"><?php echo esc_html($c->post_title); ?></strong>
+                                    <span style="font-size:9px; opacity:0.4;"><?php echo date('H:i', strtotime(get_post_meta($c->ID, '_gp_last_active', true))); ?></span>
+                                </div>
+                                <div style="font-size:11px; opacity:0.6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo esc_html($last_msg['msg'] ?? 'No messages'); ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+                    <div id="chat-session-header" style="padding:20px; background:rgba(0,0,0,0.02); border-bottom:1px solid #EEE; font-weight:900; font-size:11px; letter-spacing:1px;">SELECT A SESSION</div>
+                    <div id="chat-session-body" style="flex:1; overflow-y:auto; padding:30px; display:flex; flex-direction:column; gap:20px;">
+                        <div style="text-align:center; margin-top:100px; opacity:0.3;">
+                            <span class="dashicons dashicons-format-chat" style="font-size:64px; width:64px; height:64px;"></span>
+                            <p>Strategic node awaiting uplink...</p>
+                        </div>
+                    </div>
+                    <div id="chat-session-footer" style="padding:20px; background:#F8FAFC; border-top:1px solid #EEE; display:none; gap:10px;">
+                        <input type="text" id="admin-chat-input" style="flex:1; border-radius:10px; border:1px solid #E2E8F0; padding:12px;" placeholder="Transmit response...">
+                        <button class="button button-primary" onclick="sendAdminChat()">SEND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        let currentSessionId = null;
+        function loadChatSession(id, el) {
+            jQuery('.chat-session-item').css('background', 'transparent');
+            jQuery(el).css('background', '#F0F9FF');
+            currentSessionId = id;
+            jQuery('#chat-session-header').text('SESSION ID: ' + jQuery(el).find('strong').text());
+            jQuery('#chat-session-body').html('<div style="text-align:center; padding:50px;">Calibrating history...</div>');
+            jQuery.post(ajaxurl, { action: 'gp_get_chat_history', session_post_id: id, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) {
+                    let html = '';
+                    res.data.history.forEach(m => {
+                        let align = m.role === 'user' ? 'flex-start' : 'flex-end';
+                        let bg = m.role === 'user' ? '#F1F5F9' : 'var(--primary)';
+                        let color = m.role === 'user' ? 'inherit' : 'white';
+                        html += `<div style="align-self:${align}; background:${bg}; color:${color}; padding:15px 20px; border-radius:20px; max-width:80%; font-size:13px; font-weight:600;">${m.msg}</div>`;
+                    });
+                    jQuery('#chat-session-body').html(html).scrollTop(100000);
+                    jQuery('#chat-session-footer').css('display', 'flex');
+                }
+            });
+        }
+        function sendAdminChat() {
+            const msg = jQuery('#admin-chat-input').val();
+            if(!msg) return;
+            jQuery.post(ajaxurl, { action: 'gp_admin_chat_reply', session_post_id: currentSessionId, msg: msg, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) {
+                    jQuery('#admin-chat-input').val('');
+                    loadChatSession(currentSessionId, jQuery(`.chat-session-item[onclick*="${currentSessionId}"]`));
+                }
+            });
+        }
+        </script>
+        <?php
     }
 
     public function render_funnel_command() {
