@@ -30,6 +30,7 @@ class GrowthPress_Dashboard {
 
     public function handle_chat_session_delete() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         $id = intval($_POST['session_post_id']);
         wp_delete_post($id, true);
         GrowthPress_Activity::log("Chat Command: Session ID #$id purged from ecosystem.");
@@ -38,6 +39,7 @@ class GrowthPress_Dashboard {
 
     public function handle_workflow_step_add() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         $step_name = sanitize_text_field($_POST['step_name']);
 
         $steps = get_option('gp_workflow_steps', array(
@@ -54,6 +56,7 @@ class GrowthPress_Dashboard {
 
     public function handle_erp_reorder() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         $item_id = intval($_POST['item_id']);
         $title = get_the_title($item_id);
 
@@ -63,6 +66,7 @@ class GrowthPress_Dashboard {
 
     public function handle_agency_activation() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         $slug = sanitize_text_field($_POST['slug']);
         $profiles = get_option('gp_agency_profiles', array());
 
@@ -77,6 +81,7 @@ class GrowthPress_Dashboard {
 
     public function handle_sales_lab_converse() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         $msg = sanitize_text_field($_POST['msg']);
         $arch = sanitize_text_field($_POST['archetype']);
         $diff = sanitize_text_field($_POST['difficulty']);
@@ -807,7 +812,8 @@ class GrowthPress_Dashboard {
     }
 
     public function enqueue_dashboard_assets( $hook ) {
-        if ( strpos($hook, 'growthpress') === false ) return;
+        $screens = array( 'edit-gp_lead', 'edit-gp_appointment', 'edit-gp_proposal', 'edit-gp_transaction', 'edit-gp_task', 'edit-gp_kb', 'edit-gp_project', 'edit-gp_service', 'edit-gp_staff', 'edit-gp_chat', 'edit-gp_chat_template', 'edit-gp_conflict', 'edit-gp_seo_cluster', 'edit-gp_inventory', 'edit-gp_referral' );
+        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) ) return;
 
         $mode = get_option('growthpress_visual_mode', 'light');
         add_filter('admin_body_class', function($classes) use ($mode) {

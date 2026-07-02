@@ -190,6 +190,7 @@ class GrowthPress_Payments {
     }
 
     public function handle_deposit() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         // Mock Stripe/PayPal integration logic
         $transaction_id = intval($_POST['transaction_id']);
         update_post_meta( $transaction_id, '_status', 'Paid' );

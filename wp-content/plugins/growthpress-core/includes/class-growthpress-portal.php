@@ -11,6 +11,7 @@ class GrowthPress_Portal {
 
     public function __construct() {
         add_shortcode( 'gp_client_portal', array( $this, 'render_portal' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_portal_assets' ) );
         add_action( 'wp_ajax_gp_request_reschedule', array( $this, 'handle_reschedule_request' ) );
         add_action( 'wp_ajax_gp_update_portal_profile', array( $this, 'handle_profile_update' ) );
         add_action( 'wp_ajax_gp_portal_upload', array( $this, 'handle_portal_upload' ) );
@@ -19,11 +20,31 @@ class GrowthPress_Portal {
         add_action( 'wp_ajax_gp_submit_onboarding', array( $this, 'handle_onboarding_submission' ) );
     }
 
+    public function enqueue_portal_assets() {
+        global $post;
+        if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'gp_client_portal' ) ) {
+            wp_localize_script( 'jquery', 'gp_portal', array(
+                'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'gp_portal_nonce' )
+            ) );
+        }
+    }
+
+    private function verify_lead_ownership( $lead_id ) {
+        if ( ! is_user_logged_in() ) return false;
+        $user = wp_get_current_user();
+        $email = get_post_meta( $lead_id, '_lead_email', true );
+        return ( $email === $user->user_email );
+    }
+
     public function handle_onboarding_submission() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         $user = wp_get_current_user();
         $lead_id = intval($_POST['lead_id']);
-        $goals = sanitize_textarea_field($_POST['onboarding_goals']);
 
+        if ( ! $this->verify_lead_ownership( $lead_id ) ) wp_send_json_error( 'Ownership verification failed.' );
+
+        $goals = sanitize_textarea_field($_POST['onboarding_goals']);
         update_post_meta($lead_id, '_gp_onboarding_data', $goals);
         update_post_meta($lead_id, '_gp_onboarding_complete', '1');
 
@@ -32,6 +53,7 @@ class GrowthPress_Portal {
     }
 
     public function handle_referral_submission() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         $name = sanitize_text_field($_POST['ref_name']);
         $email = sanitize_email($_POST['ref_email']);
         $source_user = wp_get_current_user();
@@ -53,12 +75,15 @@ class GrowthPress_Portal {
     }
 
     public function handle_portal_upload() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         $user = wp_get_current_user();
         $email = $user->user_email;
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email, 'posts_per_page' => 1 ) );
 
         if ( ! empty($leads) ) {
             $lead_id = $leads[0]->ID;
+            if ( ! $this->verify_lead_ownership( $lead_id ) ) wp_send_json_error();
+
             $vault = get_post_meta($lead_id, '_secure_vault', true) ?: array();
             $vault[] = array(
                 'name' => sanitize_text_field($_POST['file_name']),
@@ -73,12 +98,15 @@ class GrowthPress_Portal {
     }
 
     public function handle_profile_update() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         $user = wp_get_current_user();
         $email = $user->user_email;
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email, 'posts_per_page' => 1 ) );
 
         if ( ! empty($leads) ) {
             $lead_id = $leads[0]->ID;
+            if ( ! $this->verify_lead_ownership( $lead_id ) ) wp_send_json_error();
+
             update_post_meta( $lead_id, '_lead_phone', sanitize_text_field( $_POST['phone'] ) );
             update_post_meta( $lead_id, '_lead_zip', sanitize_text_field( $_POST['zip'] ) );
             wp_send_json_success( 'Strategic profile synchronized.' );
@@ -87,12 +115,20 @@ class GrowthPress_Portal {
     }
 
     public function handle_reschedule_request() {
-        update_post_meta(intval($_POST['appointment_id']), '_reschedule_requested', '1');
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
+        $appt_id = intval($_POST['appointment_id']);
+        $email = get_post_meta($appt_id, '_client_email', true);
+        if ($email !== wp_get_current_user()->user_email) wp_send_json_error();
+
+        update_post_meta($appt_id, '_reschedule_requested', '1');
         wp_send_json_success();
     }
 
     public function handle_mark_milestone() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
+        if ( ! $this->verify_lead_ownership( $lead_id ) ) wp_send_json_error();
+
         $milestone_index = intval($_POST['index']);
         $status = sanitize_text_field($_POST['status']);
 
@@ -162,7 +198,7 @@ class GrowthPress_Portal {
                             function submitOnboarding(id) {
                                 const goals = jQuery('#onboard-goals').val();
                                 if(!goals) return alert('Input objectives node.');
-                                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_onboarding', lead_id: id, onboarding_goals: goals }, function(res) {
+                                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_onboarding', lead_id: id, onboarding_goals: goals, gp_nonce: gp_portal.nonce }, function(res) {
                                     if(res.success) location.reload();
                                 });
                             }
@@ -234,7 +270,8 @@ class GrowthPress_Portal {
                                 action: 'gp_mark_milestone',
                                 lead_id: leadId,
                                 index: index,
-                                status: isChecked ? 'complete' : 'pending'
+                                status: isChecked ? 'complete' : 'pending',
+                                gp_nonce: gp_portal.nonce
                             }, function() {
                                 // Real-time feedback via opacity if needed, but simple reload for fidelity
                                 location.reload();
@@ -323,7 +360,7 @@ class GrowthPress_Portal {
                             const name = prompt("Enter asset name for encryption:");
                             if(!name) return;
                             jQuery('#vault-status').fadeIn();
-                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_portal_upload', file_name: name }, function(res) {
+                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_portal_upload', file_name: name, gp_nonce: gp_portal.nonce }, function(res) {
                                 if(res.success) {
                                     alert(res.data);
                                     location.reload();
@@ -374,7 +411,7 @@ class GrowthPress_Portal {
                             const name = jQuery('#ref-name').val();
                             const email = jQuery('#ref-email').val();
                             if(!name || !email) return alert('Input identity nodes.');
-                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_referral', ref_name: name, ref_email: email }, function(res) {
+                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_referral', ref_name: name, ref_email: email, gp_nonce: gp_portal.nonce }, function(res) {
                                 if(res.success) {
                                     alert(res.data);
                                     jQuery('#gp-portal-referral').html('<div style="text-align:center; padding:20px; color:#166534; font-weight:900;">REFERRAL NODE SYNCED</div>');
@@ -426,7 +463,8 @@ class GrowthPress_Portal {
                 jQuery.post(gp_ajax.ajaxurl, {
                     action: 'gp_update_portal_profile',
                     phone: jQuery('#prof-phone').val(),
-                    zip: jQuery('#prof-zip').val()
+                    zip: jQuery('#prof-zip').val(),
+                    gp_nonce: gp_portal.nonce
                 }, function(res) {
                     if(res.success) alert(res.data);
                 });
@@ -434,7 +472,7 @@ class GrowthPress_Portal {
 
             function acceptProposal(id) {
                 if(!confirm("Execute agreement and engagement of proprietary services?")) return;
-                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_accept_proposal', proposal_id: id }, function(res) {
+                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_accept_proposal', proposal_id: id, gp_nonce: gp_portal.nonce }, function(res) {
                     if(res.success) {
                         alert("AGREEMENT DIGITALLY EXECUTED. KICKOFF PROTOCOL ENGAGED.");
                         location.reload();
