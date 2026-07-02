@@ -224,6 +224,7 @@ class GrowthPress_Content_Studio {
                     </div>
 
                     <button class="button button-primary button-hero" onclick="generateContent()" style="width:100%; height:60px !important; border-radius:12px !important; font-weight:900;">INITIALIZE GENERATION</button>
+                    <p style="margin-top:15px; font-size:11px; opacity:0.5; font-weight:700; text-align:center;">STRATEGIC NOTE: Neural generation takes 15-45 seconds depending on asset complexity.</p>
                 </div>
 
                 <!-- Center: Output & Preview -->
@@ -235,8 +236,13 @@ class GrowthPress_Content_Studio {
                                 <span style="font-size:11px; font-weight:950; opacity:0.5; letter-spacing:2px; text-transform: uppercase;">Intelligence Stream</span>
                             </div>
                             <div style="display:flex; gap:10px;">
-                                <button class="button button-small" onclick="generateSocialImage()" style="background:var(--primary); color:white; border:none; font-weight: 800;">GENERATE IMAGE</button>
-                                <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none; font-weight: 800;">COPY RAW</button>
+                                <div style="text-align:right;">
+                                    <div style="display:flex; gap:10px;">
+                                        <button class="button button-small" onclick="generateSocialImage()" style="background:var(--primary); color:white; border:none; font-weight: 800;">GENERATE IMAGE</button>
+                                        <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none; font-weight: 800;">COPY RAW</button>
+                                    </div>
+                                    <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700; color:white;">IMAGE GEN: 5-10s.</p>
+                                </div>
                             </div>
                         </div>
                         <div id="gp-studio-output" style="padding:45px; font-family:'JetBrains Mono', monospace; font-size:14px; line-height:1.8; height:480px; overflow-y:auto; color:rgba(255,255,255,0.95); position: relative;">
@@ -281,7 +287,9 @@ class GrowthPress_Content_Studio {
                         <button class="sync-btn" onclick="syncAsset('gp_treatment')" style="--sync-color: #EF4444;">Sync to Treatments</button>
                         <button class="sync-btn" onclick="syncAsset('gp_seo_cluster')" style="--sync-color: #7C3AED;">Sync to SEO Clusters</button>
                         <button class="sync-btn" onclick="syncAsset('sync_all')" style="--sync-color: var(--primary); background:var(--primary-glow); border-style:dashed;">Propagate to All Nodes</button>
+                        <p style="font-size:9px; opacity:0.4; text-align:center; font-weight:700;">NOTE: Node sync takes 1-2s.</p>
                         <button class="sync-btn" onclick="syndicateContent()" style="--sync-color: #000; margin-top:15px; border-style: double;">Syndicate to Social Nodes (Task 35)</button>
+                        <p style="font-size:9px; opacity:0.4; text-align:center; font-weight:700;">NOTE: Multi-channel queue takes 3-5s.</p>
                     </div>
 
                     <hr style="margin:40px 0; opacity:0.1;">

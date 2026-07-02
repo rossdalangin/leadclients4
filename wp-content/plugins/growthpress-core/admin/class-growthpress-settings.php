@@ -246,6 +246,7 @@ class GrowthPress_Settings {
                             <td>
                                 <button type="button" class="button" onclick="verifyPayPal()">Verify PayPal Handshake</button>
                                 <span id="paypal-test-res" style="margin-left:15px; font-weight:700;"></span>
+                                <p style="margin-top:10px; font-size:11px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Handshake sequence takes 2-4 seconds.</p>
                             </td>
                         </tr>
                         <tr class="section-header"><th colspan="2"><h3>Communications Hub</h3></th></tr>
@@ -292,6 +293,7 @@ class GrowthPress_Settings {
                             <td>
                                 <button type="button" class="button button-primary" onclick="activateLicense()">Authenticate Node</button>
                                 <span id="license-action-res" style="margin-left:15px; font-weight:700;"></span>
+                                <p style="margin-top:10px; font-size:11px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Remote signature verification takes 5-10 seconds. Do not exit tab.</p>
                             </td>
                         </tr>
                     </table>
@@ -350,6 +352,7 @@ class GrowthPress_Settings {
                             <td>
                                 <button type="button" class="button" onclick="verifyZoom()">Verify Zoom Connectivity</button>
                                 <span id="zoom-test-res" style="margin-left:15px; font-weight:700;"></span>
+                                <p style="margin-top:10px; font-size:11px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Handshake sequence takes 3-5 seconds.</p>
                             </td>
                         </tr>
                         <tr class="section-header"><th colspan="2"><h3>External Strategic Nodes</h3></th></tr>
@@ -412,6 +415,7 @@ class GrowthPress_Settings {
                     <div style="margin-top:20px; padding:20px; background:#F0FDF4; border-radius:15px; border:1px solid #BBF7D0;">
                         <button type="button" class="button" onclick="testAI()">Verify Active AI Connection</button>
                         <span id="ai-test-res" style="margin-left:15px; font-weight:700;"></span>
+                        <p style="margin-top:10px; font-size:11px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Handshake takes 3-5 seconds to confirm node synchronization.</p>
                     </div>
                 </div>
             </div>
@@ -547,6 +551,7 @@ class GrowthPress_Settings {
                             <h4 style="margin-top:0;">Ecosystem Diagnostics</h4>
                             <p style="font-size:13px; opacity:0.7; margin-bottom:30px;">Verify the integrity of all 14 Custom Post Types and core shortcode registration status across the OS.</p>
                             <button type="button" class="gp-btn" onclick="runDiagnostics()" style="background:#10B981; color:white; width:100%; height:60px; border-radius:15px;">Run System Audit</button>
+                            <p style="margin-top:15px; font-size:11px; opacity:0.5; font-weight:700; text-align:center;">STRATEGIC NOTE: Full audit takes 10-15 seconds to scan all relational nodes.</p>
                         </div>
                     </div>
 

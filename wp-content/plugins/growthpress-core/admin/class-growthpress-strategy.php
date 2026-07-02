@@ -51,6 +51,7 @@ class GrowthPress_Strategy {
                 <h3 style="font-size:2rem; margin-bottom:20px;">Initialize Strategic Generation</h3>
                 <p style="font-size:16px; opacity:0.6; margin-bottom:40px;">Our AI Strategist will analyze your niche cluster and generate a complete marketing and operations plan. <strong>Success Pattern:</strong> Elite firms implement the first 90 days immediately to establish absolute sector authority before scaling high-ticket outreach.</p>
                 <button class="button button-primary button-hero" style="height:70px; padding:0 50px; font-size:16px; border-radius:18px;" onclick="generateRoadmap()">INITIALIZE STRATEGY ENGINE</button>
+                <p style="margin-top:15px; font-size:12px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Generation takes 20-40 seconds to architect your multi-quarter roadmap. Do not refresh.</p>
 
                 <div id="gp-roadmap-status" style="display:none; margin-top:40px;">
                     <div style="display:flex; align-items:center; gap:20px;">

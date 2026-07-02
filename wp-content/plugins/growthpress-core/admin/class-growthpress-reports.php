@@ -245,7 +245,10 @@ class GrowthPress_Reports {
 
             <div class="glass-card gp-reveal" style="margin-top:40px; background:linear-gradient(135deg, #0F172A, #1E293B); color:white; border:none; padding:60px; border-radius:40px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                    <h3 style="color:white; margin:0; font-size:2rem;">Principal Executive Summary</h3>
+                    <div>
+                        <h3 style="color:white; margin:0; font-size:2rem;">Principal Executive Summary</h3>
+                        <p style="color:rgba(255,255,255,0.4); font-size:11px; margin-top:10px; font-weight:700;">STRATEGIC NOTE: Analysis may take 15-30 seconds to synthesize all ecosystem nodes.</p>
+                    </div>
                     <button class="gp-btn" onclick="generateExecSummary()" style="background:var(--primary); color:white; border:none;">GENERATE INTELLIGENCE BRIEF</button>
                 </div>
                 <div id="exec-summary-output" style="font-size:16px; line-height:1.8; opacity:0.8; font-family:'Inter', sans-serif;">

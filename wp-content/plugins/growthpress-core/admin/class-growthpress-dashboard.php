@@ -204,6 +204,7 @@ class GrowthPress_Dashboard {
                                 <td style="padding:20px;">
                                     <?php if($status !== 'Lead Created'): ?>
                                         <button class="button button-primary" onclick="processReferral(<?php echo $r->ID; ?>, this)">CONVERT TO LEAD</button>
+                                        <p style="font-size:9px; opacity:0.5; margin-top:8px; font-weight:700;">STRATEGIC NOTE: Conversion and AI triage sequence takes 3-5 seconds.</p>
                                     <?php else: ?>
                                         <a href="<?php echo get_edit_post_link(get_post_meta($r->ID, '_converted_lead_id', true)); ?>" class="button">VIEW DOSSIER</a>
                                     <?php endif; ?>
@@ -250,6 +251,7 @@ class GrowthPress_Dashboard {
                     <h3 style="margin-top:0;">Input Agreement</h3>
                     <textarea id="contract-input" style="width:100%; height:400px; border-radius:20px; padding:30px; font-family:'Inter', sans-serif; font-size:14px;" placeholder="Paste incoming contract text here for neural redlining..."></textarea>
                     <button class="button button-primary button-hero" style="width:100%; height:60px; margin-top:30px; border-radius:15px; font-weight:950;" onclick="executeRedline()">EXECUTE REDLINE ANALYSIS</button>
+                    <p style="margin-top:10px; font-size:11px; opacity:0.5; font-weight:700; text-align:center;">STRATEGIC NOTE: Legal redlining analysis takes 15-25 seconds.</p>
                 </div>
                 <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:#0F172A; color:white; border:none;">
                     <div style="padding:25px 40px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
@@ -261,6 +263,7 @@ class GrowthPress_Dashboard {
                     </div>
                     <div style="padding:25px 40px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.1);">
                         <button class="gp-btn" style="width:100%; font-size:11px; padding:12px; border-radius:10px;" onclick="alert('Synchronizing redlines to CRM dossier...')">SYNC TO DOSSIER</button>
+                        <p style="font-size:9px; opacity:0.5; margin-top:10px; font-weight:700; text-align:center;">NOTE: Asset synchronization takes 1-2s.</p>
                     </div>
                 </div>
             </div>
@@ -356,6 +359,7 @@ class GrowthPress_Dashboard {
                             <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
                         </div>
                         <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
+                        <p style="font-size:9px; opacity:0.4; margin-top:8px; text-align:center; font-weight:700;">STRATEGIC NOTE: Dispatches supply chain API request (2-3s).</p>
                     </div>
                 <?php endforeach; else: ?>
                     <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
@@ -415,8 +419,9 @@ class GrowthPress_Dashboard {
                         </div>
                     <?php $idx++; endforeach; ?>
 
-                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="addWorkflowStep()">
-                        <span style="font-size:12px; font-weight:900; opacity:0.4;">+ ADD ORCHESTRATION STEP</span>
+                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; cursor:pointer; text-align:center;" onclick="addWorkflowStep()">
+                        <div style="font-size:12px; font-weight:900; opacity:0.4;">+ ADD ORCHESTRATION STEP</div>
+                        <p style="font-size:9px; opacity:0.3; margin-top:8px; font-weight:700;">NOTE: Node integration takes 1-2s.</p>
                     </div>
                 </div>
             </div>
@@ -461,10 +466,11 @@ class GrowthPress_Dashboard {
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="alert('Instantiating new brand node...')">
+                <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; cursor:pointer;" onclick="alert('Instantiating new brand node...')">
                     <div style="text-align:center;">
                         <div style="font-size:32px; margin-bottom:10px;">+</div>
                         <div style="font-size:11px; font-weight:950; letter-spacing:1px;">INSTANTIATE NEW PROFILE</div>
+                        <p style="font-size:9px; opacity:0.3; margin-top:15px; font-weight:700;">NOTE: Node creation takes 2-3s.</p>
                     </div>
                 </div>
             </div>
@@ -523,10 +529,11 @@ class GrowthPress_Dashboard {
                             <p>Strategic node awaiting uplink...</p>
                         </div>
                     </div>
-                    <div id="chat-session-footer" style="padding:20px; background:#F8FAFC; border-top:1px solid #EEE; display:none; gap:10px;">
+                    <div id="chat-session-footer" style="padding:20px; background:#F8FAFC; border-top:1px solid #EEE; display:none; gap:10px; flex-wrap:wrap;">
                         <input type="text" id="admin-chat-input" style="flex:1; border-radius:10px; border:1px solid #E2E8F0; padding:12px;" placeholder="Transmit response...">
                         <button class="button button-primary" onclick="sendAdminChat()">SEND</button>
                         <button class="button" style="background:#EF4444; color:white; border:none;" onclick="deleteChatSession()">PURGE</button>
+                        <p style="width:100%; font-size:9px; opacity:0.5; margin-top:8px; font-weight:700; text-align:center;">NOTE: Transmission through neural link takes 1-2s.</p>
                     </div>
                 </div>
             </div>
@@ -693,6 +700,7 @@ class GrowthPress_Dashboard {
                         </select>
                     </div>
                     <button class="button button-primary button-hero" style="width:100%; height:60px; margin-top:40px; border-radius:15px;" onclick="startSimulation()">INITIALIZE SIMULATION</button>
+                    <p style="margin-top:15px; font-size:11px; opacity:0.5; font-weight:700; text-align:center;">STRATEGIC NOTE: Neural link setup takes 3-5 seconds.</p>
                 </div>
 
                 <div class="glass-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:#0F172A; border:none; color:white;">

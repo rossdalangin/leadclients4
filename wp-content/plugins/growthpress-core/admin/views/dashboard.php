@@ -7,7 +7,7 @@
                 <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.09em; margin:0; line-height:1;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.25;">OS</span></h1>
             <?php endif; ?>
             <div style="height:45px; width:1px; background:rgba(0,0,0,0.1);"></div>
-            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="height:55px; background:rgba(255,255,255,0.8); border:1px solid rgba(0,0,0,0.05); padding:0 20px; border-radius:15px; font-size:11px; font-weight:950; letter-spacing:3px; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.02);">
+            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="height:55px; background:rgba(255,255,255,0.8); border:1px solid rgba(0,0,0,0.05); padding:0 20px; border-radius:15px; font-size:11px; font-weight:950; letter-spacing:3px; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.02);" title="STRATEGIC NOTE: Niche recalibration takes 10-15 seconds to synchronize all 14 nodes.">
                 <?php
                 $active_niche = get_option('growthpress_niche', 'business');
                 $niches = array('dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants');
@@ -339,9 +339,12 @@
                                             </div>
                                         </div>
 
-                                        <div style="margin-top:25px; display: flex; gap:10px;">
-                                            <a href="<?php echo get_edit_post_link($lead->ID); ?>" class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:var(--secondary); text-align:center; color:white !important; font-weight: 800; letter-spacing: 0.5px;">INTEL BRIEF</a>
-                                            <button class="gp-btn" style="padding:12px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--secondary) !important; width:48px;"><span class="dashicons dashicons-email"></span></button>
+                                        <div style="margin-top:25px;">
+                                            <div style="display: flex; gap:10px;">
+                                                <a href="<?php echo get_edit_post_link($lead->ID); ?>" class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:var(--secondary); text-align:center; color:white !important; font-weight: 800; letter-spacing: 0.5px;">INTEL BRIEF</a>
+                                                <button class="gp-btn" style="padding:12px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--secondary) !important; width:48px;"><span class="dashicons dashicons-email"></span></button>
+                                            </div>
+                                            <p style="font-size:9px; opacity:0.5; margin-top:8px; font-weight:700; text-align:center;">NOTE: Neural dossier loads in 2-3s.</p>
                                         </div>
                                     </div>
                                 <?php endif;
