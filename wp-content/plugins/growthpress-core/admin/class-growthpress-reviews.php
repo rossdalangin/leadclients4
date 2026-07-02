@@ -27,6 +27,7 @@ class GrowthPress_Reviews_Manager {
 
     public function handle_reply_generation() {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         $review_id = intval($_POST['review_id']);
         $reputation = new GrowthPress_Reputation();
         $reply = $reputation->suggest_review_reply($review_id);
@@ -51,6 +52,7 @@ class GrowthPress_Reviews_Manager {
                         <h3><?php echo esc_html($review->post_title); ?></h3>
                         <p><?php echo esc_html($review->post_content); ?></p>
                         <button class="button" onclick="generateReply(<?php echo $review->ID; ?>)">Generate AI Reply</button>
+                        <p style="font-size:9px; opacity:0.5; margin-top:5px; font-weight:700;">NOTE: AI synthesis takes 3-5s.</p>
                         <div id="reply-<?php echo $review->ID; ?>" style="margin-top:10px; font-style:italic;"></div>
                     </div>
                 <?php endforeach; ?>

@@ -26,6 +26,41 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_erp_reorder', array( $this, 'handle_erp_reorder' ) );
         add_action( 'wp_ajax_gp_workflow_step_add', array( $this, 'handle_workflow_step_add' ) );
         add_action( 'wp_ajax_gp_chat_session_delete', array( $this, 'handle_chat_session_delete' ) );
+        add_action( 'wp_ajax_gp_edit_agency_node', array( $this, 'handle_agency_edit' ) );
+        add_action( 'wp_ajax_gp_generate_challenger', array( $this, 'handle_generate_challenger' ) );
+    }
+
+    public function handle_generate_challenger() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $id = intval($_POST['funnel_id']);
+        $title = get_the_title($id);
+
+        $ai = GrowthPress_AI::get_instance();
+        $challenger = $ai->call_ai("Generate a high-urgency A/B challenger headline for a funnel named: \"$title\". Focus on immediate clinical/legal realization.", "CRO Optimizer");
+
+        update_post_meta($id, '_hits_B', 0);
+        update_post_meta($id, '_challenger_copy', $challenger);
+
+        GrowthPress_Activity::log("Funnel Command: Challenger variation initialized for \"$title\". Traffic share reset to 50/50.");
+        wp_send_json_success("Challenger Node generated: \"$challenger\". A/B sequence active.");
+    }
+
+    public function handle_agency_edit() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $slug = sanitize_text_field($_POST['slug']);
+        $name = sanitize_text_field($_POST['name']);
+        $niche = sanitize_text_field($_POST['niche']);
+
+        $profiles = get_option('gp_agency_profiles', array());
+        if(isset($profiles[$slug])) {
+            $profiles[$slug]['name'] = $name;
+            $profiles[$slug]['niche'] = $niche;
+            update_option('gp_agency_profiles', $profiles);
+            wp_send_json_success("Agency Node \"$slug\" successfully recalibrated.");
+        }
+        wp_send_json_error("Node not found.");
     }
 
     public function handle_chat_session_delete() {
@@ -359,7 +394,7 @@ class GrowthPress_Dashboard {
                             <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
                         </div>
                         <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
-                        <p style="font-size:9px; opacity:0.4; margin-top:8px; text-align:center; font-weight:700;">STRATEGIC NOTE: Dispatches supply chain API request (2-3s).</p>
+                        <p style="font-size:9px; opacity:0.4; margin-top:10px; text-align:center; font-weight:700; line-height:1.4;">STRATEGIC NOTE: 'Re-order' synchronizes with your supply chain API to replenish inventory nodes. This maintains 100% operational availability for Q4 realization targets.</p>
                     </div>
                 <?php endforeach; else: ?>
                     <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
@@ -462,7 +497,7 @@ class GrowthPress_Dashboard {
                         <div style="font-size:11px; font-weight:900; opacity:0.4; letter-spacing:2px; margin:15px 0;"><?php echo strtoupper($p['niche']); ?> NODE</div>
                         <div style="display:flex; gap:10px;">
                             <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px;" onclick="switchAgencyProfile('<?php echo $slug; ?>')">ACTIVATE NODE</button>
-                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;">EDIT BRAND</button>
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="editAgencyProfile('<?php echo $slug; ?>', '<?php echo esc_js($p['name']); ?>', '<?php echo esc_js($p['niche']); ?>')">EDIT BRAND</button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -481,6 +516,23 @@ class GrowthPress_Dashboard {
             jQuery.post(ajaxurl, {
                 action: 'gp_activate_agency_node',
                 slug: slug,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        function editAgencyProfile(slug, name, niche) {
+            const newName = prompt('Calibrate Brand Name:', name);
+            const newNiche = prompt('Calibrate Niche (e.g. law, dental):', niche);
+            if(!newName || !newNiche) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_edit_agency_node',
+                slug: slug,
+                name: newName,
+                niche: newNiche,
                 gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
             }, function(res) {
                 if(res.success) {
@@ -620,14 +672,30 @@ class GrowthPress_Dashboard {
                             <span><?php echo $rateA; ?>% TRAFFIC SHARE</span>
                             <span><?php echo $rateB; ?>% TRAFFIC SHARE</span>
                         </div>
-                        <div style="margin-top:40px; display:flex; gap:10px;">
+                        <div style="margin-top:40px; display:flex; gap:10px; flex-wrap:wrap;">
                             <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:var(--primary); color:white !important;" onclick="generateChallenger(<?php echo $f->ID; ?>)">GENERATE CHALLENGER</button>
                             <a href="post.php?post=<?php echo $f->ID; ?>&action=edit" class="gp-btn" style="flex:1; text-align:center; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;">EDIT</a>
+                            <p style="width:100%; font-size:9px; opacity:0.4; margin-top:10px; font-weight:700; text-align:center;">STRATEGIC NOTE: 'Generate Challenger' utilizes AI to architect a high-urgency A/B headline. This resets Variation B traffic to 0% to begin a new 30-day clinical optimization cycle.</p>
                         </div>
                     </div>
                 <?php endforeach; else: echo "<p style='opacity:0.5;'>No active conversion funnels detected in ecosystem.</p>"; endif; ?>
             </div>
         </div>
+        <script>
+        function generateChallenger(id) {
+            if(!confirm('Initialize A/B Challenger node? This will reset Variation B traffic data.')) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_generate_challenger',
+                funnel_id: id,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        </script>
         <?php
     }
 
@@ -821,7 +889,7 @@ class GrowthPress_Dashboard {
 
     public function enqueue_dashboard_assets( $hook ) {
         $screens = array( 'edit-gp_lead', 'edit-gp_appointment', 'edit-gp_proposal', 'edit-gp_transaction', 'edit-gp_task', 'edit-gp_kb', 'edit-gp_project', 'edit-gp_service', 'edit-gp_staff', 'edit-gp_chat', 'edit-gp_chat_template', 'edit-gp_conflict', 'edit-gp_seo_cluster', 'edit-gp_inventory', 'edit-gp_referral' );
-        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) ) return;
+        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) && strpos($hook, 'growthpress-strategy') === false && strpos($hook, 'growthpress-reviews') === false ) return;
 
         $mode = get_option('growthpress_visual_mode', 'light');
         add_filter('admin_body_class', function($classes) use ($mode) {
@@ -849,7 +917,7 @@ class GrowthPress_Dashboard {
             wp_add_inline_style( 'growthpress-admin-css', $custom_css );
         }
 
-        if ( 'toplevel_page_growthpress-dashboard' === $hook || strpos($hook, 'growthpress-studio') !== false || strpos($hook, 'growthpress-reports') !== false ) {
+        if ( 'toplevel_page_growthpress-dashboard' === $hook || strpos($hook, 'growthpress-studio') !== false || strpos($hook, 'growthpress-reports') !== false || strpos($hook, 'growthpress-strategy') !== false || strpos($hook, 'growthpress-reviews') !== false ) {
             wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
             wp_enqueue_script( 'jquery-ui-draggable' );
             wp_enqueue_script( 'jquery-ui-droppable' );
