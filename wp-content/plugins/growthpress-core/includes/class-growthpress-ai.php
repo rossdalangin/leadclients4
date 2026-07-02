@@ -167,7 +167,14 @@ class GrowthPress_AI {
     }
 
     public function generate_growth_roadmap( $niche ) {
-        return $this->call_ai( "Generate a 12-month business growth and AI automation roadmap for a $niche business.", "You are a growth strategist." );
+        $prompt = "Generate a comprehensive 12-month business growth and AI automation roadmap for a $niche firm.
+        Structure the response into 4 distinct quarters:
+        Q1: Foundation & Authority (Focus on niche calibration, CRM setup, and lead capture nodes)
+        Q2: Operational Acceleration (Focus on AI triage, automated nurture, and sales lab integration)
+        Q3: Market Dominance (Focus on content syndication, SEO geo-fencing, and referral loops)
+        Q4: Scaled Realization (Focus on ERP optimization, enterprise SSO, and predictive ROI modeling)
+        For each month, provide 3 specific strategic actions and one 'Neural Milestone'. Use bold headers and clean bullet points. Focus on high-ticket realization.";
+        return $this->call_ai( $prompt, "Senior Growth Architect & Operational Strategist" );
     }
 
     public function predict_deal_probability( $lead_id ) {

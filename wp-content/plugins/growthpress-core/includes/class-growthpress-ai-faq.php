@@ -73,10 +73,11 @@ class GrowthPress_AI_FAQ {
             .gp-msg-ai { background: white; color: #1E293B; border-bottom-left-radius: 5px; border: 1px solid rgba(0,0,0,0.05); align-self: flex-start; font-weight: 500; }
             .gp-msg-user { background: <?php echo $primary; ?>; color: white; border-bottom-right-radius: 5px; align-self: flex-end; font-weight: 600; }
 
-            .dark-theme .gp-chat-window { background: #0F172A !important; border-color: rgba(255,255,255,0.1) !important; color: #F8FAFC; }
-            .dark-theme .gp-msg-ai { background: #1E293B; color: #F1F5F9; border-color: rgba(255,255,255,0.05); }
-            .dark-theme .gp-chat-footer { background: #0F172A; border-top-color: rgba(255,255,255,0.05); }
-            .dark-theme .gp-chat-footer input { background: #1E293B; border-color: rgba(255,255,255,0.1); color: white; }
+            .dark-theme .gp-chat-window { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98)) !important; border-color: rgba(255,255,255,0.1) !important; color: #F8FAFC; }
+            .dark-theme .gp-msg-ai { background: rgba(255,255,255,0.05); color: #F1F5F9; border: 1px solid rgba(255,255,255,0.1); }
+            .dark-theme .gp-msg-user { box-shadow: 0 15px 35px var(--primary-glow); }
+            .dark-theme .gp-chat-footer { background: transparent; border-top-color: rgba(255,255,255,0.1); }
+            .dark-theme .gp-chat-footer input { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white; }
 
             .gp-chat-footer { padding: 30px; background: white; border-top: 1px solid #F1F5F9; display: flex; gap: 15px; align-items: center; border-radius: 0 0 40px 40px; }
             .gp-chat-footer input { flex: 1; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px 25px; font-size: 15px; outline: none; transition: all 0.3s ease; margin:0; background: #F8FAFC; font-weight: 600; }
