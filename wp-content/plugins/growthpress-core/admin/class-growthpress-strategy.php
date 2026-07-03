@@ -48,10 +48,13 @@ class GrowthPress_Strategy {
             </div>
 
             <div class="glass-card" style="padding:60px; border-radius:40px; border-top: 8px solid var(--primary);">
+                <div style="background:#FFFBEB; border-left:5px solid #F59E0B; padding:20px; border-radius:15px; margin-bottom:40px; display:flex; gap:15px; align-items:center;">
+                    <div style="font-size:24px;">⌛</div>
+                    <div style="font-size:13px; font-weight:800; color:#92400E; line-height:1.4;">STRATEGIC NOTE: Roadmap generation involves complex niche-cluster analysis and multi-quarter architecture. Processing takes 20-40 seconds. Do not refresh the terminal.</div>
+                </div>
                 <h3 style="font-size:2rem; margin-bottom:20px;">Initialize Strategic Generation</h3>
                 <p style="font-size:16px; opacity:0.6; margin-bottom:40px;">Our AI Strategist will analyze your niche cluster and generate a complete marketing and operations plan. <strong>Success Pattern:</strong> Elite firms implement the first 90 days immediately to establish absolute sector authority before scaling high-ticket outreach.</p>
                 <button class="button button-primary button-hero" style="height:70px; padding:0 50px; font-size:16px; border-radius:18px;" onclick="generateRoadmap()">INITIALIZE STRATEGY ENGINE</button>
-                <p style="margin-top:15px; font-size:12px; opacity:0.5; font-weight:700;">STRATEGIC NOTE: Generation takes 20-40 seconds to architect your multi-quarter roadmap. Do not refresh.</p>
 
                 <div id="gp-roadmap-status" style="display:none; margin-top:40px;">
                     <div style="display:flex; align-items:center; gap:20px;">
@@ -66,12 +69,22 @@ class GrowthPress_Strategy {
         <script>
         function generateRoadmap() {
             var $ = jQuery;
+            gp_start_intelligence_uplink('ARCHITECTING 12-MONTH ROADMAP...');
             $('#gp-roadmap-status').fadeIn();
             $('#gp-roadmap-output').hide().html('');
             $.post(ajaxurl, { action: 'gp_generate_roadmap', gp_nonce: gp_admin.nonce }, function(res) {
+                gp_stop_intelligence_uplink();
                 $('#gp-roadmap-status').hide();
                 if(res.success) {
-                    $('#gp-roadmap-output').html('<div class="glass-card" style="background:#FFF; padding:60px; border-radius:30px; border:1px solid #EEE; box-shadow:0 15px 35px rgba(0,0,0,0.05); white-space: pre-wrap;">' + res.data + '</div>').fadeIn(600);
+                    // Structure the roadmap with cinematic styling
+                    let structured = res.data;
+                    structured = structured.replace(/Q1:/g, '<h2 style="color:var(--primary); margin-top:0;">Q1: Foundation & Authority</h2>');
+                    structured = structured.replace(/Q2:/g, '<h2 style="color:#10B981; margin-top:60px;">Q2: Operational Acceleration</h2>');
+                    structured = structured.replace(/Q3:/g, '<h2 style="color:#F59E0B; margin-top:60px;">Q3: Market Dominance</h2>');
+                    structured = structured.replace(/Q4:/g, '<h2 style="color:#EF4444; margin-top:60px;">Q4: Scaled Realization</h2>');
+                    structured = structured.replace(/Neural Milestone:/g, '<div style="background:var(--primary-glow); padding:15px 25px; border-radius:15px; margin-top:15px; font-weight:950; color:var(--primary); font-size:13px; display:inline-block;">🎯 NEURAL MILESTONE:</div>');
+
+                    $('#gp-roadmap-output').html('<div class="glass-card" style="background:#FFF; padding:80px; border-radius:40px; border:1px solid #EEE; box-shadow:0 30px 80px rgba(0,0,0,0.08); white-space: pre-wrap; font-family:\'Inter\', sans-serif;">' + structured + '</div>').fadeIn(600);
                 }
             });
         }

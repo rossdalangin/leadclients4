@@ -23,7 +23,10 @@
                 <div id="gp-search-results" style="display:none; position:absolute; top:65px; left:0; width:100%; background:white; border-radius:20px; box-shadow:0 30px 60px rgba(0,0,0,0.15); z-index:1000; overflow:hidden; border: 1px solid rgba(0,0,0,0.05);"></div>
             </div>
             <div class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Strategic Dark Mode" style="width:55px; height:55px; background: #FFF; border: 1px solid #EEE; border-radius: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;"><span class="dashicons dashicons-visibility"></span></div>
-            <button class="gp-btn" style="height:55px; padding:0 30px; font-size:12px; border-radius:15px; background:var(--secondary); color:white !important; font-weight: 800; letter-spacing: 1px;" onclick="exportLeads()">EXPORT INTEL</button>
+            <div style="text-align:center;">
+                <button class="gp-btn" style="height:55px; padding:0 30px; font-size:12px; border-radius:15px; background:var(--secondary); color:white !important; font-weight: 800; letter-spacing: 1px;" onclick="exportLeads()">EXPORT INTEL</button>
+                <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700;">NOTE: CSV generation (1-2s).</p>
+            </div>
             <div class="ai-status" style="background:linear-gradient(135deg, #10B981, #059669); color:white; height:55px; padding:0 30px; border-radius:30px; font-size:12px; font-weight:950; letter-spacing:2px; box-shadow:0 15px 40px rgba(16,185,129,0.3); display: flex; align-items: center;">CORE ACTIVE</div>
         </div>
     </div>
@@ -177,7 +180,10 @@
                                 </div>
                                 <p style="margin:0; font-size:13px; opacity:0.7; line-height:1.5; font-weight:600;"><?php echo esc_html($rec['msg']); ?></p>
                             </div>
-                            <button class="gp-btn" style="padding:10px 20px; font-size:10px; border-radius:10px;" onclick="alert('Action node sequence initiated...')">EXECUTE</button>
+                            <div style="text-align:center;">
+                                <button class="gp-btn" style="padding:10px 20px; font-size:10px; border-radius:10px;" onclick="alert('Action node sequence initiated...')">EXECUTE</button>
+                                <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700;">NOTE: 2-3s.</p>
+                            </div>
                         </div>
                     <?php endforeach; else: ?>
                         <p style="opacity:0.4; text-align:center;">Analyzing ecosystem performance metrics...</p>

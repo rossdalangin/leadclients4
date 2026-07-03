@@ -410,6 +410,7 @@ class GrowthPress_CRM {
                     </div>
                 <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.5;'>No proposals issued.</p>"; endif; ?>
                 <button type="button" class="button button-small" style="margin-top:10px; width:100%;" onclick="gpCreateProposalForLead(<?php echo $lead_id; ?>)">+ New Proposal</button>
+                <p style="font-size:9px; opacity:0.4; margin-top:5px; text-align:center;">NOTE: AI Proposal gen takes 15-25s.</p>
             </div>
             <div style="background:#f8fafc; padding:15px; border-radius:10px; border:1px solid #e2e8f0;">
                 <h4 style="margin:0 0 10px 0;">✅ Tasks</h4>
@@ -419,6 +420,7 @@ class GrowthPress_CRM {
                     </div>
                 <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.5;'>No tasks assigned.</p>"; endif; ?>
                 <button type="button" class="button button-small" style="margin-top:10px; width:100%;" onclick="gpCreateTaskForLead(<?php echo $lead_id; ?>)">+ New Task</button>
+                <p style="font-size:9px; opacity:0.4; margin-top:5px; text-align:center;">NOTE: Task creation is instant.</p>
             </div>
         </div>
         <script>
@@ -860,6 +862,7 @@ class GrowthPress_CRM {
         <div style="display:flex; gap:10px;">
             <input type="text" id="gp-new-asset-name" placeholder="Blueprint Name..." style="flex:1;">
             <button type="button" class="button" onclick="gpAddVaultAsset(<?php echo $post->ID; ?>)">+ Add System Asset</button>
+            <p style="font-size:9px; opacity:0.4; margin-top:5px; margin-left:10px;">NOTE: Asset encryption takes 1-2s.</p>
         </div>
         <script>
             function gpAddVaultAsset(id) {
@@ -904,6 +907,7 @@ class GrowthPress_CRM {
         </div>
         <textarea id="gp-new-note" style="width:100%; height:60px; font-size:12px;" placeholder="Add team note..."></textarea>
         <button type="button" class="button" style="width:100%; margin-top:5px;" onclick="addGPNote(<?php echo $post->ID; ?>)">Post Update</button>
+        <p style="font-size:9px; opacity:0.4; margin-top:8px; text-align:center;">NOTE: @mentions trigger high-priority alerts.</p>
         <script>function addGPNote(id) { var t = jQuery('#gp-new-note').val(); if(!t) return; jQuery.post(ajaxurl, {action:'gp_add_lead_note', lead_id:id, note:t, gp_nonce:'<?php echo wp_create_nonce("gp_admin_nonce"); ?>'}, function(){location.reload();}); }</script>
         <?php
     }

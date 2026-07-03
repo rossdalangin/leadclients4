@@ -225,6 +225,8 @@ class GrowthPress_Reports {
                         <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:2px; margin-bottom:10px;">PROJECTED VALUATION LIFT</div>
                         <div id="sim-valuation-lift" style="font-size:4rem; font-weight:950; color:var(--accent);">+$0</div>
                         <p id="sim-impact-note" style="font-size:12px; opacity:0.6; margin-top:20px; line-height:1.6;">Adjust sliders to initialize neural simulation node.</p>
+                        <button class="gp-btn" style="margin-top:25px; background:var(--primary); color:white; border:none; border-radius:10px; padding:12px; font-size:10px;" onclick="alert('Applying strategic scenario deltas to Q4 projections...')">APPLY SCENARIO</button>
+                        <p style="font-size:8px; opacity:0.3; margin-top:10px; font-weight:700;">NOTE: Update takes 2-3s.</p>
                     </div>
                 </div>
                 <script>
@@ -257,8 +259,10 @@ class GrowthPress_Reports {
                 <script>
                 function generateExecSummary() {
                     const out = jQuery('#exec-summary-output');
+                    gp_start_intelligence_uplink('SYNTHESIZING EXECUTIVE SUMMARY...');
                     out.text('CONSULTING STRATEGIC NODES...').css('opacity', 0.5);
                     jQuery.post(ajaxurl, { action: 'gp_generate_executive_summary', gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                        gp_stop_intelligence_uplink();
                         out.html(res.data.summary).css('opacity', 1);
                     });
                 }

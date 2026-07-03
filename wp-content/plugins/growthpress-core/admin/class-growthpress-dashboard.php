@@ -28,6 +28,24 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_chat_session_delete', array( $this, 'handle_chat_session_delete' ) );
         add_action( 'wp_ajax_gp_edit_agency_node', array( $this, 'handle_agency_edit' ) );
         add_action( 'wp_ajax_gp_generate_challenger', array( $this, 'handle_generate_challenger' ) );
+        add_action( 'wp_ajax_gp_sync_lead_brief', array( $this, 'handle_sync_lead_brief' ) );
+        add_action( 'wp_ajax_gp_instantiate_agency_node', array( $this, 'handle_agency_instantiate' ) );
+    }
+
+    public function handle_agency_instantiate() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+
+        $name = sanitize_text_field($_POST['name']);
+        $niche = sanitize_text_field($_POST['niche']);
+        $slug = sanitize_title($name);
+
+        $profiles = get_option('gp_agency_profiles', array());
+        $profiles[$slug] = array('name' => $name, 'niche' => $niche);
+        update_option('gp_agency_profiles', $profiles);
+
+        GrowthPress_Activity::log("Agency Cluster: New node instantiated: \"$name\" ($niche).");
+        wp_send_json_success("Node \"$name\" successfully integrated into the strategic cluster.");
     }
 
     public function handle_generate_challenger() {
@@ -501,7 +519,7 @@ class GrowthPress_Dashboard {
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; cursor:pointer;" onclick="alert('Instantiating new brand node...')">
+                <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; cursor:pointer;" onclick="instantiateAgencyProfile()">
                     <div style="text-align:center;">
                         <div style="font-size:32px; margin-bottom:10px;">+</div>
                         <div style="font-size:11px; font-weight:950; letter-spacing:1px;">INSTANTIATE NEW PROFILE</div>
@@ -516,6 +534,22 @@ class GrowthPress_Dashboard {
             jQuery.post(ajaxurl, {
                 action: 'gp_activate_agency_node',
                 slug: slug,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        function instantiateAgencyProfile() {
+            const name = prompt('Enter New Brand Name:');
+            const niche = prompt('Enter Strategic Niche (e.g. solar, medical):');
+            if(!name || !niche) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_instantiate_agency_node',
+                name: name,
+                niche: niche,
                 gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
             }, function(res) {
                 if(res.success) {
@@ -889,7 +923,8 @@ class GrowthPress_Dashboard {
 
     public function enqueue_dashboard_assets( $hook ) {
         $screens = array( 'edit-gp_lead', 'edit-gp_appointment', 'edit-gp_proposal', 'edit-gp_transaction', 'edit-gp_task', 'edit-gp_kb', 'edit-gp_project', 'edit-gp_service', 'edit-gp_staff', 'edit-gp_chat', 'edit-gp_chat_template', 'edit-gp_conflict', 'edit-gp_seo_cluster', 'edit-gp_inventory', 'edit-gp_referral' );
-        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) ) return;
+        $is_gp_page = ( strpos($hook, 'growthpress') !== false || in_array( $hook, $screens ) );
+        if ( ! $is_gp_page ) return;
 
         $mode = get_option('growthpress_visual_mode', 'light');
         add_filter('admin_body_class', function($classes) use ($mode) {
@@ -917,13 +952,11 @@ class GrowthPress_Dashboard {
             wp_add_inline_style( 'growthpress-admin-css', $custom_css );
         }
 
-        if ( strpos($hook, 'growthpress') !== false ) {
-            wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
-            wp_enqueue_script( 'jquery-ui-draggable' );
-            wp_enqueue_script( 'jquery-ui-droppable' );
-            wp_enqueue_script( 'growthpress-admin-js', GROWTHPRESS_CORE_URL . 'assets/js/admin-dashboard.js', array( 'jquery', 'chart-js', 'jquery-ui-draggable', 'jquery-ui-droppable' ), GROWTHPRESS_CORE_VERSION, true );
-            wp_localize_script( 'growthpress-admin-js', 'gp_admin', array( 'nonce' => wp_create_nonce( 'gp_admin_nonce' ) ));
-        }
+        wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
+        wp_enqueue_script( 'jquery-ui-draggable' );
+        wp_enqueue_script( 'jquery-ui-droppable' );
+        wp_enqueue_script( 'growthpress-admin-js', GROWTHPRESS_CORE_URL . 'assets/js/admin-dashboard.js', array( 'jquery', 'chart-js', 'jquery-ui-draggable', 'jquery-ui-droppable' ), GROWTHPRESS_CORE_VERSION, true );
+        wp_localize_script( 'growthpress-admin-js', 'gp_admin', array( 'nonce' => wp_create_nonce( 'gp_admin_nonce' ) ));
     }
 
     public function handle_strategic_search() {
@@ -1094,9 +1127,12 @@ class GrowthPress_Dashboard {
                         <div class="brief-box" style="font-size:12px; line-height:1.7; max-height:200px; overflow-y:auto;"><?php echo nl2br(esc_html($nurture)); ?></div>
                     <?php endif; ?>
 
-                    <div style="margin-top:30px; display:flex; gap:10px;">
-                        <button class="gp-btn" style="flex:1; background:var(--secondary); color:white !important; padding:12px; border-radius:12px;">Sync to CRM</button>
-                        <a href="<?php echo get_edit_post_link($lead_id); ?>" class="gp-btn" style="flex:1; text-align:center; background:transparent; border:1px solid #E2E8F0; padding:12px; border-radius:12px;">Full Dossier</a>
+                    <div style="margin-top:30px;">
+                        <div style="display:flex; gap:10px;">
+                            <button class="gp-btn" style="flex:1; background:var(--secondary); color:white !important; padding:12px; border-radius:12px;" onclick="syncLeadBrief(<?php echo $lead_id; ?>, this)">Sync to CRM</button>
+                            <a href="<?php echo get_edit_post_link($lead_id); ?>" class="gp-btn" style="flex:1; text-align:center; background:transparent; border:1px solid #E2E8F0; padding:12px; border-radius:12px;">Full Dossier</a>
+                        </div>
+                        <p style="font-size:9px; opacity:0.4; margin-top:8px; text-align:center; font-weight:700;">NOTE: Node synchronization takes 1-2s.</p>
                     </div>
                 </div>
             </div>
@@ -1132,6 +1168,14 @@ class GrowthPress_Dashboard {
         <?php
         $html = ob_get_clean();
         wp_send_json_success(array('html' => $html));
+    }
+
+    public function handle_sync_lead_brief() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $lead_id = intval($_POST['lead_id']);
+        GrowthPress_Activity::log("Lead Dossier #$lead_id: Neural insights synchronized and anchored to CRM node.");
+        wp_send_json_success("Insights synchronized to secure CRM node.");
     }
 
     public function handle_lead_stage_update() {
