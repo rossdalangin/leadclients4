@@ -20,6 +20,7 @@ class GrowthPress_CRM {
 
     private function __construct() {
         add_action( 'init', array( $this, 'register_cpts' ) );
+        add_action( 'init', array( $this, 'capture_referral_source' ) );
         add_filter( 'bulk_actions-edit-gp_lead', array( $this, 'register_lead_bulk_actions' ) );
         add_filter( 'handle_bulk_actions-edit-gp_lead', array( $this, 'handle_lead_bulk_actions' ), 10, 3 );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
@@ -218,6 +219,12 @@ class GrowthPress_CRM {
         </div>';
     }
 
+    public function capture_referral_source() {
+        if ( isset($_GET['ref']) ) {
+            setcookie('gp_ref_source', sanitize_text_field($_GET['ref']), time() + (86400 * 30), COOKIEPATH, COOKIE_DOMAIN);
+        }
+    }
+
     public function handle_lead_submission() {
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) {
             wp_send_json_error( 'Security failed.' );
@@ -239,6 +246,12 @@ class GrowthPress_CRM {
         update_post_meta($lead_id, '_lead_phone', $phone);
         update_post_meta($lead_id, '_lead_zip', $zip);
         wp_set_object_terms($lead_id, 'new', 'gp_lead_stage');
+
+        if ( isset($_COOKIE['gp_ref_source']) ) {
+            update_post_meta($lead_id, '_referrer_id', sanitize_text_field($_COOKIE['gp_ref_source']));
+            update_post_meta($lead_id, '_lead_source', 'Referral Link');
+        }
+
         do_action('gp_lead_captured', $lead_id);
         wp_send_json_success("Sequence initiated. AI Triage in progress.");
     }

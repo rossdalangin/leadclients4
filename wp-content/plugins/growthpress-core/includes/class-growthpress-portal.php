@@ -12,6 +12,7 @@ class GrowthPress_Portal {
     public function __construct() {
         add_shortcode( 'gp_client_portal', array( $this, 'render_portal' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_portal_assets' ) );
+        add_action( 'admin_bar_menu', array( $this, 'add_portal_to_admin_bar' ), 100 );
         add_action( 'wp_ajax_gp_request_reschedule', array( $this, 'handle_reschedule_request' ) );
         add_action( 'wp_ajax_gp_update_portal_profile', array( $this, 'handle_profile_update' ) );
         add_action( 'wp_ajax_gp_portal_upload', array( $this, 'handle_portal_upload' ) );
@@ -28,6 +29,30 @@ class GrowthPress_Portal {
                 'nonce'   => wp_create_nonce( 'gp_portal_nonce' )
             ) );
         }
+    }
+
+    public function add_portal_to_admin_bar( $wp_admin_bar ) {
+        if ( ! is_user_logged_in() ) return;
+
+        $portal_page = get_pages(array(
+            'meta_key' => '_wp_page_template',
+            'meta_value' => 'template-full-width-glass.php', // Common for portal
+            'number' => 1
+        ));
+
+        // Fallback search for [gp_client_portal]
+        if ( empty($portal_page) ) {
+            $portal_page = get_posts(array('post_type' => 'page', 's' => '[gp_client_portal]', 'posts_per_page' => 1));
+        }
+
+        $url = !empty($portal_page) ? get_permalink($portal_page[0]->ID) : home_url('/client-portal');
+
+        $wp_admin_bar->add_node( array(
+            'id'    => 'gp-client-portal',
+            'title' => '<span class="ab-icon dashicons-dashboard" style="top:2px;"></span> Client Portal',
+            'href'  => $url,
+            'meta'  => array( 'class' => 'gp-portal-link' )
+        ) );
     }
 
     private function verify_lead_ownership( $lead_id ) {
@@ -400,18 +425,47 @@ class GrowthPress_Portal {
 
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px; background:#F0FDF4; border-color:#DCFCE7;">
                         <h3 style="font-size:22px; margin-bottom:10px; color:#166534;">Strategic Referral Hub</h3>
-                        <p style="font-size:12px; opacity:0.6; color:#166534; margin-bottom:30px;">Propagate your network dominance. Qualified referrals earn priority operational credits.</p>
+                        <p style="font-size:12px; opacity:0.6; color:#166534; margin-bottom:30px;">Propagate your network dominance and earn commissions on successful conversions.</p>
+
+                        <div style="margin-bottom:30px; padding:20px; background:rgba(255,255,255,0.5); border-radius:15px; border:1px solid #BBF7D0;">
+                            <label style="font-size:10px; font-weight:900; opacity:0.6; letter-spacing:1px; display:block; margin-bottom:10px; color:#166534;">YOUR UNIQUE REFERRAL LINK</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" readonly value="<?php echo esc_url(add_query_arg('ref', $user->ID, home_url('/'))); ?>" style="flex:1; height:45px; border-radius:10px; border:1px solid #BBF7D0; padding:0 15px; font-size:12px; background:#FFF;">
+                                <button class="gp-btn" style="height:45px; padding:0 20px; font-size:11px; background:#166534; color:white !important; border-radius:10px;" onclick="copyRefLink(this)">COPY</button>
+                            </div>
+                        </div>
+
                         <div id="gp-portal-referral">
-                            <input type="text" id="ref-name" placeholder="Referral Name" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:15px;">
-                            <input type="email" id="ref-email" placeholder="Referral Email" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:20px;">
+                            <label style="font-size:10px; font-weight:900; opacity:0.6; letter-spacing:1px; display:block; margin-bottom:10px; color:#166534;">MANUAL REFERRAL SUBMISSION</label>
+                            <input type="text" id="ref-name" placeholder="Referral Name" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:15px; background:#FFF;">
+                            <input type="email" id="ref-email" placeholder="Referral Email" style="width:100%; height:50px; border-radius:12px; border:1px solid #BBF7D0; padding:0 15px; margin-bottom:20px; background:#FFF;">
                             <button class="gp-btn" style="width:100%; height:55px; font-size:12px; background:#166534; color:white !important; border-radius:12px;" onclick="submitReferral()">INITIALIZE REFERRAL NODE</button>
                         </div>
+
+                        <div style="margin-top:30px; padding-top:20px; border-top:1px solid rgba(22, 101, 52, 0.1);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <span style="font-size:11px; font-weight:900; color:#166534;">COMMISSION RATE:</span>
+                                <span style="font-size:18px; font-weight:950; color:#166534;"><?php echo get_option('growthpress_referral_commission', '10'); ?>%</span>
+                            </div>
+                            <div style="font-size:11px; opacity:0.7; color:#166534; line-height:1.5;">
+                                <strong>PAYOUT PROTOCOL:</strong> <?php echo esc_html(get_option('growthpress_referral_payout_instructions', 'Processed via PayPal/Transfer within 30 days of conversion.')); ?>
+                            </div>
+                        </div>
+
                         <script>
+                        function copyRefLink(btn) {
+                            const input = jQuery(btn).prev('input');
+                            input.select();
+                            document.execCommand('copy');
+                            const original = jQuery(btn).text();
+                            jQuery(btn).text('COPIED').css('background', '#10B981');
+                            setTimeout(() => jQuery(btn).text(original).css('background', ''), 2000);
+                        }
                         function submitReferral() {
                             const name = jQuery('#ref-name').val();
                             const email = jQuery('#ref-email').val();
                             if(!name || !email) return alert('Input identity nodes.');
-                            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_submit_referral', ref_name: name, ref_email: email, gp_nonce: gp_portal.nonce }, function(res) {
+                            jQuery.post(gp_portal.ajaxurl, { action: 'gp_submit_referral', ref_name: name, ref_email: email, gp_nonce: gp_portal.nonce }, function(res) {
                                 if(res.success) {
                                     alert(res.data);
                                     jQuery('#gp-portal-referral').html('<div style="text-align:center; padding:20px; color:#166534; font-weight:900;">REFERRAL NODE SYNCED</div>');
@@ -439,6 +493,43 @@ class GrowthPress_Portal {
                             </div>
                             <button type="button" class="gp-btn" style="width:100%; height:55px; font-size:12px; border-radius:12px;" onclick="updatePortalProfile()">SYNC PROFILE</button>
                         </form>
+                    </div>
+
+                    <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px;">
+                        <h3 style="font-size:22px; margin-bottom:30px; letter-spacing:-0.03em;">My Referral Ledger</h3>
+                        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                            <thead>
+                                <tr style="text-align:left; opacity:0.4; border-bottom:1px solid #EEE;">
+                                    <th style="padding-bottom:10px;">IDENTITY</th>
+                                    <th style="padding-bottom:10px;">STATUS</th>
+                                    <th style="padding-bottom:10px; text-align:right;">PAYOUT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $my_refs = get_posts(array(
+                                    'post_type' => 'gp_referral',
+                                    'posts_per_page' => -1,
+                                    'meta_query' => array(
+                                        'relation' => 'OR',
+                                        array('key' => '_source_client_id', 'value' => $user->ID),
+                                        array('key' => '_referrer_id', 'value' => $user->ID)
+                                    )
+                                ));
+                                if($my_refs): foreach($my_refs as $r):
+                                    $r_status = get_post_meta($r->ID, '_referral_status', true) ?: 'New';
+                                    $r_payout = get_post_meta($r->ID, '_payout_status', true) ?: 'Pending';
+                                    ?>
+                                    <tr style="border-bottom:1px solid #F8FAFC;">
+                                        <td style="padding:15px 0; font-weight:700;"><?php echo esc_html($r->post_title); ?></td>
+                                        <td style="padding:15px 0;"><span style="font-weight:900; opacity:0.6;"><?php echo strtoupper($r_status); ?></span></td>
+                                        <td style="padding:15px 0; text-align:right;"><span style="color:<?php echo $r_payout === 'Paid' ? '#10B981' : '#F59E0B'; ?>; font-weight:950;"><?php echo strtoupper($r_payout); ?></span></td>
+                                    </tr>
+                                <?php endforeach; else: ?>
+                                    <tr><td colspan="3" style="text-align:center; padding:30px; opacity:0.4;">No referrals found in your network.</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="glass-card" style="padding:50px; border-radius:44px;">
