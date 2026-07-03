@@ -394,7 +394,7 @@ class GrowthPress_Dashboard {
                             <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
                         </div>
                         <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
-                        <p style="font-size:9px; opacity:0.4; margin-top:10px; text-align:center; font-weight:700; line-height:1.4;">STRATEGIC NOTE: 'Re-order' synchronizes with your supply chain API to replenish inventory nodes. This maintains 100% operational availability for Q4 realization targets.</p>
+                        <p style="font-size:9px; opacity:0.5; margin-top:12px; text-align:center; font-weight:700; line-height:1.5; background:rgba(0,0,0,0.02); padding:10px; border-radius:10px;">STRATEGIC NOTE: 'Re-order' initiates a secure handshake with the supply chain API to replenish this asset node. This preserves 100% material availability for high-ticket fulfillment.</p>
                     </div>
                 <?php endforeach; else: ?>
                     <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
@@ -675,7 +675,7 @@ class GrowthPress_Dashboard {
                         <div style="margin-top:40px; display:flex; gap:10px; flex-wrap:wrap;">
                             <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:var(--primary); color:white !important;" onclick="generateChallenger(<?php echo $f->ID; ?>)">GENERATE CHALLENGER</button>
                             <a href="post.php?post=<?php echo $f->ID; ?>&action=edit" class="gp-btn" style="flex:1; text-align:center; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;">EDIT</a>
-                            <p style="width:100%; font-size:9px; opacity:0.4; margin-top:10px; font-weight:700; text-align:center;">STRATEGIC NOTE: 'Generate Challenger' utilizes AI to architect a high-urgency A/B headline. This resets Variation B traffic to 0% to begin a new 30-day clinical optimization cycle.</p>
+                            <p style="width:100%; font-size:9px; opacity:0.5; margin-top:12px; font-weight:700; text-align:center; background:rgba(0,0,0,0.03); padding:8px; border-radius:8px;">STRATEGIC NOTE: 'Generate Challenger' utilizes AI to architect a high-urgency A/B headline. <strong>Caution:</strong> This resets Variation B traffic share to 0% to begin a new 30-day clinical optimization cycle.</p>
                         </div>
                     </div>
                 <?php endforeach; else: echo "<p style='opacity:0.5;'>No active conversion funnels detected in ecosystem.</p>"; endif; ?>
@@ -889,7 +889,7 @@ class GrowthPress_Dashboard {
 
     public function enqueue_dashboard_assets( $hook ) {
         $screens = array( 'edit-gp_lead', 'edit-gp_appointment', 'edit-gp_proposal', 'edit-gp_transaction', 'edit-gp_task', 'edit-gp_kb', 'edit-gp_project', 'edit-gp_service', 'edit-gp_staff', 'edit-gp_chat', 'edit-gp_chat_template', 'edit-gp_conflict', 'edit-gp_seo_cluster', 'edit-gp_inventory', 'edit-gp_referral' );
-        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) && strpos($hook, 'growthpress-strategy') === false && strpos($hook, 'growthpress-reviews') === false ) return;
+        if ( strpos($hook, 'growthpress') === false && ! in_array( $hook, $screens ) ) return;
 
         $mode = get_option('growthpress_visual_mode', 'light');
         add_filter('admin_body_class', function($classes) use ($mode) {
@@ -917,7 +917,7 @@ class GrowthPress_Dashboard {
             wp_add_inline_style( 'growthpress-admin-css', $custom_css );
         }
 
-        if ( 'toplevel_page_growthpress-dashboard' === $hook || strpos($hook, 'growthpress-studio') !== false || strpos($hook, 'growthpress-reports') !== false || strpos($hook, 'growthpress-strategy') !== false || strpos($hook, 'growthpress-reviews') !== false ) {
+        if ( strpos($hook, 'growthpress') !== false ) {
             wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
             wp_enqueue_script( 'jquery-ui-draggable' );
             wp_enqueue_script( 'jquery-ui-droppable' );
