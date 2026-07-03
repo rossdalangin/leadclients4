@@ -260,9 +260,9 @@
     --secondary: #F8FAFC;
     --surface: #0F172A;
     --text-main: #F1F5F9;
-    --text-muted: #94A3B8;
-    --glass-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-muted: #CBD5E1;
+    --glass-bg: rgba(15, 23, 42, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.15);
     background: #020617 !important;
 }
 
@@ -271,6 +271,15 @@
     background: var(--glass-bg);
     border-color: var(--glass-border);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    color: #F8FAFC;
+}
+
+.gp-dark-mode h1, .gp-dark-mode h2, .gp-dark-mode h3, .gp-dark-mode .footer-heading {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode p, .gp-dark-mode .description, .gp-dark-mode .footer-desc {
+    color: #CBD5E1 !important;
 }
 
 .gp-dark-mode .kanban-card,
@@ -278,6 +287,16 @@
     background: #1E293B;
     border-color: #334155;
     color: #F8FAFC;
+}
+
+.gp-dark-mode .button-primary, .gp-dark-mode .gp-btn:not([style*="background:transparent"]) {
+    background: var(--primary) !important;
+    color: #FFFFFF !important;
+}
+
+.gp-dark-mode .button:not(.button-primary), .gp-dark-mode .gp-btn[style*="background:transparent"] {
+    border-color: rgba(255,255,255,0.2) !important;
+    color: #F8FAFC !important;
 }
 
 /* Cyber Neon Mode - High Impact */

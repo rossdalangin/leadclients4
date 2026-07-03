@@ -212,27 +212,37 @@ class GrowthPress_Dashboard {
 
     public function add_dashboard_menu() {
         $brand = get_option('growthpress_brand_name', 'GrowthPress');
-        add_menu_page( $brand, $brand, 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ), 'dashicons-chart-line', 2 );
-        add_submenu_page( 'growthpress-dashboard', 'System Dashboard', 'System Dashboard', 'manage_options', 'growthpress-dashboard', array( $this, 'render_dashboard' ) );
-        add_submenu_page( 'growthpress-dashboard', 'Strategic Tasks', 'Global Tasks', 'manage_options', 'growthpress-tasks', array( $this, 'render_global_tasks' ) );
-        add_submenu_page( 'growthpress-dashboard', 'Sales Simulation Lab', 'Sales Lab', 'manage_options', 'growthpress-sales-lab', array( $this, 'render_sales_lab' ) );
+        // Use 'edit_posts' as base capability so Staff can access the parent menu
+        add_menu_page( $brand, $brand, 'edit_posts', 'growthpress-dashboard', array( $this, 'render_dashboard' ), 'dashicons-chart-line', 2 );
+
+        // Submenus - Restricted by role/capability
+        add_submenu_page( 'growthpress-dashboard', 'System Dashboard', 'System Dashboard', 'edit_posts', 'growthpress-dashboard', array( $this, 'render_dashboard' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Strategic Tasks', 'Global Tasks', 'edit_posts', 'growthpress-tasks', array( $this, 'render_global_tasks' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Sales Simulation Lab', 'Sales Lab', 'edit_posts', 'growthpress-sales-lab', array( $this, 'render_sales_lab' ) );
         add_submenu_page( 'growthpress-dashboard', 'System Ecosystem', 'Ecosystem Map', 'manage_options', 'growthpress-ecosystem', array( $this, 'render_ecosystem_map' ) );
         add_submenu_page( 'growthpress-dashboard', 'Funnel Command', 'Conversion Funnels', 'manage_options', 'growthpress-funnels', array( $this, 'render_funnel_command' ) );
-        add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'manage_options', 'growthpress-chat', array( $this, 'render_chat_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Chat Command', 'Chat Command', 'edit_posts', 'growthpress-chat', array( $this, 'render_chat_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Agency Cluster', 'Agency Cluster', 'manage_options', 'growthpress-agency', array( $this, 'render_agency_cluster' ) );
         add_submenu_page( 'growthpress-dashboard', 'Workflow Command', 'Workflow Command', 'manage_options', 'growthpress-workflows', array( $this, 'render_workflow_command' ) );
-        add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'manage_options', 'growthpress-erp', array( $this, 'render_erp_command' ) );
-        add_submenu_page( 'growthpress-dashboard', 'Legal Lab', 'Legal Lab', 'manage_options', 'growthpress-law-lab', array( $this, 'render_law_lab' ) );
-        add_submenu_page( 'growthpress-dashboard', 'Referral Hub', 'Referrals', 'manage_options', 'growthpress-referrals', array( $this, 'render_referral_hub' ) );
+        add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'edit_posts', 'growthpress-erp', array( $this, 'render_erp_command' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Legal Lab', 'Legal Lab', 'edit_posts', 'growthpress-law-lab', array( $this, 'render_law_lab' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Referral Hub', 'Referrals', 'edit_posts', 'growthpress-referrals', array( $this, 'render_referral_hub' ) );
     }
 
     public function render_referral_hub() {
         $referrals = get_posts(array('post_type' => 'gp_referral', 'posts_per_page' => -1));
+        $commission = get_option('growthpress_referral_commission', '10');
+        $instructions = get_option('growthpress_referral_payout_instructions');
         ?>
         <div class="wrap gp-reveal">
             <div class="glass-card" style="background:#f0fdf4; border-left:5px solid #10b981; margin-bottom:30px; padding:25px;">
-                <h4 style="margin:0 0 10px 0; color:#065f46;">🤝 Strategic Context: Referral Engine</h4>
-                <p style="margin:0; font-size:14px; color:#065f46; line-height:1.5;">Referrals are your highest-authority lead source. <strong>Success Pattern:</strong> Transitioning referrals to lead nodes within 12 hours maintains the trust delta established by the referring client.</p>
+                <h4 style="margin:0 0 10px 0; color:#065f46;">🤝 Strategic Context: Referral Engine & Payouts</h4>
+                <p style="margin:0; font-size:14px; color:#065f46; line-height:1.5;">Referrals are your highest-authority lead source. <strong>Monetization:</strong> Referring partners earn a <strong><?php echo $commission; ?>%</strong> commission on successful client conversions. Manage payouts below once the lead status advances to 'Closed'.</p>
+                <?php if($instructions): ?>
+                    <div style="margin-top:15px; padding:12px; background:rgba(0,0,0,0.03); border-radius:10px; font-size:12px; color:#065f46;">
+                        <strong>PAYOUT PROTOCOL:</strong> <?php echo esc_html($instructions); ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <h1>Strategic Referral Command Hub</h1>
@@ -243,17 +253,21 @@ class GrowthPress_Dashboard {
                             <th style="padding:20px; font-weight:900;">REFERRAL IDENTITY</th>
                             <th style="padding:20px; font-weight:900;">EMAIL NODE</th>
                             <th style="padding:20px; font-weight:900;">STATUS</th>
+                            <th style="padding:20px; font-weight:900;">PAYOUT</th>
                             <th style="padding:20px; font-weight:900;">ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if($referrals): foreach($referrals as $r):
                             $status = get_post_meta($r->ID, '_referral_status', true) ?: 'New';
+                            $payout = get_post_meta($r->ID, '_payout_status', true) ?: 'Pending';
+                            $payout_color = ($payout === 'Paid') ? '#10B981' : '#F59E0B';
                             ?>
                             <tr>
                                 <td style="padding:20px; font-weight:700;"><?php echo esc_html($r->post_title); ?></td>
                                 <td style="padding:20px;"><?php echo get_post_meta($r->ID, '_referral_email', true); ?></td>
                                 <td style="padding:20px;"><span style="background:<?php echo $status === 'Lead Created' ? '#D1FAE5' : '#F8FAFC'; ?>; color:<?php echo $status === 'Lead Created' ? '#065F46' : '#64748B'; ?>; padding:5px 12px; border-radius:30px; font-size:10px; font-weight:950;"><?php echo strtoupper($status); ?></span></td>
+                                <td style="padding:20px;"><span style="font-weight:900; font-size:10px; color:<?php echo $payout_color; ?>;"><?php echo strtoupper($payout); ?></span></td>
                                 <td style="padding:20px;">
                                     <?php if($status !== 'Lead Created'): ?>
                                         <button class="button button-primary" onclick="processReferral(<?php echo $r->ID; ?>, this)">CONVERT TO LEAD</button>
@@ -472,16 +486,21 @@ class GrowthPress_Dashboard {
                         </div>
                     <?php $idx++; endforeach; ?>
 
-                    <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px dashed #CBD5E1; cursor:pointer; text-align:center;" onclick="addWorkflowStep()">
-                        <div style="font-size:12px; font-weight:900; opacity:0.4;">+ ADD ORCHESTRATION STEP</div>
-                        <p style="font-size:9px; opacity:0.3; margin-top:8px; font-weight:700;">NOTE: Node integration takes 1-2s.</p>
+                    <div style="background:#F8FAFC; padding:40px; border-radius:20px; border:1px dashed #CBD5E1; cursor:pointer; text-align:center;" onclick="addWorkflowStep()">
+                        <div style="font-size:14px; font-weight:900; color:var(--primary);">+ ADD ORCHESTRATION STEP</div>
+                        <div style="margin-top:20px; display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; text-align:left;">
+                            <div style="font-size:11px; opacity:0.6; line-height:1.4;"><strong>SMS Dispatch:</strong> Triggers a real-time notification via Twilio to your priority handset.</div>
+                            <div style="font-size:11px; opacity:0.6; line-height:1.4;"><strong>AI Re-Score:</strong> Re-evaluates lead sentiment after specific interactions to update probability.</div>
+                            <div style="font-size:11px; opacity:0.6; line-height:1.4;"><strong>Email Sequence:</strong> Handshakes with the AI Content Studio to dispatch high-authority nurture copy.</div>
+                        </div>
+                        <p style="font-size:9px; opacity:0.3; margin-top:30px; font-weight:700;">STRATEGIC NOTE: Integration with the global OS lifecycle occurs in 1-2 seconds.</p>
                     </div>
                 </div>
             </div>
         </div>
         <script>
         function addWorkflowStep() {
-            const name = prompt('Identify orchestration step node:');
+            const name = prompt('Identify orchestration step node (e.g. "Send Slack Alert", "Update Ledger"):');
             if(!name) return;
             jQuery.post(ajaxurl, {
                 action: 'gp_workflow_step_add',
@@ -521,9 +540,10 @@ class GrowthPress_Dashboard {
                 <?php endforeach; ?>
                 <div class="glass-card" style="padding:40px; border-radius:30px; border:2px dashed #E2E8F0; cursor:pointer;" onclick="instantiateAgencyProfile()">
                     <div style="text-align:center;">
-                        <div style="font-size:32px; margin-bottom:10px;">+</div>
-                        <div style="font-size:11px; font-weight:950; letter-spacing:1px;">INSTANTIATE NEW PROFILE</div>
-                        <p style="font-size:9px; opacity:0.3; margin-top:15px; font-weight:700;">NOTE: Node creation takes 2-3s.</p>
+                        <div style="font-size:32px; margin-bottom:10px; color:var(--primary);">+</div>
+                        <div style="font-size:11px; font-weight:950; letter-spacing:1px; color:var(--primary);">INSTANTIATE NEW PROFILE</div>
+                        <p style="font-size:11px; opacity:0.6; margin-top:20px; line-height:1.5;">Creates a new brand identity within the OS. All settings, pages, and AI prompts will be uniquely calibrated for this node.</p>
+                        <p style="font-size:9px; opacity:0.3; margin-top:15px; font-weight:700;">STRATEGIC NOTE: Full node architecture instantiation takes 2-3 seconds.</p>
                     </div>
                 </div>
             </div>
@@ -542,22 +562,7 @@ class GrowthPress_Dashboard {
                 }
             });
         }
-        function instantiateAgencyProfile() {
-            const name = prompt('Enter New Brand Name:');
-            const niche = prompt('Enter Strategic Niche (e.g. solar, medical):');
-            if(!name || !niche) return;
-            jQuery.post(ajaxurl, {
-                action: 'gp_instantiate_agency_node',
-                name: name,
-                niche: niche,
-                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
-            }, function(res) {
-                if(res.success) {
-                    alert(res.data);
-                    location.reload();
-                }
-            });
-        }
+        // instantiateAgencyProfile handled in admin-dashboard.js for cinematic feedback
         function editAgencyProfile(slug, name, niche) {
             const newName = prompt('Calibrate Brand Name:', name);
             const newNiche = prompt('Calibrate Niche (e.g. law, dental):', niche);

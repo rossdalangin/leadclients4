@@ -202,4 +202,25 @@ jQuery(document).ready(function($) {
             }
         });
     };
+
+    window.instantiateAgencyProfile = function() {
+        const name = prompt('Enter New Brand Name:');
+        const niche = prompt('Enter Strategic Niche (e.g. solar, medical):');
+        if(!name || !niche) return;
+
+        gp_start_intelligence_uplink('INSTANTIATING STRATEGIC NODE: ' + name.toUpperCase());
+
+        $.post(ajaxurl, {
+            action: 'gp_instantiate_agency_node',
+            name: name,
+            niche: niche,
+            gp_nonce: gp_admin.nonce
+        }, function(res) {
+            gp_stop_intelligence_uplink();
+            if(res.success) {
+                alert(res.data);
+                location.reload();
+            }
+        });
+    };
 });

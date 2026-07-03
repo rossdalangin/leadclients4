@@ -38,7 +38,8 @@ class GrowthPress_Settings {
             'growthpress_license_key', 'growthpress_license_status', 'growthpress_dashboard_logo',
             'growthpress_agency_mode', 'growthpress_compliance_mode', 'growthpress_login_logo',
             'growthpress_custom_css', 'growthpress_ai_personality', 'growthpress_autopilot_mode',
-            'growthpress_portal_branding', 'growthpress_neural_triggers', 'growthpress_visual_mode',
+            'growthpress_portal_branding', 'growthpress_referral_commission', 'growthpress_referral_payout_instructions',
+            'growthpress_neural_triggers', 'growthpress_visual_mode',
             'growthpress_sso_enabled', 'growthpress_sso_provider', 'growthpress_sso_client_id',
             'growthpress_sso_client_secret', 'growthpress_sso_endpoint'
         );
@@ -422,15 +423,23 @@ class GrowthPress_Settings {
 
 
             <div id="tab-automations" class="tab-content" style="display:none;">
-                <div class="glass-card" style="max-width:1100px; background:#f0fdfa; border-left:5px solid #0d9488; margin-bottom:30px; padding:20px;">
-                    <h4 style="margin:0 0 10px 0; color:#0f766e;">⚡ Strategic Context: Automation Protocol</h4>
-                    <p style="margin:0; font-size:14px; color:#0f766e; line-height:1.5;">Define high-stakes rules that trigger autonomously based on ecosystem events. <strong>Operational Pro-Tip:</strong> High-urgency leads (Score > 8) should trigger an instant SMS to your phone via Twilio, allowing for sub-60 second response times while the prospect is still in "Peak Interest" mode.</p>
-                    <p style="margin:10px 0 0 0; font-size:13px; color:#0f766e;">Ensure your <strong>Twilio From Number</strong> and <strong>Admin SMS Recipient</strong> are configured in the <a href="#tab-config" onclick="jQuery('a[href=\'#tab-config\']').click();">Configuration</a> tab.</p>
+                <div class="glass-card" style="max-width:1100px; background:#f0fdfa; border-left:5px solid #0d9488; margin-bottom:30px; padding:25px;">
+                    <h4 style="margin:0 0 15px 0; color:#0f766e;">⚡ Strategic Automations: Rules & Triggers</h4>
+                    <p style="margin:0; font-size:14px; color:#0f766e; line-height:1.6;">Automations execute high-stakes actions autonomously. The "Instant SMS Dispatch" rule requires valid Twilio credentials. To configure the SMS source and recipient:</p>
+                    <div style="margin:20px 0; padding:15px; background:rgba(13, 148, 136, 0.1); border-radius:10px; border:1px solid rgba(13, 148, 136, 0.2);">
+                        <strong style="color:#0f766e; font-size:12px; letter-spacing:1px; display:block; margin-bottom:5px;">SMS CONFIGURATION PROCESS:</strong>
+                        <ol style="margin:0; padding-left:20px; font-size:13px; color:#0f766e;">
+                            <li>Navigate to the <a href="#tab-config" onclick="jQuery('a[href=\'#tab-config\']').click();" style="font-weight:900; text-decoration:underline;">Configuration Tab</a>.</li>
+                            <li>Locate the <strong>Communications Hub</strong> section.</li>
+                            <li>Input your <strong>Twilio SID</strong>, <strong>Auth Token</strong>, and <strong>From Number</strong>.</li>
+                            <li>Set the <strong>Admin SMS Recipient</strong> to the number where you wish to receive alerts.</li>
+                        </ol>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="max-width:1100px; background:#f5f3ff; border-left:5px solid #7c3aed; margin-bottom:30px; padding:20px;">
-                    <h4 style="margin:0 0 10px 0; color:#5b21b6;">💡 Pro-Tip: Reducing Latency</h4>
-                    <p style="margin:0; font-size:13px; color:#5b21b6; line-height:1.5;">Automations work best when combined with Twilio. High-urgency leads (Score > 8) can trigger an instant SMS to your phone, allowing you to respond in seconds, capturing the lead while they are still on your site.</p>
+                    <h4 style="margin:0 0 10px 0; color:#5b21b6;">💡 Pro-Tip: Omnipresence Factor</h4>
+                    <p style="margin:0; font-size:13px; color:#5b21b6; line-height:1.5;">Combining SMS triggers with the AI Auto-Pilot ensures that you engage leads instantly. Reducing intake latency below 60 seconds is the single most effective way to increase discovery call volume by up to 40%.</p>
                 </div>
 
                 <div class="glass-card" style="max-width:1100px;">
@@ -697,7 +706,15 @@ class GrowthPress_Settings {
                             <th scope="row"><label>Admin Overrides</label></th>
                             <td><textarea name="growthpress_custom_css" style="width:100%; height:150px; font-family:monospace;"><?php echo esc_textarea( get_option('growthpress_custom_css') ); ?></textarea></td>
                         </tr>
-                        <tr class="section-header"><th colspan="2"><h3>Client Portal & Intelligence</h3></th></tr>
+                        <tr class="section-header"><th colspan="2"><h3>Client Portal & Referrals</h3></th></tr>
+                        <tr>
+                            <th scope="row"><label>Referral Commission (%)</label></th>
+                            <td><input type="number" name="growthpress_referral_commission" value="<?php echo esc_attr( get_option('growthpress_referral_commission', '10') ); ?>" class="small-text"> % <span style="opacity:0.6; font-size:11px; margin-left:10px;">(Applied to first transaction value)</span></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Payout Instructions</label></th>
+                            <td><textarea name="growthpress_referral_payout_instructions" style="width:100%; height:100px;"><?php echo esc_textarea( get_option('growthpress_referral_payout_instructions', 'Payouts are processed via PayPal or Bank Transfer within 30 days of the referral becoming a client.') ); ?></textarea></td>
+                        </tr>
                         <tr>
                             <th scope="row"><label>Portal Access Model</label></th>
                             <td>

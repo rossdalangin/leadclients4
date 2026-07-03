@@ -785,3 +785,37 @@ body.gp-design-female .text-gradient {
     h1 { font-size: 3.5rem; }
     .glass-card { padding: 3rem 2rem; }
 }
+
+/* Dark Mode Footer & Global Visibility Fixes */
+.gp-dark-mode #colophon {
+    background: #0F172A;
+    color: #CBD5E1;
+}
+
+.gp-dark-mode .footer-heading, .gp-dark-mode .footer-brand {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .footer-nav a, .gp-dark-mode .site-info a {
+    color: #CBD5E1 !important;
+}
+
+.gp-dark-mode .footer-nav a:hover {
+    color: var(--primary) !important;
+}
+
+.gp-dark-mode .site-info {
+    color: rgba(255, 255, 255, 0.4) !important;
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.gp-dark-mode .glass-card {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .gp-btn {
+    background: var(--primary) !important;
+    color: #FFF !important;
+}

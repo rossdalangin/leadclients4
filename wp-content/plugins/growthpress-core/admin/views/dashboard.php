@@ -33,6 +33,10 @@
 
     <!-- System Node Health Elite -->
     <div class="glass-card gp-reveal" style="margin-bottom:50px; padding:40px; border-radius: 40px; background:rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.8);">
+        <div style="background:rgba(37,99,235,0.05); border-left:5px solid var(--primary); padding:20px; border-radius:15px; margin-bottom:30px;">
+            <h4 style="margin:0 0 10px 0; color:var(--primary); font-size:14px; font-weight:900;">🚀 System Dashboard: Operational Overview</h4>
+            <p style="margin:0; font-size:13px; color:var(--secondary); opacity:0.8; line-height:1.5;">This command node visualizes your entire business ecosystem. Use the <strong>Strategic Search</strong> to locate leads or projects, and monitor the <strong>Neural Engine</strong> health to ensure AI triage is active. High-priority leads are automatically pulsed in the Kanban board below.</p>
+        </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; gap:60px; align-items:center;">
                 <div style="display:flex; align-items:center; gap:15px;" title="Monitors OpenAI, Claude, and Gemini API connectivity status.">
