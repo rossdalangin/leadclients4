@@ -7,7 +7,7 @@
                 <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.09em; margin:0; line-height:1;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.25;">OS</span></h1>
             <?php endif; ?>
             <div style="height:45px; width:1px; background:rgba(0,0,0,0.1);"></div>
-            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="height:55px; background:rgba(255,255,255,0.8); border:1px solid rgba(0,0,0,0.05); padding:0 20px; border-radius:15px; font-size:11px; font-weight:950; letter-spacing:3px; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.02);">
+            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="height:55px; background:rgba(255,255,255,0.8); border:1px solid rgba(0,0,0,0.05); padding:0 20px; border-radius:15px; font-size:11px; font-weight:950; letter-spacing:3px; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.02);" title="STRATEGIC NOTE: Niche recalibration takes 10-15 seconds to synchronize all 14 nodes.">
                 <?php
                 $active_niche = get_option('growthpress_niche', 'business');
                 $niches = array('dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants');
@@ -23,13 +23,20 @@
                 <div id="gp-search-results" style="display:none; position:absolute; top:65px; left:0; width:100%; background:white; border-radius:20px; box-shadow:0 30px 60px rgba(0,0,0,0.15); z-index:1000; overflow:hidden; border: 1px solid rgba(0,0,0,0.05);"></div>
             </div>
             <div class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Strategic Dark Mode" style="width:55px; height:55px; background: #FFF; border: 1px solid #EEE; border-radius: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;"><span class="dashicons dashicons-visibility"></span></div>
-            <button class="gp-btn" style="height:55px; padding:0 30px; font-size:12px; border-radius:15px; background:var(--secondary); color:white !important; font-weight: 800; letter-spacing: 1px;" onclick="exportLeads()">EXPORT INTEL</button>
+            <div style="text-align:center;">
+                <button class="gp-btn" style="height:55px; padding:0 30px; font-size:12px; border-radius:15px; background:var(--secondary); color:white !important; font-weight: 800; letter-spacing: 1px;" onclick="exportLeads()">EXPORT INTEL</button>
+                <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700;">NOTE: CSV generation (1-2s).</p>
+            </div>
             <div class="ai-status" style="background:linear-gradient(135deg, #10B981, #059669); color:white; height:55px; padding:0 30px; border-radius:30px; font-size:12px; font-weight:950; letter-spacing:2px; box-shadow:0 15px 40px rgba(16,185,129,0.3); display: flex; align-items: center;">CORE ACTIVE</div>
         </div>
     </div>
 
     <!-- System Node Health Elite -->
     <div class="glass-card gp-reveal" style="margin-bottom:50px; padding:40px; border-radius: 40px; background:rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.8);">
+        <div style="background:rgba(37,99,235,0.05); border-left:5px solid var(--primary); padding:20px; border-radius:15px; margin-bottom:30px;">
+            <h4 style="margin:0 0 10px 0; color:var(--primary); font-size:14px; font-weight:900;">🚀 System Dashboard: Operational Overview</h4>
+            <p style="margin:0; font-size:13px; color:var(--secondary); opacity:0.8; line-height:1.5;">This command node visualizes your entire business ecosystem. Use the <strong>Strategic Search</strong> to locate leads or projects, and monitor the <strong>Neural Engine</strong> health to ensure AI triage is active. High-priority leads are automatically pulsed in the Kanban board below.</p>
+        </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; gap:60px; align-items:center;">
                 <div style="display:flex; align-items:center; gap:15px;" title="Monitors OpenAI, Claude, and Gemini API connectivity status.">
@@ -59,6 +66,15 @@
                 <div style="font-size:14px; font-weight:950; color: var(--primary);">ELITE v6.3 DEFINITIVE</div>
             </div>
         </div>
+        <?php if(current_user_can('edit_posts')): ?>
+            <div style="margin-top:30px; padding-top:30px; border-top:1px solid rgba(0,0,0,0.05); display:flex; gap:20px; align-items:center;">
+                <span style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; text-transform:uppercase;">Staff Quick Actions:</span>
+                <a href="<?php echo admin_url('post-new.php?post_type=gp_lead'); ?>" class="button button-small" style="border-radius:8px;">+ New Lead</a>
+                <a href="<?php echo admin_url('post-new.php?post_type=gp_task'); ?>" class="button button-small" style="border-radius:8px;">+ New Task</a>
+                <a href="<?php echo admin_url('edit.php?post_type=gp_chat'); ?>" class="button button-small" style="border-radius:8px;">Active Chats</a>
+                <button class="button button-small" style="border-radius:8px;" onclick="jQuery('#gp-strategic-search').focus()">Global Intel Search</button>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- System Health Grid -->
@@ -177,7 +193,10 @@
                                 </div>
                                 <p style="margin:0; font-size:13px; opacity:0.7; line-height:1.5; font-weight:600;"><?php echo esc_html($rec['msg']); ?></p>
                             </div>
-                            <button class="gp-btn" style="padding:10px 20px; font-size:10px; border-radius:10px;" onclick="alert('Action node sequence initiated...')">EXECUTE</button>
+                            <div style="text-align:center;">
+                                <button class="gp-btn" style="padding:10px 20px; font-size:10px; border-radius:10px;" onclick="alert('Action node sequence initiated...')">EXECUTE</button>
+                                <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700;">NOTE: 2-3s.</p>
+                            </div>
                         </div>
                     <?php endforeach; else: ?>
                         <p style="opacity:0.4; text-align:center;">Analyzing ecosystem performance metrics...</p>
@@ -339,9 +358,12 @@
                                             </div>
                                         </div>
 
-                                        <div style="margin-top:25px; display: flex; gap:10px;">
-                                            <a href="<?php echo get_edit_post_link($lead->ID); ?>" class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:var(--secondary); text-align:center; color:white !important; font-weight: 800; letter-spacing: 0.5px;">INTEL BRIEF</a>
-                                            <button class="gp-btn" style="padding:12px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--secondary) !important; width:48px;"><span class="dashicons dashicons-email"></span></button>
+                                        <div style="margin-top:25px;">
+                                            <div style="display: flex; gap:10px;">
+                                                <a href="<?php echo get_edit_post_link($lead->ID); ?>" class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:var(--secondary); text-align:center; color:white !important; font-weight: 800; letter-spacing: 0.5px;">INTEL BRIEF</a>
+                                                <button class="gp-btn" style="padding:12px; border-radius:12px; background:transparent; border:1px solid #E2E8F0; color:var(--secondary) !important; width:48px;"><span class="dashicons dashicons-email"></span></button>
+                                            </div>
+                                            <p style="font-size:9px; opacity:0.5; margin-top:8px; font-weight:700; text-align:center;">NOTE: Neural dossier loads in 2-3s.</p>
                                         </div>
                                     </div>
                                 <?php endif;
@@ -432,36 +454,51 @@
             </div>
 
             <!-- Revenue ROI Hub Elite -->
-            <div class="glass-card gp-reveal" style="margin-bottom:40px; background:var(--primary); color:white; border:none; position:relative; padding: 45px; border-radius: 40px; box-shadow: 0 30px 60px -15px var(--primary-glow);">
-                <div style="position:absolute; top:30px; right:30px; cursor:help; opacity:0.4;" title="Calculated from 'Paid' Revenue transactions vs pending Pipeline Equity.">ⓘ</div>
-                <h3 style="color:white; font-size:14px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom:35px; font-weight:950;">Revenue Analytics</h3>
-                <div style="display:grid; gap:30px;">
-                    <div>
-                        <div style="font-size:11px; font-weight:950; opacity:0.6; letter-spacing:2px; margin-bottom:8px; text-transform: uppercase;">Earned Equity</div>
-                        <div style="font-size:36px; font-weight:950; letter-spacing: -0.05em;">$<?php
-                            $revenue = 0; $expenses = 0;
-                            $transactions = get_posts(array('post_type'=>'gp_transaction', 'meta_key'=>'_status', 'meta_value'=>'Paid', 'posts_per_page'=>-1));
-                            foreach($transactions as $tx) {
-                                $amt = (float)get_post_meta($tx->ID, '_amount', true);
-                                $type = get_post_meta($tx->ID, '_transaction_type', true) ?: 'Revenue';
-                                if($type === 'Revenue') $revenue += $amt; else $expenses += $amt;
-                            }
-                            echo number_format($revenue);
-                        ?></div>
-                    </div>
-                    <div style="height:1px; background:rgba(255,255,255,0.15);"></div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <?php if(current_user_can('manage_options')): ?>
+                <div class="glass-card gp-reveal" style="margin-bottom:40px; background:var(--primary); color:white; border:none; position:relative; padding: 45px; border-radius: 40px; box-shadow: 0 30px 60px -15px var(--primary-glow);">
+                    <div style="position:absolute; top:30px; right:30px; cursor:help; opacity:0.4;" title="Calculated from 'Paid' Revenue transactions vs pending Pipeline Equity.">ⓘ</div>
+                    <h3 style="color:white; font-size:14px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom:35px; font-weight:950;">Revenue Analytics</h3>
+                    <div style="display:grid; gap:30px;">
                         <div>
-                            <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">OpEx</div>
-                            <div style="font-size:18px; font-weight:950; color:rgba(255,255,255,0.8);">$<?php echo number_format($expenses); ?></div>
+                            <div style="font-size:11px; font-weight:950; opacity:0.6; letter-spacing:2px; margin-bottom:8px; text-transform: uppercase;">Earned Equity</div>
+                            <div style="font-size:36px; font-weight:950; letter-spacing: -0.05em;">$<?php
+                                $revenue = 0; $expenses = 0;
+                                $transactions = get_posts(array('post_type'=>'gp_transaction', 'meta_key'=>'_status', 'meta_value'=>'Paid', 'posts_per_page'=>-1));
+                                foreach($transactions as $tx) {
+                                    $amt = (float)get_post_meta($tx->ID, '_amount', true);
+                                    $type = get_post_meta($tx->ID, '_transaction_type', true) ?: 'Revenue';
+                                    if($type === 'Revenue') $revenue += $amt; else $expenses += $amt;
+                                }
+                                echo number_format($revenue);
+                            ?></div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">Upside (60%)</div>
-                            <div style="font-size:18px; font-weight:950; color:#10B981;">$<?php echo number_format($pipe_val * 0.6); ?></div>
+                        <div style="height:1px; background:rgba(255,255,255,0.15);"></div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                            <div>
+                                <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">OpEx</div>
+                                <div style="font-size:18px; font-weight:950; color:rgba(255,255,255,0.8);">$<?php echo number_format($expenses); ?></div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">Upside (60%)</div>
+                                <div style="font-size:18px; font-weight:950; color:#10B981;">$<?php echo number_format($pipe_val * 0.6); ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="glass-card gp-reveal" style="margin-bottom:40px; background:#F8FAFC; border:1px solid #E2E8F0; padding:45px; border-radius:40px;">
+                    <h3 style="font-size:14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom:20px; font-weight:950;">Staff Performance Mode</h3>
+                    <p style="font-size:14px; opacity:0.6; line-height:1.6;">You are currently in <strong>Operational Focus</strong> mode. Financial and structural data is restricted to administrative levels. Focus on lead triage and task execution in the Kanban board.</p>
+                    <div style="margin-top:30px; display:grid; gap:15px;">
+                        <div style="background:#FFF; padding:20px; border-radius:15px; border:1px solid #EEE; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:11px; font-weight:800; opacity:0.5;">YOUR ACTIVE TASKS:</span>
+                            <span style="font-size:18px; font-weight:950; color:var(--primary);">
+                                <?php echo count(get_posts(array('post_type'=>'gp_task', 'meta_key'=>'_assigned_staff', 'meta_value'=>get_current_user_id(), 'meta_key'=>'_task_status', 'meta_value'=>'Pending', 'posts_per_page'=>-1))); ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <!-- Neural Gap Analysis -->
             <div class="glass-card gp-reveal" style="margin-bottom:30px; border-left: 8px solid var(--primary);">
@@ -534,6 +571,18 @@
 </div>
 
 <script>
+function submitAIFeedback(postId, key, feedback, el) {
+    jQuery.post(ajaxurl, {
+        action: 'gp_submit_ai_feedback',
+        post_id: postId,
+        meta_key: key,
+        feedback: feedback,
+        gp_nonce: gp_admin.nonce
+    }, function() {
+        jQuery(el).parent().html('<span style="font-size:9px; font-weight:950; opacity:0.5;">FEEDBACK INGESTED</span>');
+    });
+}
+
 function switchNiche(niche) {
     if(confirm('Switching ecosystem to ' + niche.toUpperCase() + '? This will recalibrate Neural Hub prompts.')) {
         jQuery.post(ajaxurl, {

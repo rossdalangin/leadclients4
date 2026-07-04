@@ -19,6 +19,21 @@ jQuery(document).ready(function($) {
     // Global Micro-interactions
     $('.glass-card').addClass('gp-reveal');
 
+    window.gp_start_intelligence_uplink = function(message = 'NEURAL UPLINK IN PROGRESS...') {
+        const overlay = $(`
+            <div id="gp-intelligence-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.9); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; backdrop-filter:blur(10px);">
+                <div class="gp-pulse-icon" style="width:100px; height:100px; background:var(--primary); border-radius:50%; margin-bottom:40px; box-shadow:0 0 50px var(--primary-glow); animation:gp-pulse 1.5s infinite;"></div>
+                <div style="font-size:14px; font-weight:950; letter-spacing:4px; text-transform:uppercase; opacity:0.6;">${message}</div>
+                <div style="margin-top:20px; font-size:11px; opacity:0.3; font-weight:700;">STRATEGIC NODE SYNCHRONIZING • DO NOT REFRESH</div>
+            </div>
+        `).appendTo('body').fadeIn(400);
+        return overlay;
+    };
+
+    window.gp_stop_intelligence_uplink = function() {
+        $('#gp-intelligence-overlay').fadeOut(400, function() { $(this).remove(); });
+    };
+
     // Kanban Drag & Drop
     if ($('.kanban-cards').length > 0) {
         $('.kanban-card').css('transition', 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)');
@@ -92,6 +107,7 @@ jQuery(document).ready(function($) {
         $loader.fadeIn();
         $actions.hide();
         $ping.css('background', '#10B981');
+        gp_start_intelligence_uplink('GENERATING STRATEGIC CONTENT...');
 
         $.post(ajaxurl, {
             action: 'gp_generate_content',
@@ -100,6 +116,7 @@ jQuery(document).ready(function($) {
             tone: tone,
             gp_nonce: gp_admin.nonce
         }, function(res) {
+            gp_stop_intelligence_uplink();
             $loader.hide();
             $ping.css('background', 'rgba(255,255,255,0.2)');
             if (res.success) {
@@ -165,6 +182,45 @@ jQuery(document).ready(function($) {
         const text = $('#gp-studio-output').find('.ai-response').text();
         navigator.clipboard.writeText(text).then(() => {
             alert('Intelligence copied to clipboard.');
+        });
+    };
+
+    window.syncLeadBrief = function(leadId, btn) {
+        const $btn = $(btn);
+        const originalText = $btn.text();
+        $btn.text('SYNCING...').prop('disabled', true);
+        $.post(ajaxurl, {
+            action: 'gp_sync_lead_brief',
+            lead_id: leadId,
+            gp_nonce: gp_admin.nonce
+        }, function(res) {
+            if(res.success) {
+                $btn.text('SYNCED').css('background', '#10B981');
+                setTimeout(() => {
+                    $btn.text(originalText).css('background', '').prop('disabled', false);
+                }, 2000);
+            }
+        });
+    };
+
+    window.instantiateAgencyProfile = function() {
+        const name = prompt('Enter New Brand Name:');
+        const niche = prompt('Enter Strategic Niche (e.g. solar, medical):');
+        if(!name || !niche) return;
+
+        gp_start_intelligence_uplink('INSTANTIATING STRATEGIC NODE: ' + name.toUpperCase());
+
+        $.post(ajaxurl, {
+            action: 'gp_instantiate_agency_node',
+            name: name,
+            niche: niche,
+            gp_nonce: gp_admin.nonce
+        }, function(res) {
+            gp_stop_intelligence_uplink();
+            if(res.success) {
+                alert(res.data);
+                location.reload();
+            }
         });
     };
 });

@@ -235,6 +235,12 @@ class GrowthPress_Display {
 
     public function render_kb_search() {
         ob_start(); ?>
+        <script>
+        function gpLogHighIntent(action) {
+            const email = localStorage.getItem('gp_lead_email') || 'anonymous@visitor.com';
+            jQuery.post(gp_ajax.ajaxurl, { action: 'gp_log_behavior', page: 'INTENT: ' + action, email: email });
+        }
+        </script>
         <div class="gp-kb-ai-search glass-card gp-reveal" style="padding:80px 60px; max-width:1000px; margin:40px auto; border-radius: 48px; box-shadow: 0 40px 100px -20px var(--primary-glow);">
             <div style="text-align:center; margin-bottom:50px;">
                 <span class="eyebrow">NEURAL RETRIEVAL HUB</span>
@@ -258,6 +264,7 @@ class GrowthPress_Display {
         <script>
         function runKBSearch() {
             const q = jQuery('#gp-kb-query').val();
+            gpLogHighIntent('KB Search: ' + q);
             const out = jQuery('#kb-ai-results').fadeIn().find('#kb-ai-output');
             out.text('CONSULTING INTERNAL KNOWLEDGE BASE...').css('opacity', 0.5);
             jQuery.post(gp_ajax.ajaxurl, { action: 'gp_kb_ai_search', query: q }, function(res) {

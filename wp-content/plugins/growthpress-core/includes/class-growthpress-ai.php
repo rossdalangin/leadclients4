@@ -29,6 +29,44 @@ class GrowthPress_AI {
 
     private function __construct() {
         $this->provider = get_option('growthpress_ai_provider', 'openai');
+        add_action('wp_ajax_gp_submit_ai_feedback', array($this, 'handle_ai_feedback'));
+        add_action('wp_ajax_gp_intelligence_routing_v2', array($this, 'handle_v2_routing'));
+    }
+
+    public function handle_v2_routing() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $prompt = sanitize_text_field($_POST['prompt']);
+        $complexity = (int)($_POST['complexity'] ?? 5);
+
+        // Task 43: Multi-Intelligence Routing v2.0
+        // GPT-4 for high-complexity, Claude 3 for creative/legal, Ollama for routine
+        if ($complexity > 8) $this->provider = 'openai'; // Force GPT-4
+        elseif ($complexity > 5) $this->provider = 'claude'; // Force Claude
+        else $this->provider = 'ollama'; // Local node for routine triage
+
+        $res = $this->call_ai($prompt, "Strategic Intelligence v2.0");
+        wp_send_json_success(array('reply' => $res, 'node' => $this->provider));
+    }
+
+    public function handle_ai_feedback() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+        $post_id = intval($_POST['post_id']);
+        $meta_key = sanitize_text_field($_POST['meta_key']);
+        $feedback = sanitize_text_field($_POST['feedback']); // 'positive' or 'negative'
+
+        $log = get_option('gp_ai_feedback_log', array());
+        $log[] = array(
+            'post_id' => $post_id,
+            'key' => $meta_key,
+            'feedback' => $feedback,
+            'time' => current_time('mysql')
+        );
+        update_option('gp_ai_feedback_log', $log);
+
+        GrowthPress_Activity::log("Neural Feedback ingested for node #$post_id. Engine recalibrating...");
+        wp_send_json_success("Feedback ingested.");
     }
 
     public function call_ai( $prompt, $context = '' ) {
@@ -129,7 +167,14 @@ class GrowthPress_AI {
     }
 
     public function generate_growth_roadmap( $niche ) {
-        return $this->call_ai( "Generate a 12-month business growth and AI automation roadmap for a $niche business.", "You are a growth strategist." );
+        $prompt = "Generate a comprehensive 12-month business growth and AI automation roadmap for a $niche firm.
+        Structure the response into 4 distinct quarters:
+        Q1: Foundation & Authority (Focus on niche calibration, CRM setup, and lead capture nodes)
+        Q2: Operational Acceleration (Focus on AI triage, automated nurture, and sales lab integration)
+        Q3: Market Dominance (Focus on content syndication, SEO geo-fencing, and referral loops)
+        Q4: Scaled Realization (Focus on ERP optimization, enterprise SSO, and predictive ROI modeling)
+        For each month, provide 3 specific strategic actions and one 'Neural Milestone'. Use bold headers and clean bullet points. Focus on high-ticket realization.";
+        return $this->call_ai( $prompt, "Senior Growth Architect & Operational Strategist" );
     }
 
     public function predict_deal_probability( $lead_id ) {

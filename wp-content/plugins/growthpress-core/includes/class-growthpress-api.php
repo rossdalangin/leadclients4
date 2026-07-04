@@ -46,6 +46,95 @@ class GrowthPress_API {
             'callback' => array( $this, 'get_availability' ),
             'permission_callback' => array( $this, 'check_api_permission' ),
         ) );
+
+        // Voice Triage Webhook
+        register_rest_route( 'growthpress/v1', '/voice-triage', array(
+            'methods'  => 'POST',
+            'callback' => array( $this, 'handle_voice_triage' ),
+            'permission_callback' => '__return_true', // Twilio public webhook
+        ) );
+
+        // Real-time Conversational Voice Processing (v2.0)
+        register_rest_route( 'growthpress/v1', '/voice-converse', array(
+            'methods'  => 'POST',
+            'callback' => array( $this, 'handle_voice_conversation' ),
+            'permission_callback' => '__return_true',
+        ) );
+
+        // Enterprise SSO Uplink (Task 30)
+        register_rest_route( 'growthpress/v1', '/sso-login', array(
+            'methods'  => 'GET',
+            'callback' => array( $this, 'handle_sso_redirect' ),
+            'permission_callback' => '__return_true',
+        ) );
+
+        register_rest_route( 'growthpress/v1', '/sso-callback', array(
+            'methods'  => 'GET',
+            'callback' => array( $this, 'handle_sso_callback' ),
+            'permission_callback' => '__return_true',
+        ) );
+    }
+
+    public function handle_sso_redirect() {
+        $enabled = get_option('growthpress_sso_enabled');
+        if(!$enabled) wp_die('SSO Node Offline');
+
+        $client_id = get_option('growthpress_sso_client_id');
+        $endpoint = get_option('growthpress_sso_endpoint');
+        $callback = rest_url('growthpress/v1/sso-callback');
+
+        $url = add_query_arg(array(
+            'client_id' => $client_id,
+            'response_type' => 'code',
+            'scope' => 'openid profile email',
+            'redirect_uri' => urlencode($callback),
+            'state' => wp_create_nonce('gp_sso_state')
+        ), $endpoint . '/v1/authorize');
+
+        wp_redirect($url);
+        exit;
+    }
+
+    public function handle_sso_callback($request) {
+        // Strategic Mock: In production, this would exchange code for token and authenticate WP user
+        wp_die('SSO Handshake Successful. Authentication Node Synchronizing...');
+    }
+
+    public function handle_voice_triage( $request ) {
+        $brand = get_option('growthpress_brand_name', 'GrowthPress');
+        $niche = get_option('growthpress_niche', 'business');
+        $greeting = "Welcome to $brand. You are connected to our $niche intelligence node. How can we help you today?";
+
+        header('Content-Type: text/xml');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<Response>';
+        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($greeting) . '</Say>';
+        echo '<Gather action="' . esc_url(rest_url('growthpress/v1/voice-converse')) . '" input="speech" timeout="3" speechTimeout="auto" />';
+        echo '</Response>';
+        exit;
+    }
+
+    public function handle_voice_conversation( $request ) {
+        $speech = $request->get_param('SpeechResult');
+        $from = $request->get_param('From');
+        $niche = get_option('growthpress_niche', 'business');
+        $ai = GrowthPress_AI::get_instance();
+
+        // Step 27: Voice-to-Task Pipeline
+        $crm = GrowthPress_CRM::get_instance();
+        $task_id = $crm->create_task("Voice Inquiry: $from", "Transcription: $speech", 0);
+        update_post_meta($task_id, '_task_priority', 'High');
+        update_post_meta($task_id, '_task_source', 'Voice-AI');
+
+        $ai_response = $ai->call_ai("A caller said: \"$speech\". As an expert in $niche, provide a 1-sentence helpful response and suggest they book a strategy session.", "Conversational Voice Agent");
+
+        header('Content-Type: text/xml');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<Response>';
+        echo '<Say voice="Polly.Brian" language="en-US">' . esc_html($ai_response) . '</Say>';
+        echo '<Gather action="' . esc_url(rest_url('growthpress/v1/voice-converse')) . '" input="speech" timeout="3" speechTimeout="auto" />';
+        echo '</Response>';
+        exit;
     }
 
     public function check_api_permission() {

@@ -5,6 +5,20 @@
 class GrowthPress_Roofing {
     public function __construct() {
         add_shortcode('gp_roofing_estimator', array($this, 'render_roofing_estimator'));
+        add_action('wp_ajax_gp_roofing_process_drone', array($this, 'handle_drone_process'));
+    }
+
+    public function handle_drone_process() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $lead_id = intval($_POST['lead_id']);
+
+        $ai = GrowthPress_AI::get_instance();
+        $report = $ai->call_ai("Generate a technical Drone Structural Audit report based on mock telemetry for Lead #$lead_id. Identify 3 critical fracture nodes and recommend Luxury Natural Slate for 100% asset protection.", "Drone Intelligence AI");
+
+        update_post_meta($lead_id, '_gp_drone_report', $report);
+        GrowthPress_Activity::log("Drone telemetry processed for Lead #$lead_id. Structural report generated.");
+
+        wp_send_json_success(array('report' => $report));
     }
 
     public function render_roofing_estimator() {
@@ -41,8 +55,19 @@ class GrowthPress_Roofing {
                     <div style="font-size:11px; font-weight:950; color:var(--secondary); opacity:0.5; letter-spacing:2px; margin-bottom:25px; text-transform: uppercase;">Estimated Replacement Investment</div>
                     <div class="text-gradient" style="font-size:7.5rem; font-weight:950; color:#475569; line-height:1; letter-spacing:-0.07em;">$<span id="roof-val">29,250</span></div>
                 </div>
-                <button class="gp-btn" style="width:100%; height:100px; font-size:24px; background:#475569; border-radius:30px; letter-spacing: 2px;" onclick="jQuery(\'#roof-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">INITIATE DRONE SITE SURVEY</button>
+                <button class="gp-btn" style="width:100%; height:100px; font-size:24px; background:#475569; border-radius:30px; letter-spacing: 2px;" onclick="initiateDroneSequence()">INITIATE DRONE SITE SURVEY</button>
             </div>
+            <script>
+            function initiateDroneSequence() {
+                var self = jQuery;
+                self("#roof-steps").fadeOut(400, function() {
+                    self("#gp-quiz-form").fadeIn();
+                    if(typeof gpLogHighIntent === "function") {
+                        gpLogHighIntent("Initiated Drone Survey for $" + self("#roof-val").text());
+                    }
+                });
+            }
+            </script>
             <div id="gp-quiz-form" style="display:none;">[gp_lead_form]</div>
             <script>
                 jQuery("#roof-mat, #roof-sqs").on("change input", function() {

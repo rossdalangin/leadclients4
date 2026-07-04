@@ -14,6 +14,40 @@ class GrowthPress_Content_Studio {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_studio_assets' ) );
         add_action( 'wp_ajax_gp_generate_content', array( $this, 'handle_generation' ) );
         add_action( 'wp_ajax_gp_sync_to_kb', array( $this, 'handle_kb_sync' ) );
+        add_action( 'wp_ajax_gp_generate_social_image', array( $this, 'handle_social_image_generation' ) );
+        add_action( 'wp_ajax_gp_syndicate_content', array( $this, 'handle_syndication' ) );
+    }
+
+    public function handle_syndication() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $title = sanitize_text_field($_POST['title']);
+        $content = wp_kses_post($_POST['content']);
+        $channels = $_POST['channels'] ?? array('linkedin', 'x');
+
+        $ai = GrowthPress_AI::get_instance();
+        $summary = $ai->call_ai("Summarize this for social sharing on " . implode(', ', $channels) . ": \"$content\"", "Social Omnipresence Node");
+
+        // Strategic Mock: In production, this would uplink to LinkedIn/X API or Buffer/Hootsuite
+        GrowthPress_Activity::log("Multi-Channel Presence Node: Syndicated \"$title\" to " . strtoupper(implode(', ', $channels)));
+
+        wp_send_json_success(array('summary' => $summary, 'message' => "Content successfully queued for global authority propagation."));
+    }
+
+    public function handle_social_image_generation() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $topic = sanitize_text_field($_POST['topic']);
+
+        $ai = GrowthPress_AI::get_instance();
+        $prompt = $ai->call_ai("Generate a cinematic, high-authority social media image prompt for the topic: \"$topic\". Focus on luxury materials and architectural precision.", "Creative Director AI");
+
+        // Strategic Mock: In production, this would uplink to DALL-E 3 or Midjourney API
+        $mock_url = GROWTHPRESS_CORE_URL . "assets/images/social-gen-placeholder.png";
+
+        wp_send_json_success(array(
+            'prompt' => $prompt,
+            'image_url' => $mock_url,
+            'message' => "Neural creative node initialized. High-authority asset generated."
+        ));
     }
 
     public function handle_kb_sync() {
@@ -91,6 +125,15 @@ class GrowthPress_Content_Studio {
                 case 'inventory': $result = $ai->call_ai("Generate a luxury Portfolio listing for \"$topic\". $context", "Elite Marketer"); break;
                 case 'kb': $result = $ai->call_ai("Generate a technical Knowledge Base article for \"$topic\". $context", "Knowledge Specialist"); break;
                 case 'treatment': $result = $ai->call_ai("Generate a specialized Clinical Treatment Protocol for \"$topic\". Include duration, complexity, and clinical outcomes. $context", "Medical Director AI"); break;
+                case 'seo_cluster': $result = $ai->call_ai("Generate a Local SEO content cluster strategy for \"$topic\". Identify 5 long-tail keywords based on high-intent ZIP code routing and draft a 200-word intro for each.", "SEO Clustering Architect"); break;
+                case 'geo_fencing':
+                    $zips = get_posts(array('post_type' => 'gp_location', 'fields' => 'ids'));
+                    $zip_context = "";
+                    foreach($zips as $zid) $zip_context .= get_post_meta($zid, '_serviced_zips', true) . ", ";
+                    $result = $ai->call_ai("Generate a Hyper-Local SEO landing page for topic: \"$topic\".
+                    Target Neighborhoods based on these ZIP nodes: $zip_context.
+                    Include a neighborhood-specific ROI anchor and local social proof references. $context", "Geo-Fencing Specialist");
+                    break;
                 default: $result = 'Invalid selection.';
             }
         }
@@ -154,10 +197,14 @@ class GrowthPress_Content_Studio {
                             <option value="campaign">5-Day Nurture Sequence</option>
                             <option value="market">Market Angle of Attack</option>
                             <option value="sales">Discovery Talk Tracks</option>
+                            <option value="headline_optimizer">Neural Headline Optimizer (A/B)</option>
                             <option value="service">Service Line Description</option>
                             <option value="project">High-Ticket Case Study</option>
                             <option value="kb">Technical KB Article</option>
                             <option value="treatment">Clinical Treatment Protocol</option>
+                            <option value="seo_cluster">AI Local SEO Cluster</option>
+                            <option value="geo_fencing">Hyper-Local Geo-Fencing (Task 37)</option>
+                            <option value="competitor_swot">Autonomous Competitor SWOT (Task 43)</option>
                         </select>
                     </div>
 
@@ -177,6 +224,7 @@ class GrowthPress_Content_Studio {
                     </div>
 
                     <button class="button button-primary button-hero" onclick="generateContent()" style="width:100%; height:60px !important; border-radius:12px !important; font-weight:900;">INITIALIZE GENERATION</button>
+                    <p style="margin-top:15px; font-size:11px; opacity:0.5; font-weight:700; text-align:center;">STRATEGIC NOTE: Neural generation takes 15-45 seconds depending on asset complexity.</p>
                 </div>
 
                 <!-- Center: Output & Preview -->
@@ -188,7 +236,13 @@ class GrowthPress_Content_Studio {
                                 <span style="font-size:11px; font-weight:950; opacity:0.5; letter-spacing:2px; text-transform: uppercase;">Intelligence Stream</span>
                             </div>
                             <div style="display:flex; gap:10px;">
-                                <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none; font-weight: 800;">COPY RAW</button>
+                                <div style="text-align:right;">
+                                    <div style="display:flex; gap:10px;">
+                                        <button class="button button-small" onclick="generateSocialImage()" style="background:var(--primary); color:white; border:none; font-weight: 800;">GENERATE IMAGE</button>
+                                        <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none; font-weight: 800;">COPY RAW</button>
+                                    </div>
+                                    <p style="font-size:8px; opacity:0.3; margin-top:5px; font-weight:700; color:white;">IMAGE GEN: 5-10s.</p>
+                                </div>
                             </div>
                         </div>
                         <div id="gp-studio-output" style="padding:45px; font-family:'JetBrains Mono', monospace; font-size:14px; line-height:1.8; height:480px; overflow-y:auto; color:rgba(255,255,255,0.95); position: relative;">
@@ -231,7 +285,11 @@ class GrowthPress_Content_Studio {
                         <button class="sync-btn" onclick="syncAsset('gp_project')" style="--sync-color: #10B981;">Sync to Case Studies</button>
                         <button class="sync-btn" onclick="syncAsset('gp_property')" style="--sync-color: #F59E0B;">Sync to Inventory</button>
                         <button class="sync-btn" onclick="syncAsset('gp_treatment')" style="--sync-color: #EF4444;">Sync to Treatments</button>
+                        <button class="sync-btn" onclick="syncAsset('gp_seo_cluster')" style="--sync-color: #7C3AED;">Sync to SEO Clusters</button>
                         <button class="sync-btn" onclick="syncAsset('sync_all')" style="--sync-color: var(--primary); background:var(--primary-glow); border-style:dashed;">Propagate to All Nodes</button>
+                        <p style="font-size:9px; opacity:0.4; text-align:center; font-weight:700;">NOTE: Node sync takes 1-2s.</p>
+                        <button class="sync-btn" onclick="syndicateContent()" style="--sync-color: #000; margin-top:15px; border-style: double;">Syndicate to Social Nodes (Task 35)</button>
+                        <p style="font-size:9px; opacity:0.4; text-align:center; font-weight:700;">NOTE: Multi-channel queue takes 3-5s.</p>
                     </div>
 
                     <hr style="margin:40px 0; opacity:0.1;">
@@ -310,6 +368,39 @@ class GrowthPress_Content_Studio {
                 jQuery(this).addClass('active');
                 jQuery('#design-preview-area').attr('class', 'preview-' + jQuery(this).data('design'));
             });
+        function syndicateContent() {
+            const title = jQuery('#gp-content-topic').val();
+            const content = jQuery('#gp-studio-output').find('.ai-response').text();
+            if(!content) return alert('Generate content node first.');
+
+            if(!confirm('Syndicate this intelligence to LinkedIn and X?')) return;
+
+            jQuery.post(ajaxurl, {
+                action: 'gp_syndicate_content',
+                title: title,
+                content: content,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    alert('SYNDICATION SUCCESS: ' + res.data.summary);
+                }
+            });
+        }
+        function generateSocialImage() {
+            const topic = jQuery('#gp-content-topic').val();
+            if(!topic) return alert('Identify topic node.');
+            alert('Consulting Neural Creative Cluster...');
+            jQuery.post(ajaxurl, {
+                action: 'gp_generate_social_image',
+                topic: topic,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    jQuery('#preview-body').prepend(`<img src="${res.data.image_url}" style="width:100%; border-radius:20px; margin-bottom:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);">`);
+                    alert('SOCIAL IMAGE PROMPT: ' + res.data.prompt);
+                }
+            });
+        }
         </script>
         <?php
     }

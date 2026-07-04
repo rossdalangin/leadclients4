@@ -27,6 +27,7 @@ class GrowthPress_Reviews_Manager {
 
     public function handle_reply_generation() {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         $review_id = intval($_POST['review_id']);
         $reputation = new GrowthPress_Reputation();
         $reply = $reputation->suggest_review_reply($review_id);
@@ -37,9 +38,13 @@ class GrowthPress_Reviews_Manager {
         $reviews = get_posts(array('post_type' => 'gp_review', 'posts_per_page' => 10));
         ?>
         <div class="wrap growthpress-reviews gp-reveal">
-            <div class="glass-card" style="background:#f0fdf4; border-left:5px solid #10b981; margin-bottom:30px;">
+            <div class="glass-card" style="background:#f0fdf4; border-left:5px solid #10b981; margin-bottom:30px; padding:25px;">
                 <h4 style="margin:0 0 10px 0; color:#166534;">⭐️ Strategic Context: Reputation Authority</h4>
                 <p style="margin:0; font-size:14px; color:#166534; line-height:1.5;">Public reviews are a primary "Market Authority" signal. The AI suggests replies that reinforce your sector expertise and professional authority. <strong>Success Pattern:</strong> Responding to all reviews, positive or negative, within 24 hours is correlated with a significant boost in local SEO dominance and trust-building for new inquiries.</p>
+                <div style="margin-top:20px; background:#FEF3C7; border-left:4px solid #F59E0B; padding:12px; border-radius:8px; display:flex; align-items:center; gap:12px;">
+                    <div style="font-size:18px;">⌛</div>
+                    <div style="font-size:11px; font-weight:800; color:#92400E;">NOTE: AI Reply synthesis may take 5-10s to analyze sentiment and draft a high-authority response.</div>
+                </div>
             </div>
 
             <h1>Reputation Management</h1>
@@ -51,6 +56,7 @@ class GrowthPress_Reviews_Manager {
                         <h3><?php echo esc_html($review->post_title); ?></h3>
                         <p><?php echo esc_html($review->post_content); ?></p>
                         <button class="button" onclick="generateReply(<?php echo $review->ID; ?>)">Generate AI Reply</button>
+                        <p style="font-size:9px; opacity:0.5; margin-top:5px; font-weight:700;">NOTE: AI synthesis takes 3-5s.</p>
                         <div id="reply-<?php echo $review->ID; ?>" style="margin-top:10px; font-style:italic;"></div>
                     </div>
                 <?php endforeach; ?>
@@ -59,8 +65,10 @@ class GrowthPress_Reviews_Manager {
         <script>
         function generateReply(id) {
             var $ = jQuery;
+            gp_start_intelligence_uplink('SYNTHESIZING AUTHORITY REPLY...');
             $('#reply-' + id).text('AI is writing...');
             $.post(ajaxurl, { action: 'gp_generate_review_reply', review_id: id, gp_nonce: gp_admin.nonce }, function(res) {
+                gp_stop_intelligence_uplink();
                 if(res.success) $('#reply-' + id).html('<strong>Suggested Reply:</strong><br>' + res.data);
             });
         }

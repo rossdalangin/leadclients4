@@ -7,6 +7,46 @@ class GrowthPress_Law {
         add_shortcode('gp_legal_intake', array($this, 'render_legal_intake'));
         add_shortcode('gp_law_conflict_check', array($this, 'render_conflict_check'));
         add_action('gp_niche_lead_analysis', array($this, 'analyze_law_lead'));
+        add_action('wp_ajax_gp_law_execute_clearance', array($this, 'handle_clearance_request'));
+        add_action('wp_ajax_gp_law_redline_contract', array($this, 'handle_contract_redlining'));
+    }
+
+    public function handle_contract_redlining() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $contract_text = sanitize_textarea_field($_POST['contract_text']);
+
+        $ai = GrowthPress_AI::get_instance();
+        $redline = $ai->call_ai("Analyze this contract for high-risk clauses: \"$contract_text\".
+        Identify 3 liabilities and suggest alternative 'Elite' legal language that protects the firm's equity while ensuring Q4 realization speed.", "Autonomous Redlining AI");
+
+        wp_send_json_success(array('analysis' => $redline));
+    }
+
+    public function handle_clearance_request() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $party = sanitize_text_field($_POST['party']);
+
+        // Automated Conflict Search Node
+        $matches = get_posts(array(
+            'post_type' => 'gp_lead',
+            's' => $party,
+            'posts_per_page' => 5
+        ));
+
+        $status = empty($matches) ? 'CLEARED' : 'FLAGGED';
+        $audit_id = wp_insert_post(array(
+            'post_title' => "Conflict Audit: $party",
+            'post_type' => 'gp_conflict',
+            'post_status' => 'publish'
+        ));
+
+        update_post_meta($audit_id, '_conflict_status', $status);
+        update_post_meta($audit_id, '_match_count', count($matches));
+
+        wp_send_json_success(array(
+            'status' => $status,
+            'message' => empty($matches) ? "No jurisdictional overlaps detected for $party." : "Overlaps detected with existing ecosystem nodes."
+        ));
     }
 
     public function render_conflict_check() {
@@ -32,8 +72,23 @@ class GrowthPress_Law {
                     <label style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:2px; display:block; margin-bottom:12px;">DISPUTE SUMMARY</label>
                     <textarea name="lead_msg" placeholder="Summarize the nature of the dispute and any other related entities... (Privileged)"></textarea>
                 </div>
-                <button type="submit" class="gp-btn" style="width:100%; height:95px; font-size:22px; background:#1E293B; border-radius: 25px; letter-spacing: 2px;">EXECUTE CLEARANCE SEQUENCE</button>
+                <button type="button" class="gp-btn" onclick="executeLawClearance()" style="width:100%; height:95px; font-size:22px; background:#1E293B; border-radius: 25px; letter-spacing: 2px;">EXECUTE CLEARANCE SEQUENCE</button>
             </form>
+            <script>
+            function executeLawClearance() {
+                var party = jQuery("input[name=\'adverse_party\']").val();
+                if(!party) return alert("Enter adverse party identity.");
+                jQuery.post(gp_ajax.ajaxurl, {
+                    action: "gp_law_execute_clearance",
+                    party: party,
+                    gp_nonce: "'.wp_create_nonce("gp_admin_nonce").'"
+                }, function(res) {
+                    if(res.success) {
+                        alert("CLEARANCE RESULT: " + res.data.status + "\n" + res.data.message);
+                    }
+                });
+            }
+            </script>
             <div style="margin-top:50px; font-size:12px; font-weight: 900; opacity:0.3; text-align:center; letter-spacing: 1px;">ENCRYPTION: AES-256-GCM. Clearance does not constitute engagement.</div>
         </div>';
     }
@@ -45,6 +100,25 @@ class GrowthPress_Law {
 
         if (strpos($content, 'conflict') !== false || strpos($content, 'parties') !== false) {
             $crm->create_task("Legal Conflict Check", "Parties mentioned in inquiry. Execute priority clearance protocol.", $lead_id);
+
+            // Step 14: Autonomous Conflict Search
+            // Simple keyword-based extraction of potential parties (Mock for AI extraction)
+            $words = explode(' ', $lead->post_content);
+            $potential_party = end($words);
+
+            $matches = get_posts(array('post_type' => 'gp_lead', 's' => $potential_party, 'exclude' => array($lead_id), 'posts_per_page' => 3));
+            $status = empty($matches) ? 'CLEARED' : 'FLAGGED';
+
+            $audit_id = wp_insert_post(array(
+                'post_title' => "Auto-Audit: " . $lead->post_title,
+                'post_type' => 'gp_conflict',
+                'post_status' => 'publish'
+            ));
+            update_post_meta($audit_id, '_conflict_status', $status);
+            update_post_meta($audit_id, '_related_lead', $lead_id);
+            update_post_meta($audit_id, '_match_count', count($matches));
+
+            GrowthPress_Activity::log("Legal Hub: Autonomous conflict search performed for Lead #$lead_id. Status: $status.");
         }
 
         if (strpos($content, 'litigation') !== false || strpos($content, 'sue') !== false) {

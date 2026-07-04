@@ -29,8 +29,8 @@ This 3-email sequence is designed for agencies to sell the GrowthPress OS to loc
 
 ### Medical Clinic (Clinical Triage)
 **Subject:** Reclaiming 15 hours/week from patient administrative load
-**Body:** Hi [Clinic Director Name], your specialists are likely spending 30% of their time on manual triage. Our v6.3 Neural Hub uses HIPAA-ready triage nodes to autonomously score patient urgency and route them to the correct specialist before they even enter your clinic. Are you open to a brief briefing on how we automated the intake lifecycle for [Local Clinic]?
+**Body:** Hi [Clinic Director Name], your specialists are likely spending 30% of their time on manual triage. Our v6.3 Elite Definitive Neural Hub uses HIPAA-ready triage nodes to autonomously score patient urgency and route them to the correct specialist before they even enter your clinic. Are you open to a brief briefing on how we automated the intake lifecycle for [Local Clinic]?
 
 ### Solar Company (Capital Realization)
 **Subject:** Why your solar leads are committed "Equity Suicide"
-**Body:** Hi [CEO Name], every hour a solar lead sits in your CRM without an ROI projection, its value drops by 50%. We've integrated a high-fidelity 'Capital Calculator' that provides prospects with a 25-year utility delta analysis in under 60 seconds, autonomously moving them from 'Curious' to 'Qualified.' Can I show you the data from our latest v6.3 deployment?
+**Body:** Hi [CEO Name], every hour a solar lead sits in your CRM without an ROI projection, its value drops by 50%. We've integrated a high-fidelity 'Capital Calculator' that provides prospects with a 25-year utility delta analysis in under 60 seconds, autonomously moving them from 'Curious' to 'Qualified.' Can I show you the data from our latest v6.3 Elite Definitive deployment?

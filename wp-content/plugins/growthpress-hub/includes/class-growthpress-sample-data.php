@@ -30,6 +30,12 @@ class GrowthPress_Sample_Data {
         self::generate_staff($lead_ids);
         self::generate_reviews($project_ids);
         self::generate_treatments();
+        self::generate_chat_templates();
+        self::generate_erp_inventory();
+        self::generate_referrals();
+        self::generate_seo_clusters();
+        self::generate_chat_sessions($lead_ids);
+        self::generate_conflict_audits();
 
         // 2. Call niche-specific sample data
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
@@ -65,7 +71,7 @@ class GrowthPress_Sample_Data {
 
     public static function remove_all_sample_data() {
         $args = array(
-            'post_type'      => array('gp_lead', 'gp_appointment', 'gp_property', 'gp_review', 'gp_proposal', 'gp_transaction', 'gp_funnel', 'gp_location', 'gp_task', 'gp_kb', 'gp_project', 'gp_service', 'gp_treatment', 'gp_staff'),
+            'post_type'      => array('gp_lead', 'gp_appointment', 'gp_property', 'gp_review', 'gp_proposal', 'gp_transaction', 'gp_funnel', 'gp_location', 'gp_task', 'gp_kb', 'gp_project', 'gp_service', 'gp_treatment', 'gp_staff', 'gp_chat', 'gp_chat_template'),
             'posts_per_page' => -1,
             'meta_query'     => array(
                 array(
@@ -97,6 +103,14 @@ class GrowthPress_Sample_Data {
             array('login' => 'gp_staff_1', 'role' => 'editor', 'email' => 'staff@growthpress.io'),
             array('login' => 'gp_client_1', 'role' => 'subscriber', 'email' => 'client@growthpress.io')
         );
+
+        // Seed Agency Profiles
+        $profiles = array(
+            'medical' => array('name' => 'Vance Health Systems', 'niche' => 'medical'),
+            'legal'   => array('name' => 'Sterling Global Law', 'niche' => 'law'),
+            'solar'   => array('name' => 'Apex Solar Infrastructure', 'niche' => 'solar')
+        );
+        update_option('gp_agency_profiles', $profiles);
 
         foreach($users as $u) {
             if ( ! username_exists($u['login']) ) {
@@ -217,6 +231,15 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_ai_closing_tips', "Strategic Advantage: Emphasize the 5-minute response rule. \nROI Pivot: Contrast the cost of their current manual triage latency against our autonomous realized equity spreads.");
                 update_post_meta($id, '_gp_ai_discovery_questions', "1. What is the current financial delta of your ignored leads?\n2. How would a 400% increase in response velocity impact your Q4 realization?");
                 update_post_meta($id, '_gp_ai_suggested_reply', "Hello " . explode(' ', $l['title'])[0] . ", I saw your inquiry about automation...");
+                update_post_meta($id, '_gp_ai_strategic_plan', "1. Execute v6.3 Merit Review Node\n2. Perform Jurisdictional Overlap Audit\n3. Initialize Secure Asset Vault Uplink\n4. Dispatch Strategic Proposal Node\n5. Finalize Retainer Realization");
+                update_post_meta($id, '_gp_ai_competitive_edge', "Your firm is the only one in this ZIP sector utilizing autonomous clinical mapping. This reduces intake latency by 44% compared to standard regional competitors.");
+                update_post_meta($id, '_gp_ai_battlecard', "### Competitor Analysis\n- **Regional Incumbents**: High manual latency, no client portal.\n- **Our Edge**: 14-node relational OS, AI-driven triage, real-time ROI tracking.\n- **Win-Point**: Emphasize our 5-minute response rule vs their 48-hour delay.");
+        update_post_meta($id, '_gp_behavior_log', array(
+            array('page' => 'Home', 'time' => date('Y-m-d H:i', strtotime('-2 hours'))),
+            array('page' => 'ROI Calculator', 'time' => date('Y-m-d H:i', strtotime('-1 hour'))),
+            array('page' => 'Services', 'time' => date('Y-m-d H:i', strtotime('-45 mins'))),
+            array('page' => 'KB: Strategic ROI', 'time' => date('Y-m-d H:i', strtotime('-30 mins')))
+        ));
                 update_post_meta($id, '_gp_behavioral_nudge', "Based on your interest in " . $l['tag'] . " solutions, we have a specialized team ready.");
                 update_post_meta($id, '_gp_nurture_sequence', "Day 1: Welcome\nDay 2: Value Proposition\nDay 3: Case Study\nDay 4: Demo Invitation\nDay 5: Final Follow-up");
                 $niche = get_option('growthpress_niche', 'business');
@@ -617,7 +640,31 @@ class GrowthPress_Sample_Data {
     }
 
     private static function generate_projects($lead_ids = array()) {
-        $projects = array(
+        $niche = get_option('growthpress_niche', 'business');
+        $niche_projects = array(
+            'dental' => array(
+                'Full-Mouth Reconstruction Realization' => array('+180%', '12 HRS/WK', '$45k+'),
+                'Invisalign Elite Deployment' => array('+320%', '8 HRS/WK', '$25k+')
+            ),
+            'law' => array(
+                'Corporate Merger Triage' => array('+440%', '20 HRS/WK', '$1.2M+'),
+                'Strategic Litigation Merit Audit' => array('+210%', '15 HRS/WK', '$450k+')
+            ),
+            'solar' => array(
+                'Luxury Estate Infrastructure' => array('+550%', '30 HRS/WK', '$120k+'),
+                'Industrial Array Optimization' => array('+140%', '22 HRS/WK', '$850k+')
+            ),
+            'medical' => array(
+                'Neural Triage Hub Implementation' => array('+680%', '40 HRS/WK', '$2.1M+'),
+                'Clinical Protocol Standardization' => array('+115%', '18 HRS/WK', '$320k+')
+            ),
+            'contractor' => array(
+                'Modernist Estate Overhaul' => array('+240%', '25 HRS/WK', '$2.5M+'),
+                'Structural Engineering Realization' => array('+95%', '12 HRS/WK', '$420k+')
+            )
+        );
+
+        $projects = $niche_projects[$niche] ?? array(
             'Global Enterprise Migration' => array('+420%', '15 HRS/WK', '$2.5M+'),
             'Sustainable Infrastructure Deployment' => array('+215%', '22 HRS/WK', '$1.8M+'),
             'Neural Triage Implementation' => array('+680%', '40 HRS/WK', '$3.2M+')
@@ -745,6 +792,144 @@ class GrowthPress_Sample_Data {
                 update_post_meta($id, '_gp_is_sample', '1');
                 update_post_meta($id, '_treatment_duration', $data[0]);
                 update_post_meta($id, '_treatment_complexity', $data[1]);
+            }
+        }
+    }
+
+    private static function generate_erp_inventory() {
+        $items = array(
+            'High-Efficiency Solar Array Node' => 45,
+            'Neural Clinical Implant' => 12,
+            'Structural Steel Beam (Elite)' => 8
+        );
+        foreach($items as $title => $stock) {
+            $id = wp_insert_post(array('post_title' => $title, 'post_type' => 'gp_inventory', 'post_status' => 'publish'));
+            if($id) {
+                update_post_meta($id, '_gp_is_sample', '1');
+                update_post_meta($id, '_gp_stock_level', $stock);
+                update_post_meta($id, '_gp_min_threshold', 10);
+            }
+        }
+    }
+
+    private static function generate_referrals() {
+        $id = wp_insert_post(array('post_title' => 'Referral: Sarah Vance', 'post_type' => 'gp_referral', 'post_status' => 'publish'));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_referral_email', 'sarah@vance-legal.com');
+            update_post_meta($id, '_referral_status', 'Qualified');
+        }
+    }
+
+    private static function generate_seo_clusters() {
+        $niche = get_option('growthpress_niche', 'business');
+        $id = wp_insert_post(array(
+            'post_title' => "v6.3 SEO Cluster: " . ucfirst($niche) . " Authority",
+            'post_content' => "Automated SEO cluster identifying 5 high-intent long-tail keywords for the $niche sector.",
+            'post_type' => 'gp_seo_cluster',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_cluster_keywords', 'high-ticket ' . $niche . ', ' . $niche . ' automation, elite ' . $niche . ' services');
+        }
+    }
+
+    private static function generate_chat_sessions($lead_ids = array()) {
+        if(empty($lead_ids)) return;
+        $id = wp_insert_post(array(
+            'post_title' => 'Chat Session: ' . get_the_title($lead_ids[0]),
+            'post_content' => "User: How does the v6.3 triage system work?\nAI: Our neural engine identifies your strategic goals and routes you to the optimal specialist node.\nUser: Interesting. Can it handle multi-national conflict clearance?",
+            'post_type' => 'gp_chat',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_related_lead', $lead_ids[0]);
+            update_post_meta($id, '_chat_session_id', 'sample_' . wp_generate_password(8, false));
+            update_post_meta($id, '_gp_chat_history', array(
+                array('role' => 'user', 'msg' => 'How does the v6.3 triage system work?', 'time' => date('Y-m-d H:i', strtotime('-1 hour'))),
+                array('role' => 'ai', 'msg' => 'Our neural engine identifies your strategic goals and routes you to the optimal specialist node.', 'time' => date('Y-m-d H:i', strtotime('-55 mins'))),
+                array('role' => 'user', 'msg' => 'Can it handle multi-national conflict clearance?', 'time' => date('Y-m-d H:i', strtotime('-50 mins')))
+            ));
+            update_post_meta($id, '_gp_last_active', date('Y-m-d H:i', strtotime('-50 mins')));
+        }
+    }
+
+    private static function generate_conflict_audits() {
+        $niche = get_option('growthpress_niche', 'business');
+        if($niche !== 'law') return;
+        $id = wp_insert_post(array(
+            'post_title' => 'Conflict Audit: Sterling Global vs Apex Corp',
+            'post_type' => 'gp_conflict',
+            'post_status' => 'publish'
+        ));
+        if($id) {
+            update_post_meta($id, '_gp_is_sample', '1');
+            update_post_meta($id, '_conflict_status', 'CLEARED');
+            update_post_meta($id, '_audit_notes', 'Neural search performed across 14-node ecosystem. No jurisdictional overlaps detected.');
+        }
+    }
+
+    private static function generate_chat_templates() {
+        $niche = get_option('growthpress_niche', 'business');
+        $niche_templates = array(
+            'dental' => array(
+                array('title' => 'Invisalign Inquiry', 'content' => 'We offer Invisalign Elite protocols. Our neural triage system will map your aesthetic journey during the first session. Would you like to check our availability?', 'keywords' => 'invisalign, aligner, straight'),
+                array('title' => 'Emergency Triage', 'content' => 'If you are experiencing acute pain, our specialist routing is active. Please book an "Emergency Triage" slot immediately for priority clinical handling.', 'keywords' => 'emergency, pain, hurt, broken')
+            ),
+            'law' => array(
+                array('title' => 'Retainer Question', 'content' => 'Our corporate litigation nodes operate on a high-value retainer model. We provide multi-jurisdictional risk mitigation and AI-driven case merit analysis.', 'keywords' => 'retainer, cost, price, fee'),
+                array('title' => 'Conflict Clearance', 'content' => 'We utilize v6.3 conflict clearance protocols to ensure enterprise-grade legal integrity. Initial clearance takes approximately 24 hours.', 'keywords' => 'conflict, clear, background')
+            ),
+            'solar' => array(
+                array('title' => 'Incentive Modeling', 'content' => 'Our structural ROI engineering identifies all available federal and state tax credits. Most clients realize a 100% ROI within 5-7 years.', 'keywords' => 'tax, credit, incentive, roi, money'),
+                array('title' => 'Grid Independence', 'content' => 'We specialize in grid-independence modeling using high-efficiency battery storage nodes. This ensures operational continuity during outages.', 'keywords' => 'battery, storage, outage, grid, off-grid')
+            ),
+            'medical' => array(
+                array('title' => 'HIPAA Security', 'content' => 'All health intelligence data is stored in our secure, HIPAA-ready neural vault. Your clinical records are only accessible to authorized specialists.', 'keywords' => 'hipaa, privacy, secure, safe, data'),
+                array('title' => 'Specialist Routing', 'content' => 'Our triage node handles specialized outpatient protocols. Once you book a session, you will be routed to the appropriate clinical expert.', 'keywords' => 'specialist, doctor, expert, route')
+            ),
+            'contractor' => array(
+                array('title' => 'Permit Realization', 'content' => 'Our autonomous design-to-build protocol includes full permit management and structural engineering authentication to reduce project latency.', 'keywords' => 'permit, code, city, engineering'),
+                array('title' => 'Material Authority', 'content' => 'We source only high-authority materials for modernist estate overhauls, ensuring absolute structural dominance and long-term appreciation.', 'keywords' => 'material, wood, steel, finish, luxury')
+            ),
+            'roofing' => array(
+                array('title' => 'Drone Audit', 'content' => 'We execute AI-assisted drone surveys to identify structural deltas. This reduces audit friction by 40% and provides high-fidelity storm damage reports.', 'keywords' => 'drone, survey, audit, inspect, fly'),
+                array('title' => 'Slate Expertise', 'content' => 'Our industrial deployment teams specialize in natural slate installations, which offer the highest level of asset protection and aesthetic authority.', 'keywords' => 'slate, natural, stone, luxury')
+            ),
+            'accounting' => array(
+                array('title' => 'Tax Delta', 'content' => 'We specialize in identifying reclaimable capital nodes through multi-jurisdictional tax delta analysis. Our focus is long-term wealth preservation.', 'keywords' => 'tax, capital, save, refund, irs'),
+                array('title' => 'Fiscal Trajectory', 'content' => 'Our v6.3 Wealth Preservation Engine models your 10-year fiscal trajectory, accounting for high-stakes corporate audits and capital realization.', 'keywords' => 'audit, trajectory, future, wealth, plan')
+            ),
+            'real-estate' => array(
+                array('title' => 'Off-Market Nodes', 'content' => 'Access proprietary off-market inventory through our Neural Lifestyle Matcher. We target high-growth appreciation nodes for elite capital deployment.', 'keywords' => 'off-market, hidden, secret, exclusive, deal'),
+                array('title' => 'Portfolio Delta', 'content' => 'Our acquisition specialists utilize AI-driven market delta analysis to pair high-net-worth individuals with modernist estates.', 'keywords' => 'portfolio, asset, investment, estate')
+            ),
+            'coaches' => array(
+                array('title' => 'Scaling Roadmap', 'content' => 'Our Performance Engine provides the 12-month roadmap for 7-figure high-ticket scaling. We focus on transitioning from manual latency to autonomous realization.', 'keywords' => 'scale, growth, roadmap, plan, million'),
+                array('title' => 'Authority Building', 'content' => 'We empower founders to capture absolute sector authority through neural content automation and high-stakes closing tactics.', 'keywords' => 'authority, brand, expert, closing, sales')
+            ),
+            'consultants' => array(
+                array('title' => 'Operational Audit', 'content' => 'We identify 18+ hours per week in reclaimable operational equity by eliminating lifecycle friction across your digital ecosystem.', 'keywords' => 'audit, equity, time, friction, efficiency'),
+                array('title' => 'Change Command', 'content' => 'Our Management Consultants perform full-scale architectural audits to modernize your ecosystem and maximize conversion velocity.', 'keywords' => 'change, manage, velocity, modern')
+            )
+        );
+
+        $templates = $niche_templates[$niche] ?? array(
+            array('title' => 'General Inquiry', 'content' => 'Welcome to the GrowthPress ecosystem. Our neural-calibrated OS is ready to handle your specialized technical inquiries.', 'keywords' => 'help, information, about')
+        );
+
+        foreach ($templates as $tpl) {
+            $id = wp_insert_post(array(
+                'post_title'   => $tpl['title'],
+                'post_content' => $tpl['content'],
+                'post_type'    => 'gp_chat_template',
+                'post_status'  => 'publish'
+            ));
+            if ($id) {
+                update_post_meta($id, '_gp_is_sample', '1');
+                update_post_meta($id, '_gp_template_keywords', $tpl['keywords']);
             }
         }
     }

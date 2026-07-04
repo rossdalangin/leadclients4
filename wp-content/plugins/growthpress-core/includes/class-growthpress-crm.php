@@ -20,6 +20,7 @@ class GrowthPress_CRM {
 
     private function __construct() {
         add_action( 'init', array( $this, 'register_cpts' ) );
+        add_action( 'init', array( $this, 'capture_referral_source' ) );
         add_filter( 'bulk_actions-edit-gp_lead', array( $this, 'register_lead_bulk_actions' ) );
         add_filter( 'handle_bulk_actions-edit-gp_lead', array( $this, 'handle_lead_bulk_actions' ), 10, 3 );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
@@ -32,6 +33,7 @@ class GrowthPress_CRM {
         add_action( 'wp_ajax_gp_add_lead_note', array( $this, 'handle_add_note' ) );
         add_action( 'wp_ajax_gp_add_vault_asset', array( $this, 'handle_add_vault_asset' ) );
         add_action( 'wp_ajax_gp_complete_task', array( $this, 'handle_complete_task' ) );
+        add_action( 'wp_ajax_gp_process_referral', array( $this, 'handle_process_referral' ) );
         if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
             wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
         }
@@ -84,6 +86,54 @@ class GrowthPress_CRM {
             'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
         ) );
 
+        register_post_type( 'gp_chat', array(
+            'labels'      => array( 'name' => 'Chat Sessions', 'singular_name' => 'Chat' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-format-chat',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_chat_template', array(
+            'labels'      => array( 'name' => 'Chat Templates', 'singular_name' => 'Template' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-media-text',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_conflict', array(
+            'labels'      => array( 'name' => 'Conflict Audits', 'singular_name' => 'Audit' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-shield',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_seo_cluster', array(
+            'labels'      => array( 'name' => 'SEO Clusters', 'singular_name' => 'Cluster' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-networking',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_inventory', array(
+            'labels'      => array( 'name' => 'ERP Inventory', 'singular_name' => 'Asset' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-archive',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
+        register_post_type( 'gp_referral', array(
+            'labels'      => array( 'name' => 'Referral Node', 'singular_name' => 'Referral' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-share-alt',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,
@@ -101,6 +151,9 @@ class GrowthPress_CRM {
 
         add_filter( 'manage_gp_lead_posts_columns', array( $this, 'lead_columns' ) );
         add_action( 'manage_gp_lead_posts_custom_column', array( $this, 'lead_column_content' ), 10, 2 );
+
+        add_filter( 'manage_gp_conflict_posts_columns', array( $this, 'conflict_columns' ) );
+        add_action( 'manage_gp_conflict_posts_custom_column', array( $this, 'conflict_column_content' ), 10, 2 );
 
         add_filter( 'manage_gp_task_posts_columns', array( $this, 'task_columns' ) );
         add_action( 'manage_gp_task_posts_custom_column', array( $this, 'task_column_content' ), 10, 2 );
@@ -166,6 +219,12 @@ class GrowthPress_CRM {
         </div>';
     }
 
+    public function capture_referral_source() {
+        if ( isset($_GET['ref']) ) {
+            setcookie('gp_ref_source', sanitize_text_field($_GET['ref']), time() + (86400 * 30), COOKIEPATH, COOKIE_DOMAIN);
+        }
+    }
+
     public function handle_lead_submission() {
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) {
             wp_send_json_error( 'Security failed.' );
@@ -187,6 +246,12 @@ class GrowthPress_CRM {
         update_post_meta($lead_id, '_lead_phone', $phone);
         update_post_meta($lead_id, '_lead_zip', $zip);
         wp_set_object_terms($lead_id, 'new', 'gp_lead_stage');
+
+        if ( isset($_COOKIE['gp_ref_source']) ) {
+            update_post_meta($lead_id, '_referrer_id', sanitize_text_field($_COOKIE['gp_ref_source']));
+            update_post_meta($lead_id, '_lead_source', 'Referral Link');
+        }
+
         do_action('gp_lead_captured', $lead_id);
         wp_send_json_success("Sequence initiated. AI Triage in progress.");
     }
@@ -204,9 +269,15 @@ class GrowthPress_CRM {
 
         // Rule 1: High-Probability Lead Escalation
         if ($prob >= 90) {
-            $admin = get_users(array('role' => 'administrator', 'number' => 1))[0];
-            update_post_meta($lead_id, '_assigned_staff', $admin->ID);
+            $admin_users = get_users(array('role' => 'administrator', 'number' => 1));
+            $admin_id = !empty($admin_users) ? $admin_users[0]->ID : 0;
+            if($admin_id) update_post_meta($lead_id, '_assigned_staff', $admin_id);
+
             $this->create_task("PRIORITY UPLINK: " . $lead->post_title, "High-probability lead ($prob%). Strategic outreach required.", $lead_id);
+
+            // Dispatch SMS Alert
+            $this->send_admin_sms("🚨 STRATEGIC ALERT: High-prob lead detected ($prob%): " . $lead->post_title . ". Login to Dashboard to execute closure.");
+
             GrowthPress_Activity::log("Neural Node: Priority Escalation for Lead #$lead_id.");
         }
 
@@ -238,7 +309,28 @@ class GrowthPress_CRM {
         if ( ! $lead ) return;
 
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
-        $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5);
+        $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5, 'sentiment' => 'neutral');
+
+        // Step 22: High-Risk Sentiment Detection & Strategic Automations
+        if ( isset($analysis['sentiment']) && (stripos($analysis['sentiment'], 'negative') !== false || stripos($analysis['sentiment'], 'angry') !== false) ) {
+            $this->create_task( "🚨 HIGH-RISK SENTIMENT: " . $lead->post_title, "AI detected potential strategic risk or negative sentiment in inquiry. Immediate specialist intervention required.", $lead_id );
+            GrowthPress_Activity::log("Strategic Alert: Negative sentiment detected for Lead #$lead_id.");
+        }
+
+        // Automated Rule: Lead Urgency > 8 -> Instant SMS
+        if ( isset($analysis['urgency']) && (int)$analysis['urgency'] > 8 ) {
+            $this->send_admin_sms("🔥 HIGH URGENCY LEAD: " . $lead->post_title . " (Urgency: " . $analysis['urgency'] . "). Action required within 5 mins.");
+            $this->create_task("URGENT SMS DISPATCHED: " . $lead->post_title, "Lead urgency score exceeded threshold (8). Admin notified via Twilio.", $lead_id);
+        }
+
+        // Step 45: Neural Sentiment Response Auto-Pilot
+        if ( isset($analysis['sentiment']) && stripos($analysis['sentiment'], 'negative') !== false ) {
+            $niche = get_option('growthpress_niche', 'business');
+            $draft = $ai->call_ai("A lead is showing negative sentiment: \"{$lead->post_content}\". Draft a 'Risk Mitigation' email as a specialist in $niche. Focus on high-empathy conflict resolution and invite them to an immediate session with a Managing Director.", "Crisis Resolution Node");
+            if(!is_wp_error($draft)) update_post_meta($lead_id, '_gp_ai_risk_mitigation_draft', $draft);
+            GrowthPress_Activity::log("Neural Auto-Pilot: Crisis mitigation response drafted for Lead #$lead_id.");
+        }
+
         $prob = $ai->predict_deal_probability($lead_id);
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
@@ -272,6 +364,15 @@ class GrowthPress_CRM {
 
         $suggested = $ai->call_ai("Personalized reply for: \"{$lead->post_content}\"", "Assistant");
         if ( ! is_wp_error($suggested) ) update_post_meta($lead_id, '_gp_ai_suggested_reply', $suggested);
+
+        $action_plan = $ai->call_ai("Develop a 5-step strategic action plan for this lead: \"{$lead->post_content}\"", "Senior Strategist");
+        if ( ! is_wp_error($action_plan) ) update_post_meta($lead_id, '_gp_ai_strategic_plan', $action_plan);
+
+        $competitive_edge = $ai->call_ai("Analyze the competitive edge for this lead based on their specific needs: \"{$lead->post_content}\"", "Market Analyst");
+        if ( ! is_wp_error($competitive_edge) ) update_post_meta($lead_id, '_gp_ai_competitive_edge', $competitive_edge);
+
+        $battlecard = $ai->call_ai("Generate an AI Competitive Battlecard for lead: \"{$lead->post_content}\". Identify 2 regional competitors and list 3 tactical 'Win-Points' for our firm.", "Competitive Intelligence Node");
+        if ( ! is_wp_error($battlecard) ) update_post_meta($lead_id, '_gp_ai_battlecard', $battlecard);
 
         $nudge = $ai->generate_behavioral_nudge($lead_id);
         if ( ! is_wp_error($nudge) ) update_post_meta($lead_id, '_gp_behavioral_nudge', $nudge);
@@ -322,6 +423,7 @@ class GrowthPress_CRM {
                     </div>
                 <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.5;'>No proposals issued.</p>"; endif; ?>
                 <button type="button" class="button button-small" style="margin-top:10px; width:100%;" onclick="gpCreateProposalForLead(<?php echo $lead_id; ?>)">+ New Proposal</button>
+                <p style="font-size:9px; opacity:0.4; margin-top:5px; text-align:center;">NOTE: AI Proposal gen takes 15-25s.</p>
             </div>
             <div style="background:#f8fafc; padding:15px; border-radius:10px; border:1px solid #e2e8f0;">
                 <h4 style="margin:0 0 10px 0;">✅ Tasks</h4>
@@ -331,6 +433,7 @@ class GrowthPress_CRM {
                     </div>
                 <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.5;'>No tasks assigned.</p>"; endif; ?>
                 <button type="button" class="button button-small" style="margin-top:10px; width:100%;" onclick="gpCreateTaskForLead(<?php echo $lead_id; ?>)">+ New Task</button>
+                <p style="font-size:9px; opacity:0.4; margin-top:5px; text-align:center;">NOTE: Task creation is instant.</p>
             </div>
         </div>
         <script>
@@ -707,6 +810,9 @@ class GrowthPress_CRM {
         $closing = get_post_meta($post->ID, '_gp_ai_closing_tips', true);
         $discovery = get_post_meta($post->ID, '_gp_ai_discovery_questions', true);
         $suggested = get_post_meta($post->ID, '_gp_ai_suggested_reply', true);
+        $strategic_plan = get_post_meta($post->ID, '_gp_ai_strategic_plan', true);
+        $competitive_edge = get_post_meta($post->ID, '_gp_ai_competitive_edge', true);
+        $battlecard = get_post_meta($post->ID, '_gp_ai_battlecard', true);
         ?>
         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:30px; padding:10px;">
             <div>
@@ -718,11 +824,27 @@ class GrowthPress_CRM {
                     <h4 style="margin-top:0; font-size:13px;">Closing Tactics</h4>
                     <div style="font-size:13px; line-height:1.6; opacity:0.8;"><?php echo nl2br(esc_html($closing)); ?></div>
                 </div>
+                <?php if($battlecard): ?>
+                <div style="margin-top:20px; background:#FFF1F2; padding:25px; border-radius:20px; border:1px solid #FDA4AF;">
+                    <h4 style="margin-top:0; font-size:11px; color:#9F1239; text-transform:uppercase; letter-spacing:1px;">Tactical Battlecard</h4>
+                    <div style="font-size:12px; line-height:1.5; color:#9F1239;"><?php echo nl2br(esc_html($battlecard)); ?></div>
+                </div>
+                <?php endif; ?>
             </div>
             <div>
                 <h4 style="margin-top:0;">AI Suggested Discovery Call Questions</h4>
                 <div style="background:#FFFBEB; padding:25px; border-radius:20px; border:1px solid #FEF3C7; color:#92400E; font-size:14px; line-height:1.7; margin-bottom:30px;">
                     <?php echo nl2br(esc_html($discovery)); ?>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
+                    <div style="background:#F0FDF4; padding:20px; border-radius:15px; border:1px solid #DCFCE7;">
+                        <h4 style="margin-top:0; font-size:12px; color:#166534;">Strategic Action Plan</h4>
+                        <div style="font-size:12px; line-height:1.5; color:#166534;"><?php echo nl2br(esc_html($strategic_plan)); ?></div>
+                    </div>
+                    <div style="background:#F0F9FF; padding:20px; border-radius:15px; border:1px solid #BAE6FD;">
+                        <h4 style="margin-top:0; font-size:12px; color:#0369A1;">Competitive Edge Analysis</h4>
+                        <div style="font-size:12px; line-height:1.5; color:#0369A1;"><?php echo nl2br(esc_html($competitive_edge)); ?></div>
+                    </div>
                 </div>
                 <h4>Draft Response</h4>
                 <textarea id="gp-ai-reply" style="width:100%; height:200px; border-radius:15px; border:1px solid #E2E8F0; padding:20px; font-size:14px; background:#F0FDF4;"><?php echo esc_textarea($suggested); ?></textarea>
@@ -753,6 +875,7 @@ class GrowthPress_CRM {
         <div style="display:flex; gap:10px;">
             <input type="text" id="gp-new-asset-name" placeholder="Blueprint Name..." style="flex:1;">
             <button type="button" class="button" onclick="gpAddVaultAsset(<?php echo $post->ID; ?>)">+ Add System Asset</button>
+            <p style="font-size:9px; opacity:0.4; margin-top:5px; margin-left:10px;">NOTE: Asset encryption takes 1-2s.</p>
         </div>
         <script>
             function gpAddVaultAsset(id) {
@@ -797,6 +920,7 @@ class GrowthPress_CRM {
         </div>
         <textarea id="gp-new-note" style="width:100%; height:60px; font-size:12px;" placeholder="Add team note..."></textarea>
         <button type="button" class="button" style="width:100%; margin-top:5px;" onclick="addGPNote(<?php echo $post->ID; ?>)">Post Update</button>
+        <p style="font-size:9px; opacity:0.4; margin-top:8px; text-align:center;">NOTE: @mentions trigger high-priority alerts.</p>
         <script>function addGPNote(id) { var t = jQuery('#gp-new-note').val(); if(!t) return; jQuery.post(ajaxurl, {action:'gp_add_lead_note', lead_id:id, note:t, gp_nonce:'<?php echo wp_create_nonce("gp_admin_nonce"); ?>'}, function(){location.reload();}); }</script>
         <?php
     }
@@ -810,20 +934,63 @@ class GrowthPress_CRM {
 
         $lead_id = intval( $_POST['lead_id'] );
         $notes   = get_post_meta( $lead_id, '_gp_internal_notes', true ) ?: array();
+        $note_text = sanitize_textarea_field( $_POST['note'] );
         $notes[] = array(
             'user' => wp_get_current_user()->display_name,
             'time' => current_time( 'mysql' ),
-            'text' => sanitize_textarea_field( $_POST['note'] )
+            'text' => $note_text
         );
         update_post_meta( $lead_id, '_gp_internal_notes', $notes );
+
+        // Step 25: Real-time @mention detection
+        if (strpos($note_text, '@') !== false) {
+            GrowthPress_Activity::log("Specialist mentioned in Lead #$lead_id. Routing priority alert.");
+        }
+
         wp_send_json_success();
     }
+
+    public function handle_process_referral() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        $ref_id = intval($_POST['referral_id']);
+        $email = get_post_meta($ref_id, '_referral_email', true);
+        $title = get_the_title($ref_id);
+
+        $lead_id = wp_insert_post(array(
+            'post_title' => str_replace('Referral: ', '', $title),
+            'post_type'  => 'gp_lead',
+            'post_status' => 'publish'
+        ));
+
+        if($lead_id) {
+            update_post_meta($lead_id, '_lead_email', $email);
+            update_post_meta($lead_id, '_lead_source', 'Referral Node');
+            update_post_meta($ref_id, '_referral_status', 'Converted');
+            update_post_meta($ref_id, '_related_lead_id', $lead_id);
+
+            do_action('gp_lead_captured', $lead_id);
+            GrowthPress_Activity::log("Referral Node Converted to Lead #$lead_id: $title");
+            wp_send_json_success("Referral successfully promoted to active Lead node.");
+        }
+        wp_send_json_error();
+    }
+
 
     public function handle_complete_task() {
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $task_id = intval( $_POST['task_id'] );
         update_post_meta( $task_id, '_task_status', 'Completed' );
+
+        // Step 39: Precision Resource Allocation (ERP) - Bottleneck detection
+        $staff_id = get_post_meta($task_id, '_assigned_staff', true);
+        if($staff_id) {
+            $pending = get_posts(array('post_type' => 'gp_task', 'meta_key' => '_assigned_staff', 'meta_value' => $staff_id, 'meta_query' => array(array('key' => '_task_status', 'value' => 'Pending'))));
+            if(count($pending) > 5) {
+                GrowthPress_Activity::log("ERP Node: Resource bottleneck detected for Specialist ID #$staff_id. 5+ pending tasks. Suggesting redistribution.");
+            }
+        }
+
         GrowthPress_Activity::log( "Strategic Task #$task_id marked as completed." );
         wp_send_json_success();
     }
@@ -855,6 +1022,38 @@ class GrowthPress_CRM {
         $task_id = wp_insert_post( array( 'post_title' => $title, 'post_content' => $desc, 'post_type' => 'gp_task', 'post_status' => 'publish' ) );
         if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
         return $task_id;
+    }
+
+    /**
+     * Send strategic SMS alert to the principal specialist via Twilio.
+     */
+    public function send_admin_sms($message) {
+        $sid = get_option('growthpress_twilio_sid');
+        $token = get_option('growthpress_twilio_token');
+        $from = get_option('growthpress_twilio_from_number');
+        $to = get_option('growthpress_admin_sms_recipient');
+
+        if (!$sid || !$token || !$from || !$to) return false;
+
+        $url = "https://api.twilio.com/2010-04-01/Accounts/$sid/Messages.json";
+        $response = wp_remote_post($url, array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode("$sid:$token"),
+            ),
+            'body' => array(
+                'From' => $from,
+                'To'   => $to,
+                'Body' => $message,
+            ),
+        ));
+
+        if (is_wp_error($response)) {
+            GrowthPress_Activity::log("SMS Dispatch Failed: " . $response->get_error_message());
+            return false;
+        }
+
+        GrowthPress_Activity::log("Strategic SMS Dispatched to Principal Specialist.");
+        return true;
     }
 
     public function register_lead_bulk_actions( $bulk_actions ) {
@@ -913,6 +1112,46 @@ class GrowthPress_CRM {
         $cols['_lead'] = 'Related Lead';
         $cols['_staff'] = 'Assigned To';
         return $cols;
+    }
+
+    public function referral_columns($cols) {
+        $cols['_email'] = 'Referral Email';
+        $cols['_status'] = 'Status';
+        $cols['_source'] = 'Source Client';
+        $cols['_action'] = 'Action';
+        return $cols;
+    }
+
+    public function referral_column_content($col, $post_id) {
+        if($col === '_email') echo get_post_meta($post_id, '_referral_email', true);
+        if($col === '_status') echo get_post_meta($post_id, '_referral_status', true);
+        if($col === '_source') {
+            $cid = get_post_meta($post_id, '_source_client_id', true);
+            echo $cid ? get_userdata($cid)->display_name : 'Portal Node';
+        }
+        if($col === '_action') {
+            if(get_post_meta($post_id, '_referral_status', true) !== 'Converted') {
+                echo '<button class="button button-small" onclick="gpProcessReferral('.$post_id.')">PROMOTE</button>';
+                echo '<script>function gpProcessReferral(id){ jQuery.post(ajaxurl, {action:"gp_process_referral", referral_id:id, gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}, function(r){ alert(r.data); location.reload(); }); }</script>';
+            } else {
+                echo '<span style="color:#10b981; font-weight:bold;">CONVERTED</span>';
+            }
+        }
+    }
+
+    public function conflict_columns($cols) {
+        $cols['_status'] = 'Clearance Status';
+        $cols['_matches'] = 'Overlaps';
+        return $cols;
+    }
+
+    public function conflict_column_content($col, $post_id) {
+        if($col === '_status') {
+            $s = get_post_meta($post_id, '_conflict_status', true);
+            $color = ($s === 'CLEARED') ? '#10b981' : '#ef4444';
+            echo "<span style='color:$color; font-weight:bold;'>$s</span>";
+        }
+        if($col === '_matches') echo get_post_meta($post_id, '_match_count', true);
     }
 
     public function task_column_content( $col, $post_id ) {

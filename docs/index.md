@@ -1,4 +1,4 @@
-# GrowthPress Documentation: Master Index v6.3 Definitive
+# GrowthPress Documentation: Master Index v6.3 Elite Definitive
 
 Welcome to the comprehensive documentation library for the GrowthPress Business Operating System Elite.
 
@@ -7,7 +7,7 @@ Welcome to the comprehensive documentation library for the GrowthPress Business 
 - **[Quick Start GTM Checklist](marketing/gtm-plans/high-ticket-gtm.md)** - Transition from deployment to lead acquisition.
 
 ## Technical
-- [Api Specification v6.3](api-specification.md)
+- [Api Specification v6.3 Elite Definitive](api-specification.md)
 - [Architecture Map](architecture-map.md)
 - [Architecture](architecture.md)
 - [Database Schema Deep Dive](database-schema-deep-dive.md)
@@ -20,7 +20,7 @@ Welcome to the comprehensive documentation library for the GrowthPress Business 
 - [Behavioral Psychology Glossary](behavioral-psychology-glossary.md)
 - [Client Communication Strategy](client-communication-strategy.md)
 - [Conversion Strategy](conversion-strategy.md)
-- [Master Prompt Library v6.3](master-prompt-library.md)
+- [Master Prompt Library v6.3 Elite Definitive](master-prompt-library.md)
 - [Niche Success Blueprints](niche-success-blueprints.md)
 - [Operations Playbook](operations-playbook.md)
 - [Ux Strategy](ux-strategy.md)
@@ -50,12 +50,12 @@ Welcome to the comprehensive documentation library for the GrowthPress Business 
 - [System Scalability Multisite](system-scalability-multisite.md)
 - [Team Collaboration Guide](team-collaboration-guide.md)
 - [User Flows](user-flows.md)
-- [User Guide v6.3](user-guide.md)
+- [User Guide v6.3 Elite Definitive](user-guide.md)
 - [White Label Guide](white-label-guide.md)
 
 ## 🎯 Marketing & Sales Toolkit
 - **Strategy & Playbooks**
-  - [Market Dominance Whitepaper](marketing/toolkit/market-dominance-whitepaper.md) - The v6.3 Standard.
+  - [Market Dominance Whitepaper](marketing/toolkit/market-dominance-whitepaper.md) - The v6.3 Elite Definitive Standard.
   - [High Ticket Offer Structure](marketing/toolkit/high-ticket-offer-structure.md) - Pricing and packaging nodes.
   - [Referral Engine Playbook](marketing/toolkit/referral-engine-playbook.md) - Automating the viral growth node.
   - [Strategic Partnership Playbook](marketing/toolkit/strategic-partnership-playbook.md) - Ecosystem alliances.

@@ -14,7 +14,7 @@
   - "Module 1: Structural Engineering & Array Blueprinting"
   - "Module 2: 30% Federal Tax Credit Realization Protocol"
   - "Module 3: Grid-Independent Storage Node Deployment"
-- **ROI Anchor**: "Total 25-year utility delta realized: $45,000+ (Verified by v6.3 Estimator)."
+- **ROI Anchor**: "Total 25-year utility delta realized: $45,000+ (Verified by v6.3 Elite Definitive Estimator)."
 
 ## 🦷 Dental Clinic: Elite Aesthetic Reconstruction
 - **Objective**: Deliver "Clinical Dominance" and "Lifestyle Value."

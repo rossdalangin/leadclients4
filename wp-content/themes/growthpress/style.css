@@ -3,7 +3,7 @@ Theme Name: GrowthPress Ultra Elite
 Theme URI: https://growthpress.io
 Author: GrowthPress Team
 Description: The world's most advanced AI-powered business growth operating system for WordPress.
-Version: 6.3.0
+Version: 6.3.0 Elite Definitive
 Text Domain: growthpress
 */
 
@@ -122,7 +122,7 @@ body.dark-theme {
     --text-muted: #94A3B8; /* Slate 400 */
     --border: rgba(255,255,255,0.06);
     --glass-border: rgba(255,255,255,0.12);
-    --secondary: #FFFFFF;
+    --secondary: #1E293B; /* Slate 800 for contrast */
     --primary-glow: rgba(79, 70, 229, 0.4);
     --shadow-sm: 0 10px 20px rgba(0,0,0,0.5);
     --shadow-md: 0 20px 40px rgba(0,0,0,0.7);
@@ -173,6 +173,225 @@ body.dark-theme .gp-list li {
 body.dark-theme .site-header {
     background: rgba(15, 23, 42, 0.85);
     border-color: rgba(255,255,255,0.05);
+}
+
+/* Admin Dashboard & Dark Mode Polish */
+.gp-dark-mode, .dark-theme {
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+}
+
+.gp-dark-mode .glass-card, .dark-theme .glass-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.96) 100%) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode h1, .gp-dark-mode h2, .gp-dark-mode h3, .gp-dark-mode h4,
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4 {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode p, .dark-theme p {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.gp-dark-mode .gp-btn:not(.secondary), .dark-theme .gp-btn:not(.secondary) {
+    color: white !important;
+}
+
+.gp-dark-mode input, .gp-dark-mode select, .gp-dark-mode textarea,
+.dark-theme input, .dark-theme select, .dark-theme textarea {
+    background: rgba(0,0,0,0.2) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #FFF !important;
+}
+
+.gp-dark-mode .site-footer, .dark-theme .site-footer {
+    background: #020617 !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .site-footer .footer-brand, .dark-theme .site-footer .footer-brand {
+    color: #FFF !important;
+}
+
+.gp-dark-mode .site-footer p, .dark-theme .site-footer p {
+    color: #94A3B8 !important;
+}
+
+.gp-dark-mode .site-footer a, .dark-theme .site-footer a {
+    color: #CBD5E1 !important; /* Slate 300 */
+    text-decoration: none;
+}
+
+.gp-dark-mode .site-footer a:hover, .dark-theme .site-footer a:hover {
+    color: #FFF !important;
+}
+
+.gp-dark-mode .site-footer .footer-heading, .dark-theme .site-footer .footer-heading {
+    color: #FFF !important;
+    opacity: 0.8;
+}
+
+.gp-dark-mode .site-footer .footer-eyebrow, .dark-theme .site-footer .footer-eyebrow {
+    color: #64748B !important;
+}
+
+.gp-dark-mode .site-footer .social-link, .dark-theme .site-footer .social-link {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #FFF !important;
+}
+
+/* Secondary Button Polish for Dark Mode */
+.gp-dark-mode .gp-btn-card, .dark-theme .gp-btn-card {
+    background: rgba(255,255,255,0.1) !important;
+    color: #F1F5F9 !important;
+}
+
+.gp-dark-mode .gp-btn-card:hover, .dark-theme .gp-btn-card:hover {
+    background: var(--primary) !important;
+    color: #FFF !important;
+}
+
+/* Elite Footer Layout & Re-integration */
+.site-footer {
+    background: var(--secondary);
+    color: white;
+    padding: 120px 0 60px;
+    margin-top: 150px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    background: radial-gradient(circle at top right, var(--primary), transparent);
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+}
+
+.footer-grid {
+    margin-bottom: 100px;
+    gap: 60px;
+}
+
+.brand-column {
+    flex-basis: 45%;
+}
+
+.footer-brand {
+    color: white;
+    margin-bottom: 25px;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    letter-spacing: -0.04em;
+}
+
+.footer-desc {
+    color: rgba(255,255,255,0.5);
+    font-size: 17px;
+    line-height: 1.8;
+    max-width: 400px;
+}
+
+.footer-social-wrap {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.footer-eyebrow {
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 2px;
+    opacity: 0.4;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 15px;
+}
+
+.social-link {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+}
+
+.footer-heading {
+    color: white;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    margin-bottom: 35px;
+    opacity: 0.4;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+    font-size: 15px;
+    line-height: 2.8;
+    font-weight: 600;
+}
+
+.footer-nav a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.footer-nav a:hover {
+    color: white;
+}
+
+/* Dark Mode Button and Card Polish */
+.gp-dark-mode .glass-card .gp-btn, .dark-theme .glass-card .gp-btn {
+    background: var(--primary) !important;
+    color: #FFF !important;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Elite Block-Level Dark Mode Legibility */
+.gp-dark-mode .wp-block-heading, .dark-theme .wp-block-heading,
+.gp-dark-mode .wp-block-paragraph, .dark-theme .wp-block-paragraph,
+.gp-dark-mode .wp-block-list, .dark-theme .wp-block-list {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .wp-block-quote, .dark-theme .wp-block-quote {
+    border-left-color: var(--primary);
+    color: #CBD5E1;
+}
+
+.gp-dark-mode .gp-btn.secondary, .dark-theme .gp-btn.secondary {
+    background: rgba(255,255,255,0.05) !important;
+    color: #F8FAFC !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.gp-dark-mode .glass-card strong, .dark-theme .glass-card strong {
+    color: #FFF !important;
 }
 
 /* Reset & Foundation */
@@ -483,7 +702,7 @@ body.gp-design-female .text-gradient {
     opacity: 0.2;
 }
 
-/* WordPress Block Optimization v6.0 */
+/* WordPress Block Optimization v6.3 Elite */
 .wp-block-columns {
     display: flex;
     margin-bottom: 3.5rem;
@@ -565,4 +784,38 @@ body.gp-design-female .text-gradient {
     .site-header { height: 80px; }
     h1 { font-size: 3.5rem; }
     .glass-card { padding: 3rem 2rem; }
+}
+
+/* Dark Mode Footer & Global Visibility Fixes */
+.gp-dark-mode #colophon {
+    background: #0F172A;
+    color: #CBD5E1;
+}
+
+.gp-dark-mode .footer-heading, .gp-dark-mode .footer-brand {
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .footer-nav a, .gp-dark-mode .site-info a {
+    color: #CBD5E1 !important;
+}
+
+.gp-dark-mode .footer-nav a:hover {
+    color: var(--primary) !important;
+}
+
+.gp-dark-mode .site-info {
+    color: rgba(255, 255, 255, 0.4) !important;
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.gp-dark-mode .glass-card {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #F8FAFC !important;
+}
+
+.gp-dark-mode .gp-btn {
+    background: var(--primary) !important;
+    color: #FFF !important;
 }

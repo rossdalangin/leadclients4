@@ -316,9 +316,13 @@ class GrowthPress_Proposals {
             $crm->create_task("Project Kickoff: " . get_the_title($lead_id), "Proposal accepted. Initialize onboarding sequence.", $lead_id);
 
             // Create Draft Case Study with relational metadata
+            $niche = get_option('growthpress_niche', 'business');
+            $ai = GrowthPress_AI::get_instance();
+            $case_study_content = $ai->call_ai("Generate a cinematic success blueprint (case study) for a client in the $niche sector. The proposal for \"".get_the_title($lead_id)."\" was just accepted. Outline the strategic challenge, the autonomous solution we provided, and the projected ROI realization.", "Case Study Architect");
+
             $project_id = wp_insert_post(array(
                 'post_title'   => 'Case Study: ' . get_the_title($lead_id),
-                'post_content' => 'Proposal accepted on ' . date('Y-m-d') . ". Summary: " . get_the_excerpt($lead_id),
+                'post_content' => is_wp_error($case_study_content) ? 'Proposal accepted on ' . date('Y-m-d') . ". Summary: " . get_the_excerpt($lead_id) : $case_study_content,
                 'post_type'    => 'gp_project',
                 'post_status'  => 'draft'
             ));
@@ -332,6 +336,10 @@ class GrowthPress_Proposals {
                     update_post_meta($project_id, '_gp_is_sample', '1');
                 }
             }
+
+            // Step 40: Prompt for Referral & Review (Customer Advocacy Node)
+            $crm->create_task("ADVOCACY: Request Video Review & Referrals", "Proposal accepted for Lead #$lead_id. Deploy advocacy node at peak satisfaction.", $lead_id);
+            update_post_meta($lead_id, '_gp_advocacy_status', 'pending');
 
             GrowthPress_Activity::log( "Lead #$lead_id transitioned to 'Closed' following proposal acceptance. Draft Case Study initialized." );
         }
@@ -353,6 +361,22 @@ class GrowthPress_Proposals {
         $total = 0;
         foreach($proposals as $p) $total += (float)get_post_meta($p->ID, '_proposal_value', true);
         return $total;
+    }
+
+    public function get_weighted_pipeline_value() {
+        $proposals = get_posts(array(
+            'post_type' => 'gp_proposal',
+            'posts_per_page' => -1,
+            'meta_query' => array( array( 'key' => '_gp_proposal_status', 'value' => 'Sent' ) )
+        ));
+        $weighted_total = 0;
+        foreach($proposals as $p) {
+            $val = (float)get_post_meta($p->ID, '_proposal_value', true);
+            $lead_id = get_post_meta($p->ID, '_related_lead', true);
+            $prob = $lead_id ? (int)get_post_meta($lead_id, '_gp_ai_probability', true) : 50;
+            $weighted_total += ($val * ($prob / 100));
+        }
+        return $weighted_total;
     }
 }
 GrowthPress_Proposals::get_instance();

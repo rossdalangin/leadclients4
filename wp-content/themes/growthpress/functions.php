@@ -471,7 +471,16 @@ function growthpress_customize_register( $wp_customize ) {
 add_action( 'customize_register', 'growthpress_customize_register' );
 
 function growthpress_scripts() {
-	wp_enqueue_style( 'growthpress-inter-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Lexend:wght@400;700;800;900&display=swap' );
+    $niche = get_option('growthpress_niche', 'business');
+    $font_mapping = array(
+        'medical' => 'family=Outfit:wght@400;700&family=Inter:wght@400;600;900',
+        'law' => 'family=Playfair+Display:wght@700;900&family=Inter:wght@400;600',
+        'solar' => 'family=Syne:wght@700;800&family=Inter:wght@400;600',
+        'real-estate' => 'family=Montserrat:wght@300;700;900&family=Inter:wght@400',
+        'contractor' => 'family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600'
+    );
+    $font_query = $font_mapping[$niche] ?? 'family=Inter:wght@400;600;700;800;900&family=Lexend:wght@400;700;800;900';
+	wp_enqueue_style( 'growthpress-niche-fonts', 'https://fonts.googleapis.com/css2?' . $font_query . '&display=swap' );
 	wp_enqueue_style( 'growthpress-style', get_stylesheet_uri() );
     wp_enqueue_style( 'growthpress-accents', get_template_directory_uri() . '/niche-accents.css' );
     wp_enqueue_style( 'growthpress-mobile-cta', get_template_directory_uri() . '/mobile-cta.css' );

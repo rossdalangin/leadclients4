@@ -12,6 +12,7 @@ class GrowthPress_Payments {
     public function __construct() {
         add_action( 'init', array( $this, 'register_payment_cpt' ) );
         add_action( 'wp_ajax_gp_process_deposit', array( $this, 'handle_deposit' ) );
+        add_action( 'wp_ajax_gp_mark_transaction_paid', array( $this, 'handle_manual_paid' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_payment_meta_boxes' ) );
         add_action( 'save_post', array( $this, 'save_payment_meta' ) );
         add_filter( 'manage_gp_transaction_posts_columns', array( $this, 'transaction_columns' ) );
@@ -27,6 +28,16 @@ class GrowthPress_Payments {
     }
 
     public function transaction_column_content( $col, $post_id ) {
+        if ( $col === '_status' ) {
+            $s = get_post_meta( $post_id, '_status', true ) ?: 'Pending';
+            $color = ($s === 'Paid') ? '#10b981' : (($s === 'Refunded') ? '#ef4444' : '#f59e0b');
+            echo "<span style='color:$color; font-weight:bold;'>$s</span>";
+            if($s !== 'Paid') {
+                echo '<br><button class="button button-small" style="margin-top:5px;" onclick="gpMarkPaid('.$post_id.')">MARK PAID</button>';
+                echo '<script>function gpMarkPaid(id){ jQuery.post(ajaxurl, {action:"gp_mark_transaction_paid", transaction_id:id, gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}, function(){ location.reload(); }); }</script>';
+            }
+            return;
+        }
         if ( $col === '_amt' ) echo '$' . number_format(get_post_meta( $post_id, '_amount', true ));
         if ( $col === '_type' ) {
             $t = get_post_meta($post_id, '_transaction_type', true) ?: 'Revenue';
@@ -166,7 +177,20 @@ class GrowthPress_Payments {
         return $transaction_id;
     }
 
+    public function handle_manual_paid() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+        $transaction_id = intval($_POST['transaction_id']);
+        update_post_meta($transaction_id, '_status', 'Paid');
+        update_post_meta($transaction_id, '_verified_at', current_time('mysql'));
+
+        GrowthPress_Activity::log("Ledger Sync: Transaction #$transaction_id manually marked as PAID. ROI reports synchronized.");
+        wp_send_json_success("Transaction successfully synchronized to financial ledger.");
+    }
+
     public function handle_deposit() {
+        check_ajax_referer( 'gp_portal_nonce', 'gp_nonce' );
         // Mock Stripe/PayPal integration logic
         $transaction_id = intval($_POST['transaction_id']);
         update_post_meta( $transaction_id, '_status', 'Paid' );

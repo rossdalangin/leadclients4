@@ -52,4 +52,4 @@ This document contains a curated list of ultra-high-authority image prompts desi
 2.  **Typography**: Use images that allow for 'Inter' or 'Lexend' font overlays.
 3.  **Visual Weight**: Ensure the interface or 'Result' (Money/Leads/Time) is the focal point.
 
-*Final Final Final Version - v6.3 Promotion Toolkit*
+*Final Final Final Version - v6.3 Elite Definitive Promotion Toolkit*

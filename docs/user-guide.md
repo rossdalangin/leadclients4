@@ -1,4 +1,4 @@
-# GrowthPress v6.3 Elite User Guide
+# GrowthPress v6.3 Elite Definitive User Guide
 
 > **Note:** For a step-by-step walkthrough of the entire system setup and daily operations, please refer to the **[Master Tutorial & Operational Blueprint](master-tutorial.md)**.
 
@@ -38,7 +38,14 @@ Found in the **System Tools** tab of Settings:
 ### 3. AI Content Studio v1.8
 Use the Studio to generate SEO blogs, email sequences, or clinical protocols.
 - **Typing Effect**: Generated content appears in a cinematic terminal view.
+- **AI Local SEO Clusters**: (NEW) Generate geo-targeted content strategies based on ZIP-routed sectors to dominate local search results.
 - **Ecosystem Sync**: Use the 'Sync to Node' buttons to instantly propagate generated assets into the KB, Services, or Case Study post types.
+
+### 4. Strategic Chat Command Center
+Found in the **Chat Command** menu:
+- **Persistent History**: Every conversation is stored and tracked via a unique session ID.
+- **Canned Responses**: Create high-authority templates for common inquiries (Pricing, HIPAA, Legal Merit).
+- **Admin Replies**: Step into any active or offline session to provide manual specialist intervention.
 
 ## Deployment Checklist
 - [ ] Connect at least one AI Node via API key.
@@ -60,6 +67,7 @@ Strategic data shows that responding to a high-urgency lead within 5 minutes inc
 ### 2. Knowledge Base Contextualization
 The AI FAQ and Chat Assistant perform best when they have a deep Knowledge Base to draw from.
 - **Action**: Use the **AI Content Studio** weekly to generate 3-5 high-authority KB articles specific to your niche's common pain points.
+- **Keyword Templates**: (NEW) Define Chat Templates with specific keywords to trigger instant, verified responses before the AI logic executes.
 - **Operational Pro-Tip**: Well-indexed KB articles serve as "Contextual Anchors" for the AI FAQ. This allows the system to answer 70% of technical inquiries without human intervention, effectively acting as a 24/7 autonomous sales rep.
 
 ### 3. Pipeline Hygiene

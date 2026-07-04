@@ -1,8 +1,8 @@
-# Master Launch Checklist: The Business OS Elite v6.3
+# Master Launch Checklist: The Business OS Elite v6.3 Elite Definitive
 
 ## 🛠️ Step 1: Technical Foundation
 - [ ] Install WordPress 6.0+
-- [ ] Activate **GrowthPress Theme** (Cinematic Glassmorphism v6.3)
+- [ ] Activate **GrowthPress Theme** (Cinematic Glassmorphism v6.3 Elite Definitive)
 - [ ] Activate **GrowthPress Core Plugin**
 - [ ] Set Permalinks to "Post Name"
 
