@@ -30,6 +30,11 @@ class GrowthPress_Strategy {
         $niche = get_option('growthpress_niche', 'business');
         $ai = GrowthPress_AI::get_instance();
         $roadmap = $ai->generate_growth_roadmap($niche);
+
+        if(!is_wp_error($roadmap)) {
+            update_option('gp_stored_roadmap_' . $niche, $roadmap);
+        }
+
         wp_send_json_success($roadmap);
     }
 
@@ -56,6 +61,15 @@ class GrowthPress_Strategy {
                 <p style="font-size:16px; opacity:0.6; margin-bottom:40px;">Our AI Strategist will analyze your niche cluster and generate a complete marketing and operations plan. <strong>Success Pattern:</strong> Elite firms implement the first 90 days immediately to establish absolute sector authority before scaling high-ticket outreach.</p>
                 <button class="button button-primary button-hero" style="height:70px; padding:0 50px; font-size:16px; border-radius:18px;" onclick="generateRoadmap()">INITIALIZE STRATEGY ENGINE</button>
 
+                <?php
+                $niche = get_option('growthpress_niche', 'business');
+                $stored = get_option('gp_stored_roadmap_' . $niche);
+                if($stored): ?>
+                    <div style="margin-top:30px; padding:15px; background:rgba(16, 185, 129, 0.1); border-radius:10px; border:1px solid rgba(16, 185, 129, 0.2); font-size:12px; color:#065F46; font-weight:700;">
+                        ✓ PREVIOUS STRATEGY DETECTED. SCROLL DOWN TO VIEW.
+                    </div>
+                <?php endif; ?>
+
                 <div id="gp-roadmap-status" style="display:none; margin-top:40px;">
                     <div style="display:flex; align-items:center; gap:20px;">
                         <div class="status-ping active"></div>
@@ -63,7 +77,21 @@ class GrowthPress_Strategy {
                     </div>
                 </div>
 
-                <div id="gp-roadmap-output" style="margin-top:50px; line-height:2; font-size:15px; display:none;"></div>
+                <div id="gp-roadmap-output" style="margin-top:50px; line-height:2; font-size:15px; <?php echo $stored ? '' : 'display:none;'; ?>">
+                    <?php if($stored): ?>
+                        <div class="glass-card" style="background:#FFF; padding:80px; border-radius:40px; border:1px solid #EEE; box-shadow:0 30px 80px rgba(0,0,0,0.08); white-space: pre-wrap; font-family:'Inter', sans-serif;">
+                            <?php
+                            $structured = $stored;
+                            $structured = str_replace('Q1:', '<h2 style="color:var(--primary); margin-top:0;">Q1: Foundation & Authority</h2>', $structured);
+                            $structured = str_replace('Q2:', '<h2 style="color:#10B981; margin-top:60px;">Q2: Operational Acceleration</h2>', $structured);
+                            $structured = str_replace('Q3:', '<h2 style="color:#F59E0B; margin-top:60px;">Q3: Market Dominance</h2>', $structured);
+                            $structured = str_replace('Q4:', '<h2 style="color:#EF4444; margin-top:60px;">Q4: Scaled Realization</h2>', $structured);
+                            $structured = str_replace('Neural Milestone:', '<div style="background:var(--primary-glow); padding:15px 25px; border-radius:15px; margin-top:15px; font-weight:950; color:var(--primary); font-size:13px; display:inline-block;">🎯 NEURAL MILESTONE:</div>', $structured);
+                            echo $structured;
+                            ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         <script>

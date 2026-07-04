@@ -24,9 +24,13 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_sales_lab_converse', array( $this, 'handle_sales_lab_converse' ) );
         add_action( 'wp_ajax_gp_activate_agency_node', array( $this, 'handle_agency_activation' ) );
         add_action( 'wp_ajax_gp_erp_reorder', array( $this, 'handle_erp_reorder' ) );
+        add_action( 'wp_ajax_gp_erp_update_stock', array( $this, 'handle_erp_update_stock' ) );
         add_action( 'wp_ajax_gp_workflow_step_add', array( $this, 'handle_workflow_step_add' ) );
+        add_action( 'wp_ajax_gp_workflow_step_delete', array( $this, 'handle_workflow_step_delete' ) );
+        add_action( 'wp_ajax_gp_workflow_step_toggle', array( $this, 'handle_workflow_step_toggle' ) );
         add_action( 'wp_ajax_gp_chat_session_delete', array( $this, 'handle_chat_session_delete' ) );
         add_action( 'wp_ajax_gp_edit_agency_node', array( $this, 'handle_agency_edit' ) );
+        add_action( 'wp_ajax_gp_mark_referral_paid', array( $this, 'handle_mark_referral_paid' ) );
         add_action( 'wp_ajax_gp_generate_challenger', array( $this, 'handle_generate_challenger' ) );
         add_action( 'wp_ajax_gp_sync_lead_brief', array( $this, 'handle_sync_lead_brief' ) );
         add_action( 'wp_ajax_gp_instantiate_agency_node', array( $this, 'handle_agency_instantiate' ) );
@@ -107,14 +111,66 @@ class GrowthPress_Dashboard {
         wp_send_json_success("Step \"$step_name\" successfully integrated into the lead-to-revenue lifecycle.");
     }
 
+    public function handle_workflow_step_delete() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $idx = intval($_POST['step_index']);
+        $steps = get_option('gp_workflow_steps', array());
+        if(isset($steps[$idx])) {
+            $name = $steps[$idx]['name'];
+            unset($steps[$idx]);
+            update_option('gp_workflow_steps', array_values($steps));
+            GrowthPress_Activity::log("Workflow Orchestrator: Step \"$name\" purged from lifecycle.");
+            wp_send_json_success("Step successfully removed.");
+        }
+        wp_send_json_error();
+    }
+
+    public function handle_workflow_step_toggle() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $idx = intval($_POST['step_index']);
+        $steps = get_option('gp_workflow_steps', array());
+        if(isset($steps[$idx])) {
+            $steps[$idx]['status'] = ($steps[$idx]['status'] === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
+            update_option('gp_workflow_steps', $steps);
+            GrowthPress_Activity::log("Workflow Orchestrator: Step \"{$steps[$idx]['name']}\" status toggled to {$steps[$idx]['status']}.");
+            wp_send_json_success("Step status synchronized.");
+        }
+        wp_send_json_error();
+    }
+
     public function handle_erp_reorder() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         $item_id = intval($_POST['item_id']);
         $title = get_the_title($item_id);
 
+        $log = get_post_meta($item_id, '_reorder_history', true) ?: array();
+        $log[] = array('time' => current_time('mysql'), 'action' => 'RE-ORDER DISPATCHED');
+        update_post_meta($item_id, '_reorder_history', $log);
+
         GrowthPress_Activity::log("ERP Node: Re-order sequence initiated for \"$title\". Request dispatched to supply chain API.");
         wp_send_json_success("Re-order node for \"$title\" synchronized. Q4 fulfillment protected.");
+    }
+
+    public function handle_erp_update_stock() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $item_id = intval($_POST['item_id']);
+        $new_val = intval($_POST['stock']);
+        update_post_meta($item_id, '_gp_stock_level', $new_val);
+        wp_send_json_success("Inventory node synchronized.");
+    }
+
+    public function handle_mark_referral_paid() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $ref_id = intval($_POST['referral_id']);
+        update_post_meta($ref_id, '_payout_status', 'Paid');
+        update_post_meta($ref_id, '_payout_date', current_time('mysql'));
+        GrowthPress_Activity::log("Referral Payout: Node #$ref_id marked as PAID.");
+        wp_send_json_success("Referral payout synchronized.");
     }
 
     public function handle_agency_activation() {
@@ -245,6 +301,26 @@ class GrowthPress_Dashboard {
                 <?php endif; ?>
             </div>
 
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:40px; margin-top:40px;">
+                <div class="glass-card" style="padding:40px; border-radius:35px;">
+                    <h3 style="margin-top:0;">Referral Conversion Performance</h3>
+                    <div style="height:300px;">
+                        <canvas id="referral-performance-chart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding:40px; border-radius:35px; background:var(--primary); color:white; border:none;">
+                    <h3 style="color:white; margin-top:0;">Ecosystem Impact</h3>
+                    <div style="font-size:48px; font-weight:950; margin:30px 0;">
+                        <?php
+                        $converted = count(get_posts(array('post_type'=>'gp_referral', 'meta_key'=>'_referral_status', 'meta_value'=>'Converted', 'posts_per_page'=>-1)));
+                        echo $converted;
+                        ?>
+                        <span style="font-size:14px; opacity:0.6; font-weight:700;">NODES CONVERTED</span>
+                    </div>
+                    <p style="font-size:14px; opacity:0.8; line-height:1.6;">Referral nodes have a 3.4x higher realization probability than direct cold triage. Keep the trust delta high by processing payouts instantly.</p>
+                </div>
+            </div>
+
             <h1>Strategic Referral Command Hub</h1>
             <div class="glass-card" style="margin-top:30px; padding:0; overflow:hidden;">
                 <table class="wp-list-table widefat fixed striped">
@@ -267,13 +343,20 @@ class GrowthPress_Dashboard {
                                 <td style="padding:20px; font-weight:700;"><?php echo esc_html($r->post_title); ?></td>
                                 <td style="padding:20px;"><?php echo get_post_meta($r->ID, '_referral_email', true); ?></td>
                                 <td style="padding:20px;"><span style="background:<?php echo $status === 'Lead Created' ? '#D1FAE5' : '#F8FAFC'; ?>; color:<?php echo $status === 'Lead Created' ? '#065F46' : '#64748B'; ?>; padding:5px 12px; border-radius:30px; font-size:10px; font-weight:950;"><?php echo strtoupper($status); ?></span></td>
-                                <td style="padding:20px;"><span style="font-weight:900; font-size:10px; color:<?php echo $payout_color; ?>;"><?php echo strtoupper($payout); ?></span></td>
                                 <td style="padding:20px;">
-                                    <?php if($status !== 'Lead Created'): ?>
+                                    <span style="font-weight:900; font-size:10px; color:<?php echo $payout_color; ?>;"><?php echo strtoupper($payout); ?></span>
+                                    <?php if($payout !== 'Paid' && $status === 'Converted'): ?>
+                                        <br><button class="button button-small" style="margin-top:5px; font-size:9px;" onclick="markReferralPaid(<?php echo $r->ID; ?>, this)">MARK PAID</button>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="padding:20px;">
+                                    <?php if($status !== 'Converted'): ?>
                                         <button class="button button-primary" onclick="processReferral(<?php echo $r->ID; ?>, this)">CONVERT TO LEAD</button>
                                         <p style="font-size:9px; opacity:0.5; margin-top:8px; font-weight:700;">STRATEGIC NOTE: Conversion and AI triage sequence takes 3-5 seconds.</p>
-                                    <?php else: ?>
-                                        <a href="<?php echo get_edit_post_link(get_post_meta($r->ID, '_converted_lead_id', true)); ?>" class="button">VIEW DOSSIER</a>
+                                    <?php else:
+                                        $lead_id = get_post_meta($r->ID, '_related_lead_id', true);
+                                        ?>
+                                        <a href="<?php echo get_edit_post_link($lead_id); ?>" class="button">VIEW DOSSIER</a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -294,6 +377,48 @@ class GrowthPress_Dashboard {
                 }
             });
         }
+        function markReferralPaid(id, btn) {
+            if(!confirm('Sync payout status to financial ledger?')) return;
+            jQuery(btn).text('...').prop('disabled', true);
+            jQuery.post(ajaxurl, { action: 'gp_mark_referral_paid', referral_id: id, gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                if(res.success) location.reload();
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('referral-performance-chart').getContext('2d');
+            <?php
+            $labels = []; $data = [];
+            for($i=3; $i>=0; $i--) {
+                $labels[] = "Week " . (4-$i);
+                $data[] = count(get_posts(array(
+                    'post_type' => 'gp_referral',
+                    'meta_key' => '_referral_status',
+                    'meta_value' => 'Converted',
+                    'date_query' => array(array('after' => "$i weeks ago", 'before' => ($i-1) . " weeks ago")),
+                    'posts_per_page' => -1
+                )));
+            }
+            ?>
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: <?php echo json_encode($labels); ?>,
+                    datasets: [{
+                        label: 'Referral Conversions',
+                        data: <?php echo json_encode($data); ?>,
+                        borderColor: '#2563EB',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        });
         </script>
         <?php
     }
@@ -425,8 +550,20 @@ class GrowthPress_Dashboard {
                         <div style="height:8px; background:#F1F5F9; border-radius:10px; overflow:hidden; margin-bottom:30px;">
                             <div style="width:<?php echo min(100, ($stock/($min*2))*100); ?>%; height:100%; background:<?php echo $color; ?>;"></div>
                         </div>
-                        <button class="gp-btn" style="width:100%; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
-                        <p style="font-size:9px; opacity:0.5; margin-top:12px; text-align:center; font-weight:700; line-height:1.5; background:rgba(0,0,0,0.02); padding:10px; border-radius:10px;">STRATEGIC NOTE: 'Re-order' initiates a secure handshake with the supply chain API to replenish this asset node. This preserves 100% material availability for high-ticket fulfillment.</p>
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <button class="gp-btn" style="flex:2; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
+                            <?php if(current_user_can('manage_options')): ?>
+                                <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:transparent; border:1px solid #EEE; color:var(--text) !important;" onclick="updateStock(<?php echo $item->ID; ?>, <?php echo $stock; ?>)">ADJ</button>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php
+                        $history = get_post_meta($item->ID, '_reorder_history', true);
+                        if($history): $last = end($history); ?>
+                            <div style="font-size:9px; opacity:0.4; margin-bottom:15px; font-weight:700; text-transform:uppercase;">LAST ACTION: <?php echo $last['time']; ?></div>
+                        <?php endif; ?>
+
+                        <p style="font-size:9px; opacity:0.5; text-align:center; font-weight:700; line-height:1.5; background:rgba(0,0,0,0.02); padding:10px; border-radius:10px;">STRATEGIC NOTE: 'Re-order' initiates a secure handshake with the supply chain API to replenish this asset node. This preserves 100% material availability for high-ticket fulfillment.</p>
                     </div>
                 <?php endforeach; else: ?>
                     <div class="glass-card" style="grid-column: span 3; padding:100px; text-align:center; opacity:0.5;">
@@ -443,7 +580,22 @@ class GrowthPress_Dashboard {
                 item_id: id,
                 gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
             }, function(res) {
-                if(res.success) alert(res.data);
+                if(res.success) {
+                    alert(res.data);
+                    location.reload();
+                }
+            });
+        }
+        function updateStock(id, current) {
+            const val = prompt('Manually adjust stock level:', current);
+            if(val === null) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_erp_update_stock',
+                item_id: id,
+                stock: val,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) location.reload();
             });
         }
         </script>
@@ -476,13 +628,16 @@ class GrowthPress_Dashboard {
                         array('name' => 'Dispatch "Hot Lead" alert to Twilio Hub', 'status' => 'ACTIVE')
                     ));
                     $idx = 1;
-                    foreach($workflow_steps as $step): ?>
-                        <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+                    foreach($workflow_steps as $step_idx => $step): ?>
+                        <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center; <?php echo $step['status'] === 'INACTIVE' ? 'opacity:0.5;' : ''; ?>">
                             <div>
                                 <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP <?php echo str_pad($idx, 2, '0', STR_PAD_LEFT); ?>: <?php echo ($idx == 1 ? 'AI TRIAGE' : ($idx == 2 ? 'SMS NOTIFY' : 'CUSTOM NODE')); ?></div>
                                 <div style="font-size:14px; font-weight:800;"><?php echo esc_html($step['name']); ?></div>
                             </div>
-                            <span style="color:#10B981; font-weight:900; font-size:10px;"><?php echo $step['status']; ?></span>
+                            <div style="display:flex; gap:15px; align-items:center;">
+                                <span style="color:<?php echo $step['status'] === 'ACTIVE' ? '#10B981' : '#64748B'; ?>; font-weight:900; font-size:10px; cursor:pointer;" onclick="toggleWorkflowStep(<?php echo $step_idx; ?>)"><?php echo $step['status']; ?></span>
+                                <span class="dashicons dashicons-trash" style="color:#EF4444; cursor:pointer; font-size:18px;" onclick="deleteWorkflowStep(<?php echo $step_idx; ?>)"></span>
+                            </div>
                         </div>
                     <?php $idx++; endforeach; ?>
 
@@ -513,6 +668,25 @@ class GrowthPress_Dashboard {
                 }
             });
         }
+        function deleteWorkflowStep(idx) {
+            if(!confirm('Purge this orchestration node?')) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_workflow_step_delete',
+                step_index: idx,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) location.reload();
+            });
+        }
+        function toggleWorkflowStep(idx) {
+            jQuery.post(ajaxurl, {
+                action: 'gp_workflow_step_toggle',
+                step_index: idx,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) location.reload();
+            });
+        }
         </script>
         <?php
     }
@@ -521,9 +695,43 @@ class GrowthPress_Dashboard {
         $profiles = get_option('gp_agency_profiles', array());
         ?>
         <div class="wrap growthpress-agency gp-reveal">
-            <div class="glass-card" style="background:#fefce8; border-left:5px solid #ca8a04; margin-bottom:30px; padding:25px;">
-                <h4 style="margin:0 0 10px 0; color:#854d0e;">🏛️ Strategic Context: Multi-Tenant Management</h4>
-                <p style="margin:0; font-size:14px; color:#854d0e; line-height:1.5;">The Agency Cluster allows you to manage multiple brand profiles from a single unified node. <strong>Success Pattern:</strong> Agencies managing 5+ niches see a 40% reduction in OpEx by consolidating administrative overhead.</p>
+            <div class="glass-card" style="background:#fefce8; border-left:5px solid #ca8a04; margin-bottom:30px; padding:40px; border-radius:35px;">
+                <h4 style="margin:0 0 20px 0; color:#854d0e; font-size:1.4rem;">🏛️ Agency Cluster: Multi-Brand Infrastructure</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px;">
+                    <div>
+                        <p style="margin:0; font-size:14px; color:#854d0e; line-height:1.7;"><strong>How it works:</strong> The cluster instantiates independent "Brand Nodes" within your OS. Each node maintains its own niche calibration, lead routing, and AI personality prompts. <strong>Activation:</strong> Clicking 'Activate' instantly recalibrates the system global options to that brand's identity.</p>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.3); padding:20px; border-radius:20px; border:1px solid rgba(202, 138, 4, 0.2);">
+                        <strong style="color:#854d0e; font-size:11px; letter-spacing:1px; display:block; margin-bottom:10px;">BUSINESS VALUE:</strong>
+                        <ul style="margin:0; padding-left:15px; font-size:12px; color:#854d0e; line-height:1.6;">
+                            <li>Manage multiple high-ticket niches from one installation.</li>
+                            <li>Reduce OpEx by 40% through administrative consolidation.</li>
+                            <li>Switch market identities instantly for diverse client audits.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-top:30px; text-align:right;">
+                    <button class="button button-secondary" onclick="jQuery('#agency-guide-modal').fadeIn()">Multi-Brand Strategy Guide</button>
+                </div>
+            </div>
+
+            <div id="agency-guide-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; backdrop-filter:blur(10px);">
+                <div class="glass-card" style="max-width:800px; margin:100px auto; padding:60px; background:#FFF; border-radius:40px;">
+                    <h2 class="text-gradient">Multi-Brand Operational Strategy</h2>
+                    <p style="font-size:15px; line-height:1.8; opacity:0.7; margin-bottom:30px;">To effectively use multiple brands, follow the <strong>3-Step Instantiation Protocol</strong>:</p>
+                    <div style="display:grid; gap:20px;">
+                        <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px solid #EEE;">
+                            <strong>1. Instantiate Node:</strong> Create a new profile with a unique brand name and specific niche (e.g. "Solar Elite" - Solar).
+                        </div>
+                        <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px solid #EEE;">
+                            <strong>2. Calibrate Strategy:</strong> Once activated, navigate to the 'Growth Strategy' hub to generate the AI roadmap unique to that brand's niche.
+                        </div>
+                        <div style="background:#F8FAFC; padding:25px; border-radius:20px; border:1px solid #EEE;">
+                            <strong>3. Deploy Content:</strong> Use the AI Content Studio to populate the KB and Services for the active brand. This ensures absolute sector authority for that specific node.
+                        </div>
+                    </div>
+                    <button class="gp-btn" style="margin-top:40px; width:100%;" onclick="jQuery('#agency-guide-modal').fadeOut()">EXIT STRATEGY GUIDE</button>
+                </div>
             </div>
 
             <h1>Agency Strategic Cluster</h1>
