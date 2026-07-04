@@ -66,6 +66,15 @@
                 <div style="font-size:14px; font-weight:950; color: var(--primary);">ELITE v6.3 DEFINITIVE</div>
             </div>
         </div>
+        <?php if(current_user_can('edit_posts')): ?>
+            <div style="margin-top:30px; padding-top:30px; border-top:1px solid rgba(0,0,0,0.05); display:flex; gap:20px; align-items:center;">
+                <span style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; text-transform:uppercase;">Staff Quick Actions:</span>
+                <a href="<?php echo admin_url('post-new.php?post_type=gp_lead'); ?>" class="button button-small" style="border-radius:8px;">+ New Lead</a>
+                <a href="<?php echo admin_url('post-new.php?post_type=gp_task'); ?>" class="button button-small" style="border-radius:8px;">+ New Task</a>
+                <a href="<?php echo admin_url('edit.php?post_type=gp_chat'); ?>" class="button button-small" style="border-radius:8px;">Active Chats</a>
+                <button class="button button-small" style="border-radius:8px;" onclick="jQuery('#gp-strategic-search').focus()">Global Intel Search</button>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- System Health Grid -->
@@ -445,36 +454,51 @@
             </div>
 
             <!-- Revenue ROI Hub Elite -->
-            <div class="glass-card gp-reveal" style="margin-bottom:40px; background:var(--primary); color:white; border:none; position:relative; padding: 45px; border-radius: 40px; box-shadow: 0 30px 60px -15px var(--primary-glow);">
-                <div style="position:absolute; top:30px; right:30px; cursor:help; opacity:0.4;" title="Calculated from 'Paid' Revenue transactions vs pending Pipeline Equity.">ⓘ</div>
-                <h3 style="color:white; font-size:14px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom:35px; font-weight:950;">Revenue Analytics</h3>
-                <div style="display:grid; gap:30px;">
-                    <div>
-                        <div style="font-size:11px; font-weight:950; opacity:0.6; letter-spacing:2px; margin-bottom:8px; text-transform: uppercase;">Earned Equity</div>
-                        <div style="font-size:36px; font-weight:950; letter-spacing: -0.05em;">$<?php
-                            $revenue = 0; $expenses = 0;
-                            $transactions = get_posts(array('post_type'=>'gp_transaction', 'meta_key'=>'_status', 'meta_value'=>'Paid', 'posts_per_page'=>-1));
-                            foreach($transactions as $tx) {
-                                $amt = (float)get_post_meta($tx->ID, '_amount', true);
-                                $type = get_post_meta($tx->ID, '_transaction_type', true) ?: 'Revenue';
-                                if($type === 'Revenue') $revenue += $amt; else $expenses += $amt;
-                            }
-                            echo number_format($revenue);
-                        ?></div>
-                    </div>
-                    <div style="height:1px; background:rgba(255,255,255,0.15);"></div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <?php if(current_user_can('manage_options')): ?>
+                <div class="glass-card gp-reveal" style="margin-bottom:40px; background:var(--primary); color:white; border:none; position:relative; padding: 45px; border-radius: 40px; box-shadow: 0 30px 60px -15px var(--primary-glow);">
+                    <div style="position:absolute; top:30px; right:30px; cursor:help; opacity:0.4;" title="Calculated from 'Paid' Revenue transactions vs pending Pipeline Equity.">ⓘ</div>
+                    <h3 style="color:white; font-size:14px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom:35px; font-weight:950;">Revenue Analytics</h3>
+                    <div style="display:grid; gap:30px;">
                         <div>
-                            <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">OpEx</div>
-                            <div style="font-size:18px; font-weight:950; color:rgba(255,255,255,0.8);">$<?php echo number_format($expenses); ?></div>
+                            <div style="font-size:11px; font-weight:950; opacity:0.6; letter-spacing:2px; margin-bottom:8px; text-transform: uppercase;">Earned Equity</div>
+                            <div style="font-size:36px; font-weight:950; letter-spacing: -0.05em;">$<?php
+                                $revenue = 0; $expenses = 0;
+                                $transactions = get_posts(array('post_type'=>'gp_transaction', 'meta_key'=>'_status', 'meta_value'=>'Paid', 'posts_per_page'=>-1));
+                                foreach($transactions as $tx) {
+                                    $amt = (float)get_post_meta($tx->ID, '_amount', true);
+                                    $type = get_post_meta($tx->ID, '_transaction_type', true) ?: 'Revenue';
+                                    if($type === 'Revenue') $revenue += $amt; else $expenses += $amt;
+                                }
+                                echo number_format($revenue);
+                            ?></div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">Upside (60%)</div>
-                            <div style="font-size:18px; font-weight:950; color:#10B981;">$<?php echo number_format($pipe_val * 0.6); ?></div>
+                        <div style="height:1px; background:rgba(255,255,255,0.15);"></div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                            <div>
+                                <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">OpEx</div>
+                                <div style="font-size:18px; font-weight:950; color:rgba(255,255,255,0.8);">$<?php echo number_format($expenses); ?></div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size:10px; font-weight:950; opacity:0.5; letter-spacing:1px; margin-bottom:5px; text-transform: uppercase;">Upside (60%)</div>
+                                <div style="font-size:18px; font-weight:950; color:#10B981;">$<?php echo number_format($pipe_val * 0.6); ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="glass-card gp-reveal" style="margin-bottom:40px; background:#F8FAFC; border:1px solid #E2E8F0; padding:45px; border-radius:40px;">
+                    <h3 style="font-size:14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom:20px; font-weight:950;">Staff Performance Mode</h3>
+                    <p style="font-size:14px; opacity:0.6; line-height:1.6;">You are currently in <strong>Operational Focus</strong> mode. Financial and structural data is restricted to administrative levels. Focus on lead triage and task execution in the Kanban board.</p>
+                    <div style="margin-top:30px; display:grid; gap:15px;">
+                        <div style="background:#FFF; padding:20px; border-radius:15px; border:1px solid #EEE; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:11px; font-weight:800; opacity:0.5;">YOUR ACTIVE TASKS:</span>
+                            <span style="font-size:18px; font-weight:950; color:var(--primary);">
+                                <?php echo count(get_posts(array('post_type'=>'gp_task', 'meta_key'=>'_assigned_staff', 'meta_value'=>get_current_user_id(), 'meta_key'=>'_task_status', 'meta_value'=>'Pending', 'posts_per_page'=>-1))); ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <!-- Neural Gap Analysis -->
             <div class="glass-card gp-reveal" style="margin-bottom:30px; border-left: 8px solid var(--primary);">

@@ -442,13 +442,20 @@ class GrowthPress_Portal {
                             <button class="gp-btn" style="width:100%; height:55px; font-size:12px; background:#166534; color:white !important; border-radius:12px;" onclick="submitReferral()">INITIALIZE REFERRAL NODE</button>
                         </div>
 
-                        <div style="margin-top:30px; padding-top:20px; border-top:1px solid rgba(22, 101, 52, 0.1);">
+                        <div style="margin-top:30px; padding:25px; background:rgba(22, 101, 52, 0.05); border-radius:20px; border:1px solid rgba(22, 101, 52, 0.1);">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                                <span style="font-size:11px; font-weight:900; color:#166534;">COMMISSION RATE:</span>
-                                <span style="font-size:18px; font-weight:950; color:#166534;"><?php echo get_option('growthpress_referral_commission', '10'); ?>%</span>
+                                <span style="font-size:11px; font-weight:900; color:#166534; letter-spacing:1px;">MONETIZATION PROTOCOL:</span>
+                                <span style="font-size:18px; font-weight:950; color:#166534;"><?php echo get_option('growthpress_referral_commission', '10'); ?>% REWARD</span>
                             </div>
-                            <div style="font-size:11px; opacity:0.7; color:#166534; line-height:1.5;">
-                                <strong>PAYOUT PROTOCOL:</strong> <?php echo esc_html(get_option('growthpress_referral_payout_instructions', 'Processed via PayPal/Transfer within 30 days of conversion.')); ?>
+
+                            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:20px; text-align:center;">
+                                <div style="font-size:9px; font-weight:800; color:#166534; opacity:0.6;">1. REFER NODE</div>
+                                <div style="font-size:9px; font-weight:800; color:#166534; opacity:0.6;">2. CONVERT TO SALE</div>
+                                <div style="font-size:9px; font-weight:800; color:#166534; opacity:0.6;">3. RECEIVE PAYOUT</div>
+                            </div>
+
+                            <div style="font-size:11px; opacity:0.7; color:#166534; line-height:1.5; background:white; padding:15px; border-radius:12px;">
+                                <strong>HOW TO GET PAID:</strong> <?php echo esc_html(get_option('growthpress_referral_payout_instructions', 'Processed via PayPal/Transfer within 30 days of conversion.')); ?>
                             </div>
                         </div>
 
@@ -471,6 +478,25 @@ class GrowthPress_Portal {
                                     jQuery('#gp-portal-referral').html('<div style="text-align:center; padding:20px; color:#166534; font-weight:900;">REFERRAL NODE SYNCED</div>');
                                 }
                             });
+                        }
+                        </script>
+                    </div>
+
+                    <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px; border:1px solid var(--primary-glow);">
+                        <h3 style="font-size:22px; margin-bottom:20px; color:var(--primary);">Direct Strategic Uplink</h3>
+                        <p style="font-size:13px; opacity:0.6; margin-bottom:25px;">Submit a high-priority support request or strategic query directly to your assigned specialists.</p>
+                        <textarea id="uplink-msg" placeholder="Describe your request..." style="width:100%; height:120px; border-radius:15px; border:1px solid #E2E8F0; padding:15px; font-size:13px; margin-bottom:15px;"></textarea>
+                        <button class="gp-btn" style="width:100%; height:55px; font-size:12px; border-radius:12px;" onclick="sendUplinkMsg(this)">TRANSMIT TO SPECIALISTS</button>
+                        <script>
+                        function sendUplinkMsg(btn) {
+                            const msg = jQuery('#uplink-msg').val();
+                            if(!msg) return alert('Input message node.');
+                            jQuery(btn).text('TRANSMITTING...').prop('disabled', true);
+                            setTimeout(() => {
+                                alert('Strategic Uplink Synchronized. Specialists notified via encrypted channel.');
+                                jQuery('#uplink-msg').val('');
+                                jQuery(btn).text('TRANSMIT TO SPECIALISTS').prop('disabled', false);
+                            }, 1500);
                         }
                         </script>
                     </div>

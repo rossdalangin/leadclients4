@@ -109,7 +109,7 @@ class GrowthPress_Dashboard {
 
     public function handle_erp_reorder() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         $item_id = intval($_POST['item_id']);
         $title = get_the_title($item_id);
 
@@ -134,7 +134,7 @@ class GrowthPress_Dashboard {
 
     public function handle_sales_lab_converse() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         $msg = sanitize_text_field($_POST['msg']);
         $arch = sanitize_text_field($_POST['archetype']);
         $diff = sanitize_text_field($_POST['difficulty']);
@@ -151,7 +151,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_get_chat_history() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $id = intval($_POST['session_post_id']);
         $history = get_post_meta($id, '_gp_chat_history', true) ?: array();
@@ -168,7 +168,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_admin_chat_reply() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $id = intval($_POST['session_post_id']);
         $msg = sanitize_text_field($_POST['msg']);
@@ -965,7 +965,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_strategic_search() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $query = sanitize_text_field($_POST['query']);
         $results = get_posts(array(
@@ -984,7 +984,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_get_lead_brief() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
         $lead = get_post($lead_id);
@@ -1176,7 +1176,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_sync_lead_brief() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
         GrowthPress_Activity::log("Lead Dossier #$lead_id: Neural insights synchronized and anchored to CRM node.");
@@ -1184,7 +1184,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_lead_stage_update() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
         wp_set_object_terms( $lead_id, sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
