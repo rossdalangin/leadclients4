@@ -14,7 +14,7 @@ class GrowthPress_Reports {
     }
 
     public function add_reports_menu() {
-        add_submenu_page( 'growthpress-dashboard', 'Reports & ROI', 'Strategic ROI', 'manage_options', 'growthpress-reports', array( $this, 'render_reports' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Reports & ROI', 'Strategic ROI & Performance', 'edit_posts', 'growthpress-reports', array( $this, 'render_reports' ) );
         add_action('wp_ajax_gp_generate_executive_summary', array($this, 'handle_executive_summary'));
     }
 
@@ -114,7 +114,7 @@ class GrowthPress_Reports {
         ?>
         <div class="wrap growthpress-reports">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:50px;">
-                <h1>Strategic ROI & Ecosystem Health</h1>
+                <h1>Strategic ROI & Performance & Ecosystem Health</h1>
                 <div style="background:var(--primary-glow); color:var(--primary); padding:10px 20px; border-radius:30px; font-size:11px; font-weight:950; letter-spacing:2px;">ENGINE: OMNI-INTELLIGENCE v6.3</div>
             </div>
 

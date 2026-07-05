@@ -51,7 +51,7 @@ class GrowthPress_Content_Studio {
     }
 
     public function handle_kb_sync() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error();
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
 
         $title = sanitize_text_field( $_POST['title'] );
@@ -82,7 +82,7 @@ class GrowthPress_Content_Studio {
     }
 
     public function add_studio_menu() {
-        add_submenu_page( 'growthpress-dashboard', 'AI Content Studio', 'AI Content Studio', 'manage_options', 'growthpress-studio', array( $this, 'render_studio' ) );
+        add_submenu_page( 'growthpress-dashboard', 'AI Content Studio', 'AI Content Studio', 'edit_posts', 'growthpress-studio', array( $this, 'render_studio' ) );
     }
 
     public function enqueue_studio_assets( $hook ) {
@@ -92,7 +92,7 @@ class GrowthPress_Content_Studio {
     }
 
     public function handle_generation() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
 
         $type = sanitize_text_field($_POST['content_type']);

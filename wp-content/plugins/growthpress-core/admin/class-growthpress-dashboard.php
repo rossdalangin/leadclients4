@@ -24,12 +24,13 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_sales_lab_converse', array( $this, 'handle_sales_lab_converse' ) );
         add_action( 'wp_ajax_gp_activate_agency_node', array( $this, 'handle_agency_activation' ) );
         add_action( 'wp_ajax_gp_erp_reorder', array( $this, 'handle_erp_reorder' ) );
-        add_action( 'wp_ajax_gp_erp_update_stock', array( $this, 'handle_erp_update_stock' ) );
         add_action( 'wp_ajax_gp_workflow_step_add', array( $this, 'handle_workflow_step_add' ) );
         add_action( 'wp_ajax_gp_workflow_step_delete', array( $this, 'handle_workflow_step_delete' ) );
         add_action( 'wp_ajax_gp_workflow_step_toggle', array( $this, 'handle_workflow_step_toggle' ) );
+        add_action( 'wp_ajax_gp_workflow_step_reorder', array( $this, 'handle_workflow_step_reorder' ) );
         add_action( 'wp_ajax_gp_chat_session_delete', array( $this, 'handle_chat_session_delete' ) );
         add_action( 'wp_ajax_gp_edit_agency_node', array( $this, 'handle_agency_edit' ) );
+        add_action( 'wp_ajax_gp_delete_agency_node', array( $this, 'handle_agency_delete' ) );
         add_action( 'wp_ajax_gp_mark_referral_paid', array( $this, 'handle_mark_referral_paid' ) );
         add_action( 'wp_ajax_gp_generate_challenger', array( $this, 'handle_generate_challenger' ) );
         add_action( 'wp_ajax_gp_sync_lead_brief', array( $this, 'handle_sync_lead_brief' ) );
@@ -85,6 +86,19 @@ class GrowthPress_Dashboard {
         wp_send_json_error("Node not found.");
     }
 
+    public function handle_agency_delete() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $slug = sanitize_text_field($_POST['slug']);
+        $profiles = get_option('gp_agency_profiles', array());
+        if(isset($profiles[$slug])) {
+            unset($profiles[$slug]);
+            update_option('gp_agency_profiles', $profiles);
+            wp_send_json_success("Agency Node purged.");
+        }
+        wp_send_json_error();
+    }
+
     public function handle_chat_session_delete() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
@@ -120,7 +134,7 @@ class GrowthPress_Dashboard {
             $name = $steps[$idx]['name'];
             unset($steps[$idx]);
             update_option('gp_workflow_steps', array_values($steps));
-            GrowthPress_Activity::log("Workflow Orchestrator: Step \"$name\" purged from lifecycle.");
+            GrowthPress_Activity::log("Workflow Orchestrator: Step \"$name\" purged from ecosystem.");
             wp_send_json_success("Step successfully removed.");
         }
         wp_send_json_error();
@@ -140,6 +154,19 @@ class GrowthPress_Dashboard {
         wp_send_json_error();
     }
 
+    public function handle_workflow_step_reorder() {
+        check_ajax_referer('gp_admin_nonce', 'gp_nonce');
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        $new_order = $_POST['order'];
+        $steps = get_option('gp_workflow_steps', array());
+        $reordered = array();
+        foreach($new_order as $idx) {
+            if(isset($steps[$idx])) $reordered[] = $steps[$idx];
+        }
+        update_option('gp_workflow_steps', $reordered);
+        wp_send_json_success("Workflow sequence recalibrated.");
+    }
+
     public function handle_erp_reorder() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
@@ -156,7 +183,7 @@ class GrowthPress_Dashboard {
 
     public function handle_erp_update_stock() {
         check_ajax_referer('gp_admin_nonce', 'gp_nonce');
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( 'Unauthorized' );
         $item_id = intval($_POST['item_id']);
         $new_val = intval($_POST['stock']);
         update_post_meta($item_id, '_gp_stock_level', $new_val);
@@ -552,9 +579,7 @@ class GrowthPress_Dashboard {
                         </div>
                         <div style="display:flex; gap:10px; margin-bottom:15px;">
                             <button class="gp-btn" style="flex:2; padding:12px; font-size:11px; border-radius:12px;" onclick="erpReorder(<?php echo $item->ID; ?>)">RE-ORDER ASSET</button>
-                            <?php if(current_user_can('manage_options')): ?>
-                                <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:transparent; border:1px solid #EEE; color:var(--text) !important;" onclick="updateStock(<?php echo $item->ID; ?>, <?php echo $stock; ?>)">ADJ</button>
-                            <?php endif; ?>
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:12px; background:transparent; border:1px solid #EEE; color:var(--text) !important;" onclick="updateStock(<?php echo $item->ID; ?>, <?php echo $stock; ?>)">ADJ</button>
                         </div>
 
                         <?php
@@ -621,7 +646,7 @@ class GrowthPress_Dashboard {
                     </div>
                 </div>
 
-                <div style="display:grid; gap:30px; padding-left:30px; border-left:4px dashed #E2E8F0;">
+                <div id="workflow-steps-container" style="display:grid; gap:30px; padding-left:30px; border-left:4px dashed #E2E8F0;">
                     <?php
                     $workflow_steps = get_option('gp_workflow_steps', array(
                         array('name' => 'Analyze Sentiment & Score Urgency', 'status' => 'ACTIVE'),
@@ -629,7 +654,7 @@ class GrowthPress_Dashboard {
                     ));
                     $idx = 1;
                     foreach($workflow_steps as $step_idx => $step): ?>
-                        <div style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center; <?php echo $step['status'] === 'INACTIVE' ? 'opacity:0.5;' : ''; ?>">
+                        <div class="workflow-step-node" data-idx="<?php echo $step_idx; ?>" style="background:#FFF; padding:25px; border-radius:20px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center; cursor:grab; <?php echo $step['status'] === 'INACTIVE' ? 'opacity:0.5;' : ''; ?>">
                             <div>
                                 <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:5px;">STEP <?php echo str_pad($idx, 2, '0', STR_PAD_LEFT); ?>: <?php echo ($idx == 1 ? 'AI TRIAGE' : ($idx == 2 ? 'SMS NOTIFY' : 'CUSTOM NODE')); ?></div>
                                 <div style="font-size:14px; font-weight:800;"><?php echo esc_html($step['name']); ?></div>
@@ -687,6 +712,24 @@ class GrowthPress_Dashboard {
                 if(res.success) location.reload();
             });
         }
+        jQuery(document).ready(function($) {
+            if($('#workflow-steps-container').length) {
+                $('#workflow-steps-container').sortable({
+                    items: '.workflow-step-node',
+                    stop: function() {
+                        const order = [];
+                        $('.workflow-step-node').each(function() {
+                            order.push($(this).data('idx'));
+                        });
+                        $.post(ajaxurl, {
+                            action: 'gp_workflow_step_reorder',
+                            order: order,
+                            gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+                        });
+                    }
+                });
+            }
+        });
         </script>
         <?php
     }
@@ -742,7 +785,8 @@ class GrowthPress_Dashboard {
                         <div style="font-size:11px; font-weight:900; opacity:0.4; letter-spacing:2px; margin:15px 0;"><?php echo strtoupper($p['niche']); ?> NODE</div>
                         <div style="display:flex; gap:10px;">
                             <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px;" onclick="switchAgencyProfile('<?php echo $slug; ?>')">ACTIVATE NODE</button>
-                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="editAgencyProfile('<?php echo $slug; ?>', '<?php echo esc_js($p['name']); ?>', '<?php echo esc_js($p['niche']); ?>')">EDIT BRAND</button>
+                            <button class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:10px; background:transparent; border:1px solid #E2E8F0; color:var(--text) !important;" onclick="editAgencyProfile('<?php echo $slug; ?>', '<?php echo esc_js($p['name']); ?>', '<?php echo esc_js($p['niche']); ?>')">EDIT</button>
+                            <button class="gp-btn" style="padding:12px; font-size:11px; border-radius:10px; background:#FEF2F2; color:#B91C1C !important; border:none;" onclick="deleteAgencyProfile('<?php echo $slug; ?>')"><span class="dashicons dashicons-trash"></span></button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -786,6 +830,16 @@ class GrowthPress_Dashboard {
                     alert(res.data);
                     location.reload();
                 }
+            });
+        }
+        function deleteAgencyProfile(slug) {
+            if(!confirm('Purge this Brand Node? This will not delete leads but will remove brand silo data.')) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_delete_agency_node',
+                slug: slug,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) location.reload();
             });
         }
         </script>

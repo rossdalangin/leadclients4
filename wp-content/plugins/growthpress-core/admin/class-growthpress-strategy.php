@@ -19,7 +19,7 @@ class GrowthPress_Strategy {
             'growthpress-dashboard',
             'Growth Strategy',
             'Growth Strategy',
-            'manage_options',
+            'edit_posts',
             'growthpress-strategy',
             array( $this, 'render_strategy' )
         );
