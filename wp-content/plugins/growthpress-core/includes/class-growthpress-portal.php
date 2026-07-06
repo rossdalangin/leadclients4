@@ -194,19 +194,37 @@ class GrowthPress_Portal {
         $proposals = ! empty($lead_ids) ? get_posts( array( 'post_type' => 'gp_proposal', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) ) : array();
 
         ob_start(); ?>
-        <div class="gp-portal-v4 container" style="padding:150px 0;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:100px;">
+        <div class="gp-portal-v4 container" style="padding:100px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px;">
                 <div>
-                    <div style="font-size:12px; font-weight:950; color:var(--primary); text-transform:uppercase; letter-spacing:5px; margin-bottom:20px;">AUTHENTICATED COMMAND CENTER</div>
-                    <h1 class="text-gradient" style="margin:0; font-size:5.5rem; letter-spacing:-0.07em; line-height: 0.9;">Command: <?php echo esc_html($user->display_name); ?></h1>
+                    <div style="font-size:11px; font-weight:950; color:var(--primary); text-transform:uppercase; letter-spacing:5px; margin-bottom:15px;">CLIENT STRATEGIC COMMAND</div>
+                    <h1 class="text-gradient" style="margin:0; font-size:3.5rem; letter-spacing:-0.07em; line-height: 1;">Welcome, <?php echo esc_html($user->display_name); ?></h1>
                 </div>
                 <div style="text-align:right;">
-                    <div style="font-size:11px; font-weight:950; opacity:0.3; letter-spacing:2px; margin-bottom:15px; text-transform: uppercase;">Node: AES-256-GCM Secure</div>
-                    <a href="<?php echo wp_logout_url(home_url()); ?>" class="gp-btn" style="background:var(--secondary); padding:15px 40px; font-size:12px; border-radius:18px; text-transform:none; font-weight: 800;">TERMINATE SESSION</a>
+                    <div style="font-size:10px; font-weight:950; opacity:0.3; letter-spacing:2px; margin-bottom:15px; text-transform: uppercase;">Node: AES-256-GCM Secure</div>
+                    <a href="<?php echo wp_logout_url(home_url()); ?>" class="gp-btn" style="background:var(--secondary); padding:12px 30px; font-size:11px; border-radius:12px; text-transform:none; font-weight: 800;">Logout</a>
                 </div>
             </div>
 
+            <!-- Portal Navigation Tabs -->
+            <div class="portal-nav-tabs" style="display:flex; gap:10px; margin-bottom:60px; border-bottom:1px solid #EEE; padding-bottom:20px; overflow-x:auto;">
+                <button class="portal-tab active" data-target="overview" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; color:var(--primary);">OVERVIEW</button>
+                <button class="portal-tab" data-target="roadmap" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; opacity:0.4;">ROADMAP</button>
+                <button class="portal-tab" data-target="agreements" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; opacity:0.4;">AGREEMENTS</button>
+                <button class="portal-tab" data-target="financials" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; opacity:0.4;">FINANCIALS</button>
+                <button class="portal-tab" data-target="referrals" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; opacity:0.4;">REFERRALS</button>
+                <button class="portal-tab" data-target="support" style="background:none; border:none; padding:10px 25px; font-weight:950; font-size:11px; letter-spacing:1px; cursor:pointer; opacity:0.4;">SUPPORT</button>
+            </div>
+
+            <style>
+                .portal-section { display: none; }
+                .portal-section.active { display: block; }
+                .portal-tab.active { opacity: 1 !important; border-bottom: 3px solid var(--primary) !important; }
+            </style>
+
             <div class="gp-portal-grid" style="display:grid; grid-template-columns: 2.5fr 1fr; gap:60px;">
+                <div class="portal-main">
+                    <div id="overview-section" class="portal-section active">
                 <div class="portal-main">
                     <!-- Strategic Onboarding Sequence (Step 23) -->
                     <?php
@@ -232,7 +250,7 @@ class GrowthPress_Portal {
                     <?php endif; ?>
 
                     <!-- Project Velocity Tracker -->
-                    <div class="glass-card" style="border-left: 15px solid var(--primary); margin-bottom:60px; padding:70px; border-radius:44px;">
+                    <div class="glass-card gp-reveal" style="border-left: 15px solid var(--primary); margin-bottom:60px; padding:70px; border-radius:44px;">
                         <div style="background:rgba(37,99,235,0.05); border:1px solid rgba(37,99,235,0.1); padding:20px; border-radius:20px; margin-bottom:40px;">
                             <p style="margin:0; font-size:13px; color:var(--primary); font-weight:600;"><strong>Portal Guidance:</strong> This terminal provides real-time access to your strategic growth trajectory. Monitor your 'Operational Velocity' to track the execution of active business nodes.</p>
                         </div>
@@ -261,9 +279,10 @@ class GrowthPress_Portal {
                             </div>
                         </div>
                     </div>
+                    </div> <!-- End Overview -->
 
                     <!-- Roadmap Execution Checklist -->
-                    <div id="gp-portal-roadmap" style="margin-bottom:60px;">
+                    <div id="roadmap-section" class="portal-section">
                         <h2 style="font-size:32px; margin-bottom:40px; letter-spacing:-0.05em; font-weight:950;">Strategy Execution Node</h2>
                         <div class="glass-card" style="padding:50px; border-radius:40px;">
                             <?php
@@ -305,7 +324,9 @@ class GrowthPress_Portal {
                         </script>
                     </div>
 
-                    <div id="gp-portal-projects" style="margin-bottom:60px;">
+                    </div>
+
+                    <div id="gp-portal-projects" class="overview-include" style="margin-bottom:60px;">
                         <h2 style="font-size:32px; margin-bottom:40px; letter-spacing:-0.05em; font-weight:950;">Active Growth Projects</h2>
                         <?php
                         // Query projects explicitly linked to this user's leads
@@ -321,7 +342,7 @@ class GrowthPress_Portal {
                         <?php endforeach; else: echo "<p style='opacity:0.5;'>No active growth projects assigned to this node.</p>"; endif; ?>
                     </div>
 
-                    <div id="proposals">
+                    <div id="agreements-section" class="portal-section">
                         <h2 style="font-size:32px; margin-bottom:40px; letter-spacing:-0.05em; font-weight:950;">Strategic Terminal: Agreements</h2>
                         <?php if($proposals): foreach($proposals as $prop):
                             $status = get_post_meta($prop->ID, '_gp_proposal_status', true) ?: 'Pending Execution'; ?>
@@ -395,6 +416,7 @@ class GrowthPress_Portal {
                         </script>
                     </div>
 
+                    <div id="financials-section" class="portal-section">
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px;">
                         <h3 style="font-size:22px; margin-bottom:10px; letter-spacing:-0.03em;">Interactive Financial Ledger</h3>
                         <p style="font-size:12px; opacity:0.5; margin-bottom:30px;">Real-time synchronization of settled transactions and pending investment nodes.</p>
@@ -423,8 +445,18 @@ class GrowthPress_Portal {
                         <?php endif; ?>
                     </div>
 
+                    </div>
+                    </div> <!-- End Financials -->
+
+                    <div id="referrals-section" class="portal-section">
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px; background:#F0FDF4; border-color:#DCFCE7;">
-                        <h3 style="font-size:22px; margin-bottom:10px; color:#166534;">Strategic Referral Hub</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <h3 style="font-size:22px; margin-bottom:10px; color:#166534;">Strategic Referral Hub</h3>
+                            <div style="background:#FFF; padding:15px; border-radius:15px; text-align:center; border:1px solid #BBF7D0;">
+                                <div style="font-size:18px; font-weight:950; color:#166534;">$<?php echo count($my_refs) * 250; ?></div>
+                                <div style="font-size:9px; font-weight:900; opacity:0.6;">EST. EARNINGS</div>
+                            </div>
+                        </div>
                         <p style="font-size:12px; opacity:0.6; color:#166534; margin-bottom:30px;">Propagate your network dominance and earn commissions on successful conversions.</p>
 
                         <div style="margin-bottom:30px; padding:20px; background:rgba(255,255,255,0.5); border-radius:15px; border:1px solid #BBF7D0;">
@@ -482,6 +514,10 @@ class GrowthPress_Portal {
                         </script>
                     </div>
 
+                    </div>
+                    </div> <!-- End Referrals -->
+
+                    <div id="support-section" class="portal-section">
                     <div class="glass-card" style="padding:50px; border-radius:44px; margin-bottom:40px; border:1px solid var(--primary-glow);">
                         <h3 style="font-size:22px; margin-bottom:20px; color:var(--primary);">Direct Strategic Uplink</h3>
                         <p style="font-size:13px; opacity:0.6; margin-bottom:25px;">Submit a high-priority support request or strategic query directly to your assigned specialists.</p>
@@ -576,6 +612,16 @@ class GrowthPress_Portal {
             </div>
         </div>
         <script>
+            jQuery(document).ready(function($) {
+                $('.portal-tab').on('click', function() {
+                    const target = $(this).data('target');
+                    $('.portal-tab').removeClass('active').css('opacity', 0.4);
+                    $(this).addClass('active').css('opacity', 1);
+                    $('.portal-section').removeClass('active').hide();
+                    $('#' + target + '-section').addClass('active').fadeIn();
+                });
+            });
+
             function updatePortalProfile() {
                 jQuery.post(gp_ajax.ajaxurl, {
                     action: 'gp_update_portal_profile',

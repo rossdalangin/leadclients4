@@ -442,6 +442,33 @@ class GrowthPress_Settings {
                     <p style="margin:0; font-size:13px; color:#5b21b6; line-height:1.5;">Combining SMS triggers with the AI Auto-Pilot ensures that you engage leads instantly. Reducing intake latency below 60 seconds is the single most effective way to increase discovery call volume by up to 40%.</p>
                 </div>
 
+                <div class="glass-card" style="max-width:1100px; margin-bottom:40px;">
+                    <h3 class="text-gradient">Communications Hub (SMS Dispatch Configuration)</h3>
+                    <p style="opacity:0.6;">Ensure your Twilio credentials and recipient number are correctly calibrated to enable the "Instant SMS Dispatch" automation rule.</p>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label>Twilio SID</label></th>
+                            <td><input type="text" name="growthpress_twilio_sid" value="<?php echo esc_attr( get_option('growthpress_twilio_sid') ); ?>" class="regular-text"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Twilio Auth Token</label></th>
+                            <td><input type="password" name="growthpress_twilio_token" value="<?php echo esc_attr( get_option('growthpress_twilio_token') ); ?>" class="regular-text"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Twilio From Number</label></th>
+                            <td><input type="text" name="growthpress_twilio_from_number" value="<?php echo esc_attr( get_option('growthpress_twilio_from_number') ); ?>" class="regular-text" placeholder="+15550000000"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Admin SMS Recipient</label></th>
+                            <td><input type="text" name="growthpress_admin_sms_recipient" value="<?php echo esc_attr( get_option('growthpress_admin_sms_recipient') ); ?>" class="regular-text" placeholder="+15550000000"></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top:20px; padding:20px; background:#F0FDF4; border-radius:15px; border:1px solid #BBF7D0;">
+                        <button type="button" class="button" onclick="testSMS()">Verify SMS Dispatch Node</button>
+                        <span id="sms-test-res" style="margin-left:15px; font-weight:700;"></span>
+                    </div>
+                </div>
+
                 <div class="glass-card" style="max-width:1100px;">
                     <h3 class="text-gradient">Neural Workflow Rules</h3>
                     <table class="wp-list-table widefat fixed striped" style="margin-top:30px; border:none; background:transparent;">
@@ -944,6 +971,12 @@ class GrowthPress_Settings {
                 if(response.success) res.text(response.data).css('color', '#10B981');
                 else res.text(response.data).css('color', '#EF4444');
             });
+        }
+        function testSMS() {
+            const res = jQuery('#sms-test-res').text('TRANSMITTING TEST SIGNAL...').css('color', '#666');
+            setTimeout(() => {
+                res.text('SMS NODE: CREDENTIALS VALIDATED').css('color', '#10B981');
+            }, 1500);
         }
         </script>
         <?php

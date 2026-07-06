@@ -217,21 +217,21 @@ body.dark-theme .site-header {
 }
 
 .gp-dark-mode .site-footer p, .dark-theme .site-footer p {
-    color: #94A3B8 !important;
+    color: #CBD5E1 !important;
 }
 
 .gp-dark-mode .site-footer a, .dark-theme .site-footer a {
-    color: #CBD5E1 !important; /* Slate 300 */
+    color: #F8FAFC !important;
     text-decoration: none;
 }
 
 .gp-dark-mode .site-footer a:hover, .dark-theme .site-footer a:hover {
-    color: #FFF !important;
+    color: var(--primary) !important;
 }
 
 .gp-dark-mode .site-footer .footer-heading, .dark-theme .site-footer .footer-heading {
     color: #FFF !important;
-    opacity: 0.8;
+    opacity: 1 !important;
 }
 
 .gp-dark-mode .site-footer .footer-eyebrow, .dark-theme .site-footer .footer-eyebrow {
