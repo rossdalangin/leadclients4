@@ -310,6 +310,35 @@ class GrowthPress_Dashboard {
         add_submenu_page( 'growthpress-dashboard', 'ERP & Inventory', 'ERP & Inventory', 'edit_posts', 'growthpress-erp', array( $this, 'render_erp_command' ) );
         add_submenu_page( 'growthpress-dashboard', 'Legal Lab', 'Legal Lab', 'edit_posts', 'growthpress-law-lab', array( $this, 'render_law_lab' ) );
         add_submenu_page( 'growthpress-dashboard', 'Referral Hub', 'Referrals', 'edit_posts', 'growthpress-referrals', array( $this, 'render_referral_hub' ) );
+        add_submenu_page( 'growthpress-dashboard', 'Client View', 'Client View', 'read', 'growthpress-client-view', array( $this, 'render_client_view' ) );
+    }
+
+    public function render_client_view() {
+        $clients = get_posts(array('post_type' => 'gp_lead', 'posts_per_page' => 20));
+        $selected_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : 0;
+
+        echo '<div class="wrap gp-reveal"><h1>Client Portal Mirror</h1><p>Mirroring the active client terminal for strategic oversight.</p>';
+
+        echo '<div class="glass-card" style="margin-bottom:40px; padding:30px; display:flex; align-items:center; gap:20px;">';
+        echo '<label style="font-weight:950; font-size:10px; opacity:0.4; letter-spacing:1px;">SELECT CLIENT TO MIRROR:</label>';
+        echo '<select onchange="location.href=\'admin.php?page=growthpress-client-view&client_id=\' + this.value" style="flex:1; height:45px; border-radius:10px;">';
+        echo '<option value="0">--- Authenticated Self (Admin) ---</option>';
+        foreach($clients as $c) {
+            echo '<option value="'.$c->ID.'" '.selected($selected_id, $c->ID, false).'>'.esc_html($c->post_title).' ('.get_post_meta($c->ID, '_lead_email', true).')</option>';
+        }
+        echo '</select>';
+        echo '</div>';
+
+        if($selected_id) {
+            $client_email = get_post_meta($selected_id, '_lead_email', true);
+            echo '<div style="background:#FFF; border-radius:40px; padding:20px; border:1px solid #EEE;">';
+            echo do_shortcode('[gp_client_portal email="'.$client_email.'"]');
+            echo '</div>';
+        } else {
+            echo do_shortcode('[gp_client_portal]');
+        }
+
+        echo '</div>';
     }
 
     public function render_referral_hub() {
@@ -1259,6 +1288,9 @@ class GrowthPress_Dashboard {
         $strategic_plan = get_post_meta($lead_id, '_gp_ai_strategic_plan', true) ?: 'Generating strategic roadmap...';
         $competitive_edge = get_post_meta($lead_id, '_gp_ai_competitive_edge', true) ?: 'Analyzing market deltas...';
         $battlecard = get_post_meta($lead_id, '_gp_ai_battlecard', true) ?: 'Calibrating competitor intel...';
+        $sms_template = get_post_meta($lead_id, '_gp_ai_sms_template', true) ?: 'Drafting elite SMS outreach...';
+        $email_opener = get_post_meta($lead_id, '_gp_ai_email_opener', true) ?: 'Calibrating strategic email opener...';
+        $objections = get_post_meta($lead_id, '_gp_ai_objection_handler', true) ?: 'Predicting high-stakes objections...';
         $nudge = get_post_meta($lead_id, '_gp_behavioral_nudge', true);
         $nurture = get_post_meta($lead_id, '_gp_nurture_sequence', true);
 
@@ -1367,6 +1399,22 @@ class GrowthPress_Dashboard {
                     <div style="background:#FFF1F2; border:1px solid #FDA4AF; padding:20px; border-radius:15px; margin-bottom:25px;">
                         <div style="font-size:10px; font-weight:950; color:#9F1239; letter-spacing:1px; margin-bottom:8px;">AI COMPETITIVE BATTLECARD</div>
                         <div style="font-size:12px; font-weight:700; color:#9F1239; line-height:1.4;"><?php echo nl2br(esc_html($battlecard)); ?></div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:25px;">
+                        <div style="background:#FDF2F8; border:1px solid #F9A8D4; padding:20px; border-radius:15px;">
+                            <div style="font-size:9px; font-weight:950; color:#BE185D; letter-spacing:1px; margin-bottom:8px;">ELITE SMS TEMPLATE</div>
+                            <div style="font-size:12px; font-weight:600; color:#BE185D; line-height:1.4;"><?php echo nl2br(esc_html($sms_template)); ?></div>
+                        </div>
+                        <div style="background:#F5F3FF; border:1px solid #C4B5FD; padding:20px; border-radius:15px;">
+                            <div style="font-size:9px; font-weight:950; color:#6D28D9; letter-spacing:1px; margin-bottom:8px;">STRATEGIC EMAIL OPENER</div>
+                            <div style="font-size:12px; font-weight:600; color:#6D28D9; line-height:1.4;"><?php echo nl2br(esc_html($email_opener)); ?></div>
+                        </div>
+                    </div>
+
+                    <div style="background:#FEF2F2; border:1px solid #FECACA; padding:25px; border-radius:20px; margin-bottom:25px;">
+                        <div style="font-size:10px; font-weight:950; color:#991B1B; letter-spacing:1px; margin-bottom:10px;">PREDICTIVE OBJECTION HANDLING</div>
+                        <div style="font-size:13px; line-height:1.6; color:#991B1B;"><?php echo nl2br(esc_html($objections)); ?></div>
                     </div>
                     <div class="brief-box">
                         <h4 style="margin-top:0; font-size:11px; text-transform:uppercase; letter-spacing:2px; opacity:0.4;">Neural Interaction Summary</h4>

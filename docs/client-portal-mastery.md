@@ -9,6 +9,19 @@ Access to this hub is secured via AES-256-GCM encryption. If your organization u
 
 ---
 
+## 🚀 Navigation & Hubs
+The portal features a tabbed interface for streamlined operational access:
+
+*   **Overview**: Your primary dashboard featuring the **Operational Velocity** tracker and active project summaries.
+*   **Roadmap**: Your 12-month Strategy Execution Node. Track milestones and synchronize progress with your specialist.
+*   **Agreements**: Secure access to the **Strategic Terminal** for reviewing and digitally executing proprietary proposals.
+*   **Vault**: Your **Secure Asset Vault** for encrypted growth blueprints and financial audits.
+*   **Ledger**: The **Interactive Financial Ledger** for real-time settlement tracking.
+*   **Referrals**: The **Strategic Referral Hub** for managing your tracking links and rewards.
+*   **Activity Logs**: A comprehensive **Neural Activity Log** trace of all system-wide interactions.
+
+---
+
 ## 🚀 Key Features
 
 ### 1. Operational Velocity

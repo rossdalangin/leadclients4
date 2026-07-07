@@ -177,6 +177,15 @@ class GrowthPress_AI {
         return $this->call_ai( $prompt, "Senior Growth Architect & Operational Strategist" );
     }
 
+    public function generate_personalized_roadmap( $lead_content, $niche ) {
+        $prompt = "Architect a personalized 12-month growth roadmap for a $niche client with the following objectives: \"$lead_content\".
+        Focus on how our OS will automate their specific pain points.
+        Structure into 12 monthly bullet points, each starting with '- '.
+        Example: - Month 1: [Action] to achieve [Outcome].
+        Ensure the tone is elite, strategic, and high-authority.";
+        return $this->call_ai( $prompt, "Elite Growth Architect" );
+    }
+
     public function predict_deal_probability( $lead_id ) {
         $lead = get_post($lead_id);
         $res = $this->call_ai("Predict probability of closing (0-100) for inquiry: \"{$lead->post_content}\". Return ONLY number.", "Sales Predictor");

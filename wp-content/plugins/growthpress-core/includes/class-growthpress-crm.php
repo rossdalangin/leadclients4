@@ -374,12 +374,24 @@ class GrowthPress_CRM {
         $battlecard = $ai->call_ai("Generate an AI Competitive Battlecard for lead: \"{$lead->post_content}\". Identify 2 regional competitors and list 3 tactical 'Win-Points' for our firm.", "Competitive Intelligence Node");
         if ( ! is_wp_error($battlecard) ) update_post_meta($lead_id, '_gp_ai_battlecard', $battlecard);
 
+        $sms_template = $ai->call_ai("Draft a high-urgency SMS outreach template for this lead: \"{$lead->post_content}\". Maximum 160 characters. Focus on immediate realization.", "SMS Strategist");
+        if ( ! is_wp_error($sms_template) ) update_post_meta($lead_id, '_gp_ai_sms_template', $sms_template);
+
+        $email_opener = $ai->call_ai("Draft a high-authority strategic email opener for this lead: \"{$lead->post_content}\". Focus on establishing sector dominance instantly.", "Email Copywriter");
+        if ( ! is_wp_error($email_opener) ) update_post_meta($lead_id, '_gp_ai_email_opener', $email_opener);
+
+        $objections = $ai->call_ai("Predict 3 high-stakes objections this lead might have based on: \"{$lead->post_content}\" and provide elite rebuttals.", "Objection Handler Node");
+        if ( ! is_wp_error($objections) ) update_post_meta($lead_id, '_gp_ai_objection_handler', $objections);
+
         $nudge = $ai->generate_behavioral_nudge($lead_id);
         if ( ! is_wp_error($nudge) ) update_post_meta($lead_id, '_gp_behavioral_nudge', $nudge);
 
         $niche = get_option('growthpress_niche', 'business');
         $nurture = $ai->generate_email_campaign($lead->post_content, $niche);
         if ( ! is_wp_error($nurture) ) update_post_meta($lead_id, '_gp_nurture_sequence', $nurture);
+
+        $client_roadmap = $ai->generate_personalized_roadmap($lead->post_content, $niche);
+        if ( ! is_wp_error($client_roadmap) ) update_post_meta($lead_id, '_gp_growth_roadmap', $client_roadmap);
 
         do_action('gp_niche_lead_analysis', $lead_id);
     }

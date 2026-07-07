@@ -124,7 +124,7 @@ GrowthPress is designed for three distinct user levels. Each has specific goals 
 1.  **Principal (Administrator)**
     *   **Goal**: Infrastructure calibration and ecosystem-wide ROI monitoring.
     *   **Access**: Full control over Settings, Agency Cluster, Workflow Command, and Financial Ledgers.
-    *   **Core Tasks**: License activation, AI Provider linkage, niche selection, and enterprise-wide scenario modeling.
+    *   **Core Tasks**: License activation, AI Provider linkage, niche selection, and mirroring the **Client View** to verify portal integrity.
 2.  **Specialist (Staff)**
     *   **Goal**: High-velocity lead conversion and client implementation.
     *   **Access**: Strategic Command, Global Tasks, Lead Dossiers, Sales Simulation Lab, and Chat Command.
@@ -149,6 +149,22 @@ Architecting your path to market dominance.
     *   **Q3: Market Dominance**: Content syndication and referral loops.
     *   **Q4: Scaled Realization**: Predictive ROI modeling and enterprise scaling.
 4.  **Persistence**: The roadmap is automatically saved for your active niche. Return to this screen anytime and click **"View Current Roadmap"** to quickly access your strategic trajectory.
+
+---
+
+## 🤝 Step 8: The Client Experience (Portal Mastery)
+Ensuring transparency and alignment with your high-ticket partners.
+
+1.  **Access**: Clients log in via the `/client-portal` node. Admins can mirror this view via **System Dashboard > Client View**.
+2.  **Navigation**: The portal is divided into specialized tactical hubs:
+    *   **Overview**: Real-time project velocity and high-level status.
+    *   **Roadmap**: Interactive checklist of the AI-generated strategy. Check off milestones to synchronize status.
+    *   **Agreements**: Digital signature terminal for proposals and legal documents.
+    *   **Vault**: Encrypted repository for proprietary assets (Blueprints, Audits).
+    *   **Ledger**: Financial transparency hub for tracking investment settlement.
+    *   **Referrals**: Monetization terminal where clients can track their unique referral links and earned commissions.
+    *   **Activity Logs**: A full neural trace of system interactions for absolute accountability.
+3.  **Specialist Uplink**: Clients can transmit high-priority requests directly to the staff via the "Strategic Uplink" form.
 
 ---
 
