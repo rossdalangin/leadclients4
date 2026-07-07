@@ -31,10 +31,11 @@ class GrowthPress_Strategy {
         $ai = GrowthPress_AI::get_instance();
         $roadmap = $ai->generate_growth_roadmap($niche);
 
-        if(!is_wp_error($roadmap)) {
-            update_option('gp_stored_roadmap_' . $niche, $roadmap);
+        if(is_wp_error($roadmap)) {
+            wp_send_json_error($roadmap->get_error_message());
         }
 
+        update_option('gp_stored_roadmap_' . $niche, $roadmap);
         wp_send_json_success($roadmap);
     }
 
@@ -57,14 +58,20 @@ class GrowthPress_Strategy {
                     <div style="font-size:24px;">⌛</div>
                     <div style="font-size:13px; font-weight:800; color:#92400E; line-height:1.4;">STRATEGIC NOTE: Roadmap generation involves complex niche-cluster analysis and multi-quarter architecture. Processing takes 20-40 seconds. Do not refresh the terminal.</div>
                 </div>
-                <h3 style="font-size:2rem; margin-bottom:20px;">Initialize Strategic Generation</h3>
-                <p style="font-size:16px; opacity:0.6; margin-bottom:40px;">Our AI Strategist will analyze your niche cluster and generate a complete marketing and operations plan. <strong>Success Pattern:</strong> Elite firms implement the first 90 days immediately to establish absolute sector authority before scaling high-ticket outreach.</p>
-                <button class="button button-primary button-hero" style="height:70px; padding:0 50px; font-size:16px; border-radius:18px;" onclick="generateRoadmap()">INITIALIZE STRATEGY ENGINE</button>
-
                 <?php
                 $niche = get_option('growthpress_niche', 'business');
                 $stored = get_option('gp_stored_roadmap_' . $niche);
-                if($stored): ?>
+                ?>
+                <h3 style="font-size:2rem; margin-bottom:20px;">Initialize Strategic Generation (<?php echo strtoupper($niche); ?> NICHE)</h3>
+                <p style="font-size:16px; opacity:0.6; margin-bottom:40px;">Our AI Strategist will analyze your niche cluster and generate a complete marketing and operations plan tailored specifically for the <strong><?php echo esc_html($niche); ?></strong> sector. <strong>Success Pattern:</strong> Elite firms implement the first 90 days immediately to establish absolute sector authority before scaling high-ticket outreach.</p>
+                <div style="display:flex; gap:20px;">
+                    <button class="button button-primary button-hero" style="height:70px; padding:0 50px; font-size:16px; border-radius:18px;" onclick="generateRoadmap()">INITIALIZE STRATEGY ENGINE</button>
+                    <?php if($stored): ?>
+                        <button class="button button-secondary" style="height:70px; padding:0 40px; border-radius:18px; font-weight:700;" onclick="jQuery('html, body').animate({scrollTop: jQuery('#gp-roadmap-output').offset().top - 100}, 800);">VIEW CURRENT ROADMAP</button>
+                    <?php endif; ?>
+                </div>
+
+                <?php if($stored): ?>
                     <div style="margin-top:30px; padding:15px; background:rgba(16, 185, 129, 0.1); border-radius:10px; border:1px solid rgba(16, 185, 129, 0.2); font-size:12px; color:#065F46; font-weight:700;">
                         ✓ PREVIOUS STRATEGY DETECTED. SCROLL DOWN TO VIEW.
                     </div>
@@ -79,7 +86,7 @@ class GrowthPress_Strategy {
 
                 <div id="gp-roadmap-output" style="margin-top:50px; line-height:2; font-size:15px; <?php echo $stored ? '' : 'display:none;'; ?>">
                     <?php if($stored): ?>
-                        <div class="glass-card" style="background:#FFF; padding:80px; border-radius:40px; border:1px solid #EEE; box-shadow:0 30px 80px rgba(0,0,0,0.08); white-space: pre-wrap; font-family:'Inter', sans-serif;">
+                        <div class="glass-card roadmap-container" style="padding:80px; border-radius:40px; white-space: pre-wrap; font-family:'Inter', sans-serif;">
                             <?php
                             $structured = $stored;
                             $structured = str_replace('Q1:', '<h2 style="color:var(--primary); margin-top:0;">Q1: Foundation & Authority</h2>', $structured);
@@ -112,7 +119,14 @@ class GrowthPress_Strategy {
                     structured = structured.replace(/Q4:/g, '<h2 style="color:#EF4444; margin-top:60px;">Q4: Scaled Realization</h2>');
                     structured = structured.replace(/Neural Milestone:/g, '<div style="background:var(--primary-glow); padding:15px 25px; border-radius:15px; margin-top:15px; font-weight:950; color:var(--primary); font-size:13px; display:inline-block;">🎯 NEURAL MILESTONE:</div>');
 
-                    $('#gp-roadmap-output').html('<div class="glass-card" style="background:#FFF; padding:80px; border-radius:40px; border:1px solid #EEE; box-shadow:0 30px 80px rgba(0,0,0,0.08); white-space: pre-wrap; font-family:\'Inter\', sans-serif;">' + structured + '</div>').fadeIn(600);
+                    $('#gp-roadmap-output').html('<div class="glass-card roadmap-container" style="padding:80px; border-radius:40px; white-space: pre-wrap; font-family:\'Inter\', sans-serif;">' + structured + '</div>').fadeIn(600);
+
+                    // Auto-scroll to the roadmap
+                    $('html, body').animate({
+                        scrollTop: $("#gp-roadmap-output").offset().top - 100
+                    }, 1000);
+                } else {
+                    alert('STRATEGIC ERROR: ' + res.data);
                 }
             });
         }

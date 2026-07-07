@@ -374,12 +374,6 @@ class GrowthPress_CRM {
         $battlecard = $ai->call_ai("Generate an AI Competitive Battlecard for lead: \"{$lead->post_content}\". Identify 2 regional competitors and list 3 tactical 'Win-Points' for our firm.", "Competitive Intelligence Node");
         if ( ! is_wp_error($battlecard) ) update_post_meta($lead_id, '_gp_ai_battlecard', $battlecard);
 
-        $sms_template = $ai->call_ai("Draft a high-urgency SMS outreach template for this lead: \"{$lead->post_content}\". Maximum 160 characters. Focus on immediate clinical/strategic realization.", "SMS Strategist");
-        if ( ! is_wp_error($sms_template) ) update_post_meta($lead_id, '_gp_ai_sms_template', $sms_template);
-
-        $email_opener = $ai->call_ai("Draft a high-authority strategic email opener for this lead: \"{$lead->post_content}\". Focus on establishing sector dominance instantly.", "Email Copywriter");
-        if ( ! is_wp_error($email_opener) ) update_post_meta($lead_id, '_gp_ai_email_opener', $email_opener);
-
         $nudge = $ai->generate_behavioral_nudge($lead_id);
         if ( ! is_wp_error($nudge) ) update_post_meta($lead_id, '_gp_behavioral_nudge', $nudge);
 
@@ -814,8 +808,6 @@ class GrowthPress_CRM {
         </div>
         <?php
         $closing = get_post_meta($post->ID, '_gp_ai_closing_tips', true);
-        $sms_template = get_post_meta($post->ID, '_gp_ai_sms_template', true);
-        $email_opener = get_post_meta($post->ID, '_gp_ai_email_opener', true);
         $discovery = get_post_meta($post->ID, '_gp_ai_discovery_questions', true);
         $suggested = get_post_meta($post->ID, '_gp_ai_suggested_reply', true);
         $strategic_plan = get_post_meta($post->ID, '_gp_ai_strategic_plan', true);
@@ -836,20 +828,6 @@ class GrowthPress_CRM {
                 <div style="margin-top:20px; background:#FFF1F2; padding:25px; border-radius:20px; border:1px solid #FDA4AF;">
                     <h4 style="margin-top:0; font-size:11px; color:#9F1239; text-transform:uppercase; letter-spacing:1px;">Tactical Battlecard</h4>
                     <div style="font-size:12px; line-height:1.5; color:#9F1239;"><?php echo nl2br(esc_html($battlecard)); ?></div>
-                </div>
-                <?php endif; ?>
-
-                <?php if($sms_template): ?>
-                <div style="margin-top:20px; background:#FDF2F8; padding:25px; border-radius:20px; border:1px solid #F9A8D4;">
-                    <h4 style="margin-top:0; font-size:11px; color:#BE185D; text-transform:uppercase; letter-spacing:1px;">Elite SMS Template</h4>
-                    <div style="font-size:12px; line-height:1.5; color:#BE185D;"><?php echo nl2br(esc_html($sms_template)); ?></div>
-                </div>
-                <?php endif; ?>
-
-                <?php if($email_opener): ?>
-                <div style="margin-top:20px; background:#F5F3FF; padding:25px; border-radius:20px; border:1px solid #C4B5FD;">
-                    <h4 style="margin-top:0; font-size:11px; color:#6D28D9; text-transform:uppercase; letter-spacing:1px;">Strategic Email Opener</h4>
-                    <div style="font-size:12px; line-height:1.5; color:#6D28D9;"><?php echo nl2br(esc_html($email_opener)); ?></div>
                 </div>
                 <?php endif; ?>
             </div>

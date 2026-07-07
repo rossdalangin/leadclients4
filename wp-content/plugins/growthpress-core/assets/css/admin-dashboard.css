@@ -271,14 +271,10 @@
     background: var(--glass-bg);
     border-color: var(--glass-border);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    color: #F8FAFC !important;
+    color: #F8FAFC;
 }
 
-.gp-dark-mode .glass-card * {
-    color: inherit;
-}
-
-.gp-dark-mode h1, .gp-dark-mode h2, .gp-dark-mode h3, .gp-dark-mode h4, .gp-dark-mode .footer-heading {
+.gp-dark-mode h1, .gp-dark-mode h2, .gp-dark-mode h3, .gp-dark-mode .footer-heading {
     color: #F8FAFC !important;
 }
 
@@ -298,12 +294,9 @@
     color: #FFFFFF !important;
 }
 
-.gp-dark-mode .button:not(.button-primary),
-.gp-dark-mode .gp-btn[style*="background:transparent"],
-.gp-dark-mode .gp-btn[style*="background: transparent"] {
-    border-color: rgba(255,255,255,0.4) !important;
+.gp-dark-mode .button:not(.button-primary), .gp-dark-mode .gp-btn[style*="background:transparent"] {
+    border-color: rgba(255,255,255,0.2) !important;
     color: #F8FAFC !important;
-    background: rgba(255,255,255,0.05) !important;
 }
 
 /* Cyber Neon Mode - High Impact */
@@ -318,14 +311,9 @@
 }
 
 .gp-cyber-mode .glass-card {
-    background: rgba(10, 10, 10, 0.9);
+    background: rgba(10, 10, 10, 0.8);
     border: 1px solid var(--primary);
     box-shadow: 0 0 20px var(--primary-glow);
-    color: #FFFFFF !important;
-}
-
-.gp-cyber-mode .glass-card * {
-    color: inherit;
 }
 
 .gp-cyber-mode .glass-card:hover {
@@ -349,6 +337,21 @@
 .gp-cyber-mode .stat b {
     color: var(--primary);
     text-shadow: 0 0 10px var(--primary);
+}
+
+.roadmap-container {
+    background: #FFF !important;
+    border: 1px solid #EEE !important;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.08) !important;
+    color: #1E293B !important;
+}
+
+.gp-dark-mode .roadmap-container,
+.gp-cyber-mode .roadmap-container {
+    background: #0F172A !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #F8FAFC !important;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5) !important;
 }
 
 .gp-dark-mode h4, .gp-cyber-mode h4 {

@@ -118,4 +118,38 @@ Maintaining high-authority output.
 
 ---
 
+## 👥 User Role & Permission Architecture
+GrowthPress is designed for three distinct user levels. Each has specific goals and operational access:
+
+1.  **Principal (Administrator)**
+    *   **Goal**: Infrastructure calibration and ecosystem-wide ROI monitoring.
+    *   **Access**: Full control over Settings, Agency Cluster, Workflow Command, and Financial Ledgers.
+    *   **Core Tasks**: License activation, AI Provider linkage, niche selection, and enterprise-wide scenario modeling.
+2.  **Specialist (Staff)**
+    *   **Goal**: High-velocity lead conversion and client implementation.
+    *   **Access**: Strategic Command, Global Tasks, Lead Dossiers, Sales Simulation Lab, and Chat Command.
+    *   **Core Tasks**: Executing daily tasks, practicing closing tactics in the Sales Lab, and managing manual outreach via the Intel Brief.
+3.  **Client (Portal Node)**
+    *   **Goal**: Transparency of project velocity and secure asset management.
+    *   **Access**: Secure Client Portal only (Overview, Roadmap, Agreements, Vault).
+    *   **Core Tasks**: Reviewing and signing proposals, tracking project milestones, and accessing encrypted growth blueprints.
+
+---
+
+## 📈 Step 7: AI Growth Strategy & Trajectory
+Architecting your path to market dominance.
+
+1.  **Initialize Engine**: Navigate to the **Growth Strategy** submenu.
+2.  **Action**: Click **"Initialize Strategy Engine"**.
+    *   **User Interaction**: Observe the Intelligence Uplink as the AI analyzes your niche cluster.
+    *   **Processing Time**: 20-40 seconds for full multi-quarter architecture.
+3.  **The Roadmap**: View your 12-month operational plan, structured into 4 quarters:
+    *   **Q1: Foundation & Authority**: Establishing niche calibration and capture nodes.
+    *   **Q2: Operational Acceleration**: AI triage and Sales Lab integration.
+    *   **Q3: Market Dominance**: Content syndication and referral loops.
+    *   **Q4: Scaled Realization**: Predictive ROI modeling and enterprise scaling.
+4.  **Persistence**: The roadmap is automatically saved for your active niche. Return to this screen anytime and click **"View Current Roadmap"** to quickly access your strategic trajectory.
+
+---
+
 *Status: Master Tutorial Complete. System Ready for Dominance.*

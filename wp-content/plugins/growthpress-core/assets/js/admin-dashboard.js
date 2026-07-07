@@ -218,8 +218,8 @@ jQuery(document).ready(function($) {
         }, function(res) {
             gp_stop_intelligence_uplink();
             if(res.success) {
-                alert(res.data + ' Redirecting to calibration hub.');
-                window.location.href = 'admin.php?page=growthpress-settings#tab-white-label';
+                alert(res.data);
+                location.reload();
             }
         });
     };
