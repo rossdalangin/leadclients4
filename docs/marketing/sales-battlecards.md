@@ -4,6 +4,14 @@ Use these strategic battlecards to overcome objections and close high-ticket age
 
 ---
 
+## 🏛️ CORE PLATFORM BATTLECARD: The Portal & Roadmap Anchors
+**The Objection**: "How is your system different from a standard CRM or website?"
+**The Response**: "Most CRMs are black boxes that make your clients feel disconnected, and websites are just static brochures. GrowthPress v6.3 is an active Business Operating System.
+First, we provide **Persistent AI Growth Roadmaps** that map out a 12-month trajectory, permanently saved on their strategy dashboard.
+Second, we elevate client trust to the absolute maximum with our **7-Tab Secure Client Portal** (Overview, Roadmap, Agreements, Vault, Ledger, Referrals, and Activity Logs). The client gets total transparency into project velocity, and you can mirror their portal in one click with **Client View Admin Mirroring** to verify data. We don't just capture leads; we provide an authoritative client ecosystem that justifies 10x higher retainers."
+
+---
+
 ## ⚖️ LAW FIRMS: The Supreme Merit Angle
 **The Problem**: Law firms lose 65% of litigation equity due to slow intake and manual triage.
 **The Solution**: [Proprietary OS] provides immediate AI Merit Analysis.
