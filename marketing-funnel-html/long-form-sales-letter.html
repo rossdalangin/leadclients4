@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowthPress Elite v6.3: Definitive Dominance Sales Letter</title>
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@300;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --secondary: #0F172A;
+            --accent: #10B981;
+            --accent-glow: rgba(16, 185, 129, 0.2);
+            --bg: #020617;
+            --surface: #0F172A;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.8;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Header Navigation */
+        header {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Lexend', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFFFFF;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary);
+            background: var(--primary-glow);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 30px;
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        h1 {
+            font-family: 'Lexend', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 5.5rem);
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            line-height: 0.95;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #FFF 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lead-text {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 50px;
+            font-weight: 500;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95));
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 60px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, var(--primary-glow), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: #FFFFFF;
+            padding: 22px 50px;
+            border-radius: 18px;
+            font-weight: 900;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 20px 40px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px var(--primary-glow);
+            background: #3b82f6;
+        }
+
+        /* Features Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-family: 'Lexend', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Interactive Tabs */
+        .tabs-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 12px 25px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 80px 0 40px;
+            background: #020617;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-heading {
+            font-family: 'Lexend', sans-serif;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #FFFFFF;
+            margin-bottom: 25px;
+            opacity: 0.5;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            color: #FFFFFF;
+        }
+
+        .copy {
+            border-top: 1px solid var(--glass-border);
+            padding-top: 30px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div class="logo">GROWTHPRESS<span>.OS</span></div>
+            <div class="eyebrow" style="margin: 0;">v6.3 Elite Definitive</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="eyebrow">DOMINANCE SEQUENCE INITIATED</div>
+            <h1>Your site is committing <span class="text-gradient">Equity Suicide</span> every single night.</h1>
+            <p class="lead-text">Stop running a standard WordPress site while your competitors automate their way to the top. Deploy the world's most advanced 14-node Business OS.</p>
+            <a href="#deploy" class="btn">Initialize Deployment Now</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Feature Highlights -->
+        <div class="grid">
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <div class="feature-title">Persistent AI Strategy</div>
+                <div class="feature-desc">Generate month-by-month marketing and operational roadmaps saved permanently to your strategy dashboard. Zero delay, zero friction.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <div class="feature-title">7-Tab Client Portal</div>
+                <div class="feature-desc">Absolute transparency for your clients. Structured into Overview, Agreements, Vault, Ledger, Referrals, and Live Activity logs.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👁️</div>
+                <div class="feature-title">Client View Mirroring</div>
+                <div class="feature-desc">Never guess what your clients see. Admins can mirror any active client portal layout with a single click in the top admin bar.</div>
+            </div>
+        </div>
+
+        <!-- Portal Hub Interactive Section -->
+        <div class="glass-card">
+            <h2 style="font-family: 'Lexend', sans-serif; font-size: 32px; margin-bottom: 15px;">Explore the Secure Client Portal tabs</h2>
+            <p style="color: var(--text-muted); margin-bottom: 40px; font-weight: 500;">Click through the operational hubs designed to establish absolute customer confidence.</p>
+
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="openTab(event, 'overview')">Overview (Velocity)</button>
+                <button class="tab-btn" onclick="openTab(event, 'roadmap')">Roadmap Checklist</button>
+                <button class="tab-btn" onclick="openTab(event, 'agreements')">Agreements</button>
+                <button class="tab-btn" onclick="openTab(event, 'vault')">Asset Vault</button>
+                <button class="tab-btn" onclick="openTab(event, 'ledger')">Financial Ledger</button>
+                <button class="tab-btn" onclick="openTab(event, 'referrals')">Referral Engine</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <h3 style="margin-bottom: 15px;">Project Velocity Tracker</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Your clients get real-time tracking of active implementation nodes (e.g. Intake, Triage, and Active Execution) presented in a responsive progress meter.</p>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 30px; border-radius: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: 700;">
+                        <span>PROJECT VELOCITY</span>
+                        <span>64% COMPLETE</span>
+                    </div>
+                    <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                        <div style="width: 64%; height: 100%; background: var(--primary);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="roadmap" class="tab-content">
+                <h3 style="margin-bottom: 15px;">Interactive Milestone Checklist</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">The client's AI strategy roadmap is presented as an interactive checklist. Clients can complete milestones to instantly synchronize progress with their specialist.</p>
+                <div style="display: grid; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 20px; border-radius: 15px;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span style="font-weight: 700; text-decoration: line-through; opacity: 0.5;">Month 1: Calibrate core niche-specific terminology & CRM hooks</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 20px; border-radius: 15px;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <span style="font-weight: 700;">Month 2: Set up automated Twilio notifications & SMS dispatch triggers</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="agreements" class="tab-content">
+                <h3 style="margin-bottom: 15px;">Strategic Agreement Terminal</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Review, negotiate, and digitally sign high-stakes service proposals directly in the portal. Digital acceptance automatically kicks off tasks and schedules kickoff events.</p>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 40px; border-radius: 20px; text-align: center;">
+                    <h4 style="margin-bottom: 10px;">Corporate Litigation Strategy Agreement</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Proposal Value: $12,500. Awaiting cryptographic signature.</p>
+                    <button class="btn" style="padding: 12px 30px; font-size: 12px; border-radius: 10px;">EXECUTE & SIGN AGREEMENT</button>
+                </div>
+            </div>
+
+            <div id="vault" class="tab-content">
+                <h3 style="margin-bottom: 15px;">Encrypted Asset Vault</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Upload sensitive client documents, blueprints, and audits securely. All documents are encrypted on upload via our custom AES-256 node.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 20px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🔒</div>
+                        <div style="font-size: 13px; font-weight: 700;">Litigation_Brief.pdf</div>
+                        <span style="font-size: 9px; color: var(--accent); font-weight: 900; margin-top: 10px; display: inline-block;">ENCRYPTED</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ledger" class="tab-content">
+                <h3 style="margin-bottom: 15px;">Interactive Financial Ledger</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Real-time settlement status for all active invoices, retaining trust at its highest delta.</p>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 20px; border-radius: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700;">Retainer Invoice #GP-2042</div>
+                            <div style="font-size: 11px; opacity: 0.5; margin-top: 5px;">Timestamp: Oct 24, 2024</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 18px; font-weight: 900; color: var(--accent);">$5,000</div>
+                            <span style="font-size: 9px; background: rgba(16, 185, 129, 0.1); color: var(--accent); padding: 3px 8px; border-radius: 30px; font-weight: 900;">PAID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="referrals" class="tab-content">
+                <h3 style="margin-bottom: 15px;">Strategic Referral Hub</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Propagate your network dominance. Clients get unique tracking links to refer partners and automatically track their conversion and payout statuses.</p>
+                <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent);">Your Unique Referral Link:</div>
+                        <div style="font-size: 13px; opacity: 0.6; margin-top: 5px;">http://localhost/wordpress/?ref=user_node_1</div>
+                    </div>
+                    <button class="btn" style="background: var(--accent); padding: 12px 25px; font-size: 12px; border-radius: 10px; box-shadow: none;">COPY LINK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom: 20px;">GROWTHPRESS<span>.OS</span></div>
+                    <p style="color: var(--text-muted); font-size: 14px; max-width: 350px;">The world's most advanced AI-powered business growth operating system for high-ticket service firms.</p>
+                </div>
+                <div>
+                    <h4 class="footer-heading">ECOSYSTEM</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Strategic Services</a></li>
+                        <li><a href="#">Investment Plans</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading">PROTOCOL</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Mission Vision</a></li>
+                        <li><a href="#">Contact Command</a></li>
+                        <li><a href="#">Ecosystem Integrity</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copy">
+                <div>&copy; 2024 GrowthPress. All rights reserved. Elite Business OS v6.3 Definitive.</div>
+                <div style="color: var(--accent); font-weight: 700;">SYSTEM ONLINE • NEURAL LINK ACTIVE</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

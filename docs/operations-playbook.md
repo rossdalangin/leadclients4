@@ -4,6 +4,43 @@ This manual provides granular instructions on **how, when, and where** to manage
 
 ---
 
+## 👥 Roles, Capabilities & SOP Matrix
+
+This section establishes the clear division of labor, capabilities, and daily Standard Operating Procedures (SOPs) for each user level in the v6.3 Business OS.
+
+### 👑 User Level 1: Principal (Administrator)
+*   **Strategic Goal**: Maintain 100% operational uptime, calibrate neural instructions, monitor enterprise valuation, and audit client experience nodes.
+*   **Core Dashboard Access**: Full Access (Settings, Agency Cluster, Workflow Command, Financial Ledger, System Tools, Governance scanner).
+*   **Daily SOP**:
+    1.  **System Audit**: Navigate to **Settings > System Tools** and execute an **Ecosystem Audit** to verify 14-node database and shortcode integrity.
+    2.  **Licensing & Security**: Access the **OS Activation** tab to confirm active cryptographic node signatures.
+    3.  **Client Experience Mirroring (SOP-01)**: To audit any client portal:
+        - Navigate to **System Dashboard > Client View**.
+        - Select the target client from the **SELECT CLIENT TO MIRROR** drop-down menu.
+        - Verify that the client's progress, strategy roadmap checklist, and financial ledger items are rendered with absolute visual accuracy and perfect dark-mode contrast.
+    4.  **Strategic Integrations**: Ensure Twilio and Zoom nodes are fully authenticated in the **Integrations** tab.
+
+### 👤 User Level 2: Specialist (Staff / Sales Rep)
+*   **Strategic Goal**: Drive lead velocity, practice closing talk tracks, and convert pipeline equity.
+*   **Core Dashboard Access**: Operational Access (Strategic Command, Global Tasks, Leads Kanban, Sales Lab, Chat Command, ERP & Inventory).
+*   **Daily SOP**:
+    1.  **Pipeline Triage**: Review the leads Kanban board. Prioritize leads flagged with red **"HOT"** badges (deal probability > 85%).
+    2.  **Lead Brief Analysis**: Open the lead and click **"INTEL BRIEF"**. Review the AI-generated Strategic Action Plan, SMS outreach templates, and competitive battlecards before executing outreach.
+    3.  **Objection Lab Training (SOP-02)**: Access the **Sales Simulation Lab** to practice objection rebuttals against simulated client archetypes before executing priority outreach.
+    4.  **Supply Chain Check (SOP-03)**: Navigate to **ERP & Inventory**. Locate assets with a **"CRITICAL"** stock status. Click **"RE-ORDER ASSET"** to synchronize re-supply. Once the shipment arrives, click **"MARK SHIPMENT RECEIVED"** to auto-replenish inventory nodes by +50 units.
+
+### 🤝 User Level 3: Client (Portal Node)
+*   **Strategic Goal**: Access encrypted blueprints, execute proposals, track velocity, and refer strategic partners.
+*   **Core Portal Access**: Tabbed Customer Portal (Overview, Roadmap, Agreements, Vault, Ledger, Referrals, Activity Logs).
+*   **Portal SOP**:
+    1.  **Onboarding (Step 1)**: Upon initial login, complete the cinematic **Strategic Onboarding** prompt by typing your Q4 objectives.
+    2.  **Velocity Review (Step 2)**: Monitor project milestone percentages in the **Overview** velocity bar.
+    3.  **Roadmap Milestones (Step 3)**: Go to the **Roadmap** tab to view the 12-month strategy checklist. Check off completed items to sync progress with the specialist.
+    4.  **Agreement Execution (Step 4)**: Open the **Agreements** tab, select the pending proposal, review terms, and click **"EXECUTE & INITIATE KICKOFF"** to sign.
+    5.  **Secure Uplink**: Use the **Vault** tab to upload critical documents for AES-256 encryption, or transmit messages to the specialist via the **Strategy Uplink** form.
+
+---
+
 ## 🏎️ Core Lead & Sales Velocity
 
 ### 1. Leads (`gp_lead`)
@@ -107,5 +144,31 @@ This manual provides granular instructions on **how, when, and where** to manage
 *   **When**: To refine the "Tone of Authority" for your specific niche.
 *   **How**: Enter custom instructions (e.g. "Speak like a high-end defense attorney").
 *   **Management**: Test the output in the sandbox before pushing live to the Chat Assistant.
+
+### 15. Twilio SMS Dispatch Calibration (SOP-04)
+*   **Where**: Settings > Strategic Automations / Configuration
+*   **When**: During initial deployment or when updating priority handsets.
+*   **How**:
+    1. Input Twilio Account SID and Auth Token.
+    2. Input **Twilio From Number** and the **Admin SMS Recipient** phone number.
+    3. Click **"Verify SMS Dispatch Node"** to test transmission.
+*   **Management**: Once verified, the "Instant SMS Dispatch" rule is live, sending alerts when lead urgency exceeds 8.
+
+### 16. Persistent AI Growth Roadmaps (SOP-05)
+*   **Where**: Growth Strategy Submenu
+*   **When**: When generating or reviewing a niche-specific 12-month trajectory.
+*   **How**:
+    1. Select the niche in the Dashboard.
+    2. Go to **Growth Strategy** and click **"INITIALIZE STRATEGY ENGINE"**.
+    3. AI will output a month-by-month strategy split into 4 quarters. This is saved to `gp_stored_roadmap_{niche}` options.
+    4. To view an already-stored roadmap, simply click **"VIEW CURRENT ROADMAP"** for instant, zero-delay rendering.
+
+### 17. Deploying Designed HTML Funnel Pages (SOP-06)
+*   **Where**: Root directory `/marketing-funnel-html`
+*   **When**: To launch high-conversion advertising or cold-outreach campaigns.
+*   **How**:
+    1. Upload the target HTML file (e.g. `long-form-sales-letter.html` or `landing-page-solar.html`) to your static web directory or map it to a WordPress template.
+    2. Ensure that any submit buttons or options route form submissions to the WordPress REST API endpoint `/wp-json/growthpress/v1/submit-lead` using a standard AJAX request.
+    3. Verify that the lead payload contains the proper fields (`lead_name`, `lead_email`, `lead_phone`, `lead_zip`, `lead_msg`) to trigger autonomous neural triage.
 
 *Status: OS Operational. Strategy: Domination.*

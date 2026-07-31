@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Stakes Legal Representation for Enterprise Entities</title>
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@300;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #D97706; /* Bronze / Gold */
+            --primary-glow: rgba(217, 119, 6, 0.15);
+            --secondary: #0F172A;
+            --accent: #F59E0B;
+            --bg: #020617;
+            --surface: #0F172A;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(217, 119, 6, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.08) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.8;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Header Navigation */
+        header {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Lexend', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFFFFF;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        /* Hero Section with Grid split (Copy & Form) */
+        .hero {
+            padding: 100px 0;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        @media (max-width: 991px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary);
+            background: var(--primary-glow);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 30px;
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        h1 {
+            font-family: 'Lexend', sans-serif;
+            font-size: clamp(2.2rem, 4vw, 4.5rem);
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            line-height: 1.05;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #FFF 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lead-text {
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* Intake Form Card */
+        .intake-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95));
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .intake-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, var(--primary-glow), transparent 70%);
+            pointer-events: none;
+        }
+
+        .form-header {
+            font-family: 'Lexend', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #FFFFFF;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 950;
+            opacity: 0.4;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 15px 30px var(--primary-glow);
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px var(--primary-glow);
+            background: #f59e0b;
+        }
+
+        /* Features List */
+        .features-list {
+            margin-top: 50px;
+            list-style: none;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .check-icon {
+            color: var(--primary);
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div class="logo">LITIGATION<span>.OS</span></div>
+            <div class="eyebrow" style="margin: 0;">JURISDICTIONAL INTELLIGENCE</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <div>
+                <div class="eyebrow">LITIGATION INTELLIGENCE NODE</div>
+                <h1>High-Stakes Legal Representation for <span class="text-gradient">Enterprise Entities</span></h1>
+                <p class="lead-text">Our firm leverages the v6.3 Litigation Intelligence node to provide deep legal expertise and AI-driven case merit analysis for multi-national corporate counsel.</p>
+                <ul class="features-list">
+                    <li><span class="check-icon">✓</span> Rapid Conflict Clearance Auditing</li>
+                    <li><span class="check-icon">✓</span> Automated Contract Redlining & Risk Analysis</li>
+                    <li><span class="check-icon">✓</span> Secure Client Portal with Encrypted Vaults</li>
+                </ul>
+            </div>
+
+            <div class="intake-card">
+                <div class="form-header">Initiate Strategic Sequence</div>
+                <form onsubmit="event.preventDefault(); alert('Lead Node successfully initialized. AI Triage sequence running.');">
+                    <div class="form-group">
+                        <label>IDENTITY</label>
+                        <input type="text" placeholder="Full Legal Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>DIRECT EMAIL</label>
+                        <input type="email" placeholder="direct@enterprise.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CASE BRIEF / OBJECTIVE</label>
+                        <textarea placeholder="Outline your legal objectives..." style="height: 100px;" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">UPLINK WITH SPECIALISTS</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>
